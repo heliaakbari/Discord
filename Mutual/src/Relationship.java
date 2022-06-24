@@ -1,18 +1,18 @@
-package discord;
+
 
 public enum Relationship {
     Friend,
     Block,
     Friend_pending;
 
-    private User sender;
-    private User receiver;
+    private String sender;
+    private String receiver;
 
-    public void setSender(User sender) {
+    public void setSender(String sender) {
         this.sender = sender;
     }
 
-    public void setReceiver(User receiver) {
+    public void setReceiver(String receiver) {
         this.receiver = receiver;
     }
 }
