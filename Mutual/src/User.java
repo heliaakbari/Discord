@@ -10,7 +10,6 @@ public class User {
     private BufferedImage profilePhoto;
 
 
-    // check the regex here
     public User(String username, String password, String email) throws IllegalArgumentException {
         this.username = username;
         this.password = password;
@@ -54,9 +53,6 @@ public class User {
     }
 
     public void setStatus(String status) throws IllegalArgumentException {
-//        if (Status.defineStatus(status) == null)
-//            throw new IllegalArgumentException("invalid status");
-//        this.status = Status.defineStatus(status);
         this.status = Status.valueOf(status);
     }
 
