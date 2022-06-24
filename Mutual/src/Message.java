@@ -6,10 +6,10 @@ import java.time.LocalDateTime;
 public class Message implements Serializable {
 
     private LocalDateTime dateTime;
-    private User sender;
+    private String senderUsername;
 
-    public Message(User sender) {
-        this.sender = sender;
+    public Message(String sender) {
+        this.senderUsername = sender;
         dateTime = LocalDateTime.now();
     }
 
@@ -17,7 +17,7 @@ public class Message implements Serializable {
         return dateTime;
     }
 
-    public User getSender() {
-        return sender;
+    public String getSender() {
+        return senderUsername;
     }
 }
