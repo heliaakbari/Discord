@@ -11,6 +11,7 @@ public class ClientMain {
     static ObjectOutputStream out;
     static ObjectInputStream in;
     static InputHandler inputHandler;
+    static String username;
 
     public static void main(String[] args) {
 
@@ -43,31 +44,34 @@ public class ClientMain {
     // when the login is successful and returns 1, you should communicate with server and set the client handler id
     public static int login(){
         while (true){
-            String input = inputHandler.login();
-            if (input.equals("0"))
+             ArrayList<String> info = inputHandler.login();
+            if (info == null)
                 return 0;
             else {
                 // create command
                 // if found the condition is true
-                if (condition)
+                if (condition){
+                    username = info.get(0);
                     return 1;
+                }
                 else
-                    inputHandler.printMsg("incorrect username or password, try again!");
+                    inputHandler.printMsg("incorrect username or password, try again!\npress 0 to exit");
             }
         }
     }
 
 
     public static int signup(){
-        String username;
+
         while (true){
-            username = inputHandler.usernameValidation();
-            if (username.equals("0"))
+            String input = inputHandler.usernameValidation();
+            if (input.equals("0"))
                 return 0;
             else {
-                String userInfo = inputHandler.signup();
+                ArrayList<String> userInfo = inputHandler.signup();
                 // create command, if not found condition is true
                 if (condition){
+                    username = input;
                     return 1;
                 }
                 else
@@ -85,21 +89,19 @@ public class ClientMain {
             choice = inputHandler.showMenu("""
                     1) servers list
                     2) direct messages
-                    3) friends list
-                    4) blocked list
-                    5) pending list
-                    press 0 to exit""", 5);
+                    3) relationships list
+                    press 0 to exit""", 3);
 
             switch (choice){
                 case 1 -> chooseServer();
                 case 2 -> enterDirectMessages();
-                case 3 -> enterFriendList();
-                case 4 -> enterBlockList();
-                case 5 -> enterPendingList();
+                case 3 -> enterRelationshipsList();
             }
+
         } while (choice != 0);
     }
 
+    // add a delete/creat server action and the 8 abilities to the list of actions
     public static void chooseServer(){
         // create a command to get a list of servers and pass the list to printmsg in inputhandler and ask user to choose one
         ArrayList<String> serversList;
@@ -111,6 +113,7 @@ public class ClientMain {
 
         } while (choice != 0);
     }
+
     public static void chooseChannel(String server){
         // create a command to get a list of channels in this server
         ArrayList<String> channelsList;
@@ -133,28 +136,31 @@ public class ClientMain {
         } while (choice != 0);
     }
 
-    public static void enterFriendList(){
-        // create a command to get friends list
-        ArrayList<User> friends;
-        int friend;
-        do{
-            inputHandler.printMsg("press 0 to exit");
-            friend = inputHandler.showMenu(friends.toString(), friends.size());
-            if (friend != 0){
-                int action = inputHandler.showMenu("0) back to friends list\n1) block this account", 1);
-                if (action == 1){
-                    // creat a block command
-                }
+    public static void enterRelationshipsList(){
+        int choice;
+        do {
+            choice = inputHandler.showMenu("""
+                    1) friends list
+                    2) blocked list
+                    3) pending list
+                    4) send friend request
+                    5) block someone
+                    press 0 to exit""", 5);
+
+            // create appropriate command based on each option
+            switch (choice){
+                case 1 -> ;
+                case 2 -> ;
+                case 3 -> ;
+                case 4 -> ;
+                case 5 -> ;
             }
-        } while (friend != 0);
+        } while (choice != 0);
+    }
 
-
-
+    public static void enterDirectMessages(){
 
     }
-    public static void enterBlockList(){}
-    public static void enterPendingList(){}
-    public static void enterDirectMessages(){}
 
     public static void getInbox(){} // this method is called inside startDiscord method
 

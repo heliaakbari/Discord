@@ -1,5 +1,6 @@
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.ArrayList;
 
 public abstract class InputHandler {
 
@@ -7,8 +8,8 @@ public abstract class InputHandler {
     protected abstract int checkInput(int numberOfChoices) throws Exception;
     protected abstract String checkInput(String regex);
     public abstract void printMsg(String msg);
-    public abstract String login();
-    public abstract String signup();
+    public abstract ArrayList<String> login();
+    public abstract ArrayList<String> signup();
     public abstract String usernameValidation();
 
 }

@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Console extends InputHandler{
@@ -44,71 +45,27 @@ public class Console extends InputHandler{
         return choice;
     }
 
-//    public int showEntranceMenu(){
-//        System.out.println("welcome");
-//        System.out.println("""
-//                1) signup
-//                2) login
-//                press 0 to exit
-//                """);
-//
-//        boolean successful = false;
-//        int choice = 0;
-//        while (!successful) {
-//            try {
-//                choice = checkInput(2);
-//                successful = true;
-//            } catch (Exception e) {
-//                System.err.println("you must choose one of the numbers in the menu");
-//            }
-//        }
-//        return choice;
-//    }
+    public ArrayList<String> login(){
 
-//    public int showDiscordMenu(){
-//
-//        System.out.println("""
-//                1) servers list
-//                2) direct messages
-//                3) friends list
-//                4) blocked list
-//                5) pending list""");
-//
-//
-//        boolean successful = false;
-//        int choice = 0;
-//        while (!successful){
-//            try {
-//                choice = checkInput(5);
-//                successful = true;
-//            } catch (Exception e){
-//                System.err.println("you must choose one of the numbers in the menu");
-//            }
-//        }
-//        return choice;
-//    }
+        ArrayList<String> info = new ArrayList<>();
 
-    public String login(){
-
-        StringBuilder stringBuilder = new StringBuilder("");
-        System.out.println("press 0 to exit");
         System.out.print("username -> ");
+        String username = scanner.nextLine();
+        if (username.equals("0"))
+            return null;
+        info.add(username);
 
-        input = scanner.nextLine();
-        if (input.equals("0"))
-            return "0";
-        stringBuilder.append(" ").append(input);
-
-        System.out.println("press 0 to exit");
         System.out.print("password -> ");
-        input = scanner.nextLine();
-        if (input.equals("0"))
-            return "0";
-        stringBuilder.append(" ").append(input);
-        return stringBuilder.toString();
+        String password = scanner.nextLine();
+        if (password.equals("0"))
+            return null;
+        info.add(password);
+        return info;
     }
 
-    public String signup() {
+
+    public ArrayList<String> signup() {
+        ArrayList<String> info = new ArrayList<>();
         System.out.println("password must be at least 8 characters and must contain capital and small english alphabets and numbers");
         System.out.println("press 0 to exit");
         System.out.print("password -> ");
@@ -119,7 +76,7 @@ public class Console extends InputHandler{
             System.out.println("invalid password format. try again!");
             password = checkInput("");
         }
-
+        info.add(password);
 
         System.out.println("press 0 to exit");
         System.out.print("email address -> ");
@@ -129,9 +86,7 @@ public class Console extends InputHandler{
             System.out.println("invalid email format. try again!");
             email = checkInput("");
         }
-        StringBuilder stringBuilder = new StringBuilder("");
-        stringBuilder.append(" ").append(password).append(" ").append(email);
-
+        info.add(email);
 
         System.out.println("would yu like to add a phone number as well?");
         System.out.println("1) yes 2) no");
@@ -146,10 +101,10 @@ public class Console extends InputHandler{
                 phoneNum = checkInput("");
             }
 
-            stringBuilder.append(" ").append(phoneNum);
+            info.add(phoneNum);
         }
 
-        return stringBuilder.toString();
+        return info;
     }
 
     public String usernameValidation(){
