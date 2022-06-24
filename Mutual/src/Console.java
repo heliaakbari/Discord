@@ -32,6 +32,17 @@ public class Console extends InputHandler{
     public int showMenu(String menu, int options){
 
         System.out.println(menu);
+        return getUserOption(options);
+    }
+
+    public int showMenu(ArrayList<String> menu, int options){
+        for (String option: menu) {
+            System.out.println(option);
+        }
+        return getUserOption(options);
+    }
+
+    private int getUserOption(int options) {
         boolean successful = false;
         int choice = 0;
         while (!successful){
@@ -62,7 +73,6 @@ public class Console extends InputHandler{
         info.add(password);
         return info;
     }
-
 
     public ArrayList<String> signup() {
         ArrayList<String> info = new ArrayList<>();

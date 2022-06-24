@@ -1,4 +1,3 @@
-package discord;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,18 +12,16 @@ public class Role {
         this.values = values;
     }
 
-    @Override
-    public String toString() {
-        int choiceNumber = 1;
-        StringBuilder stringBuilder = new StringBuilder();
 
-        for (int i = 0; i < 8; i++){
+    public ArrayList<String> getAbilities() {
+        ArrayList<String> availableAbilities = new ArrayList<>();
+
+        for (int i = 0; i < 9; i++){
             if (values.charAt(i) == 1){
-                stringBuilder.append(choiceNumber + " : " + abilities.get(i) + "\n");
-                choiceNumber++;
+                availableAbilities.add((availableAbilities.size() + 1) + ") " + abilities.get(i));
             }
         }
 
-        return stringBuilder.toString();
-    }
+        return availableAbilities;}
+
 }

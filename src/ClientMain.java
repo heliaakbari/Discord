@@ -90,25 +90,36 @@ public class ClientMain {
                     1) servers list
                     2) direct messages
                     3) relationships list
-                    press 0 to exit""", 3);
+                    4) account setting
+                    press 0 to exit""", 4);
 
             switch (choice){
                 case 1 -> chooseServer();
                 case 2 -> enterDirectMessages();
                 case 3 -> enterRelationshipsList();
+                case 4 -> setting();
             }
 
         } while (choice != 0);
     }
 
-    // add a delete/creat server action and the 8 abilities to the list of actions
+    
     public static void chooseServer(){
-        // create a command to get a list of servers and pass the list to printmsg in inputhandler and ask user to choose one
+
+        // create a command to get a list of servers
         ArrayList<String> serversList;
         serversList.add("press 0 to exit");
         int choice;
         do{
-            choice = inputHandler.showMenu(serversList.toString(), serversList.size() - 1);
+            choice = inputHandler.showMenu(serversList, serversList.size() - 1);
+            int action;
+            do {
+                // create a command to get user abilities in this server
+                Role role;
+                action = inputHandler.showMenu(role.getAbilities(), role.getAbilities().size());
+                // create the command, for the keyword use the value in the abilities arrayList, to get the value use action - 1 index
+
+            } while (action != 0);
             chooseChannel(serversList.get(choice));
 
         } while (choice != 0);
@@ -120,7 +131,7 @@ public class ClientMain {
         channelsList.add("press 0 to exit");
         int choice;
         do {
-            choice = inputHandler.showMenu(channelsList.toString(), channelsList.size() - 1) ;
+            choice = inputHandler.showMenu(channelsList, channelsList.size() - 1) ;
 
             int action;
             do {
@@ -163,6 +174,8 @@ public class ClientMain {
     }
 
     public static void getInbox(){} // this method is called inside startDiscord method
+
+    public static void setting(){}
 
 
 }
