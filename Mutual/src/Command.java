@@ -27,7 +27,22 @@ public class Command {
     private Command(String keyword){
         this.keyword= keyword;
     }
-    //for new message: to be decided
+
+    public static Command newPvMsg(String sender,String reciever,Message message){
+        Command cmd = new Command("newPvMsg");
+        cmd.user = sender;
+        cmd.primary = message;
+        cmd.secondary = reciever;
+        return cmd;
+    }
+
+    public static Command newChannelMsg(String sender, String server,String channel,Message message){
+        Command cmd = new Command("newChannelMsg");
+        cmd.user = sender;
+        cmd.server = server;
+        cmd.channel=channel;
+        return cmd;
+    }
 
     //for new User: keyword: newUser    primary: user object
     public static Command newUser(User user) {
@@ -45,16 +60,18 @@ public class Command {
     }
 
     //for new request: keyword: newRequest, user= sender's name, primary = a request object
-    public static Command newRequest(Object relationship){
-        Command cmd = new Command("newRequest");
-        cmd.primary= relationship;
+    public static Command newRelation(Object relation){
+        Command cmd = new Command("newRelation");
+        cmd.primary= relation;
         return cmd;
     }
 
     //for new reaction: newReaction, user=reaction sender, primary= message, secondary = type of reaction(enum)
-    public static Command newReaction(Object reaction){
+    public static Command newReaction(String user,Message message, int type){
         Command cmd = new Command("newReaction");
-        cmd.primary= reaction;
+        cmd.user = user;
+        cmd.primary = message;
+        cmd.secondary = type;
         return cmd;
     }
 
@@ -72,8 +89,27 @@ public class Command {
         return cmd;
     }
 
+    //for getting list of someone's friends and their status: keyword=getFriends  user = username
+    public static Command getFriends(String user){
+        Command cmd = new Command("getFriends");
+        cmd.user= user;
+        return cmd;
+    }
+
+    public static Command getBlockList(String user){
+        Command cmd = new Command("getBlockList");
+        cmd.user= user;
+        return cmd;
+    }
+
+    public static Command getBlockedBy(String user){
+        Command cmd = new Command("getBlockedBy");
+        cmd.user= user;
+        return cmd;
+    }
+
     //for getting channel's messages : keyword=getChannelMsg , user=username,
-    //  channel = channel, server = server, primary = number of latest massages in INTEGER
+          //  channel = channel, server = server, primary = number of latest massages in INTEGER
     public static Command getChannelMsg(String user, String server, String channel,Integer numberOfMessages){
         Command cmd = new Command("getChannelMsg");
         cmd.user=user;
@@ -93,7 +129,7 @@ public class Command {
         return cmd;
     }
     //for getting list of channel members:keyword=getChannelMembers user = username, server = server,
-    //channel=channel
+        //channel=channel
     public static Command getChannelMembers(String user,String server, String channel){
         Command cmd = new Command("getChannelMembers");
         cmd.user=user;
@@ -111,12 +147,7 @@ public class Command {
     }
 
 
-    //for getting list of someone's friends and their status: keyword=getFriends  user = username
-    public static Command getFriends(String user){
-        Command cmd = new Command("getFriends");
-        cmd.user= user;
-        return cmd;
-    }
+
 
     //for deleting server: keyword=deleteServer, user= user, server=server
     public static Command deleteServer(String user,String server){
@@ -127,7 +158,7 @@ public class Command {
     }
 
     //for deleting channel: keyword=deleteChannel, user= user, server=server
-    //channel=channel
+        //channel=channel
     public static Command deleteChannel(String user,String server,String channel){
         Command cmd = new Command("deleteChannel");
         cmd.user=user;
@@ -137,7 +168,7 @@ public class Command {
     }
 
     //for changing username :keyword = changeUsername , user= old username,
-    //primary = new username
+        //primary = new username
     public static Command changeUsername(String oldName,String newName){
         Command cmd = new Command("changeUsername");
         cmd.user= oldName;
@@ -146,7 +177,7 @@ public class Command {
     }
 
     //for changing server's name: keyword= changeServerName, server= old name.
-    //user= user, primary= new servername
+        //user= user, primary= new servername
     public static Command changeServerName(String user, String oldName,String newName){
         Command cmd = new Command("changeServername");
         cmd.user= user;
@@ -174,6 +205,13 @@ public class Command {
         Command cmd = new Command("pinMsg");
         cmd.user = user;
         cmd.primary= message;
+        return cmd;
+    }
+
+    public static Command getRole(String user,String server){
+        Command cmd = new Command("getRole");
+        cmd.user = user;
+        cmd.server= server;
         return cmd;
     }
 }

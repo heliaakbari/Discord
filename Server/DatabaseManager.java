@@ -1,0 +1,162 @@
+
+
+import java.awt.*;
+import java.sql.*;
+import java.util.Scanner;
+
+public class DatabaseManager {
+   private  Connection con = null;
+   public   Scanner get = new Scanner(System.in);
+   private  String dbUrl = "jdbc:hsqldb:hsql://localhost/testdb";
+   private  Statement stmt = null;
+
+    public void start (){
+        try {
+
+            System.out.println("1.existing database    2.new database");
+            connect();
+            if (get.nextLine().equals("1")) {
+
+                ResultSet result = stmt.executeQuery("SELECT COUNT(*) AS tablecount\n" +
+                        "FROM   INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA='PUBLIC';");
+                while (result.next()) {
+                    if(result.getInt("tablecount")==0){
+                        newDatabase();
+                    }
+                }
+
+            } else {
+                newDatabase();
+            }
+        }
+        catch (SQLException sqlException){
+            sqlException.printStackTrace();
+        }
+    }
+
+    public void connect() throws SQLException{
+            //Registering the HSQLDB JDBC driver
+        try {
+            Class.forName("org.hsqldb.jdbc.JDBCDriver");
+        }
+           catch (ClassNotFoundException classNotFoundException){
+            classNotFoundException.printStackTrace();
+           }
+            //Creating the connection with HSQLDB
+            con = DriverManager.getConnection(dbUrl, "SA", "");
+            if (con!= null){
+                System.out.println("Connection created successfully");
+                stmt = con.createStatement();
+                test();
+                ResultSet result = stmt.executeQuery ("SELECT COUNT(*) AS tablecount\n" +
+                        "FROM   INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA='PUBLIC';");
+                while (result.next()) {
+                    System.out.println(result.getInt("tablecount"));
+                }
+            }else{
+                System.out.println("Problem with creating connection");
+            }
+    }
+
+    public void newDatabase() throws SQLException{
+        //clears all databases rows
+            stmt.executeUpdate("truncate schema PUBLIC and commit");
+            stmt.executeUpdate("""
+            drop table IF EXISTS channel_members;
+            drop table IF EXISTS relationships;
+            drop table IF EXISTS users;
+            drop table IF EXISTS pv_massages;
+            drop table IF EXISTS channel_massages;
+            drop table IF EXISTS roles;
+            drop table IF EXISTS reactions;
+            """);
+            //delete images and files in pc too
+
+        //add table member of channels
+            stmt.executeUpdate("""
+                                            CREATE TABLE IF NOT EXISTS channel_members
+                                            (username VARCHAR(20) not null,
+                                             server varchar(20) not null,
+                                             channel varchar(20),
+                                             lastseen Date);""");
+            stmt.executeUpdate("""
+                ALTER TABLE channel_members
+                ADD CONSTRAINT IF NOT EXISTS uniquePersonInchannel UNIQUE(username,server,channel);
+            """);
+        //add relationships
+        stmt.executeUpdate("""
+                                            CREATE TABLE IF NOT EXISTS relationships
+                                            (sender VARCHAR(20) not null,
+                                             receiver varchar(20) not null,
+                                             status varchar(20));""");
+        stmt.executeUpdate("""
+                ALTER TABLE relationships
+                ADD CONSTRAINT IF NOT EXISTS uniqueRelationship UNIQUE(sender,receiver);
+            """);
+        //users in general
+        stmt.executeUpdate("""
+                                            CREATE TABLE IF NOT EXISTS users
+                                            (username VARCHAR(20) unique not null,
+                                             password varchar(20) not null,
+                                             phone varchar(15),
+                                             email varchar(50) not null,
+                                             status varchar(20),
+                                             picturelink varchar(200));""");
+
+        //channel massages
+        stmt.executeUpdate("""
+                                            CREATE TABLE IF NOT EXISTS channel_massages
+                                            (sender VARCHAR(20) not null,
+                                             server varchar(20) not null,
+                                             channel varchar(20) not null,
+                                             date DATE not null,
+                                             body varchar(1000) not null,
+                                             isFile boolean not null,
+                                             filename varchar(20),
+                                             filelink varchar(200));""");
+
+        //pv massages
+        stmt.executeUpdate("""
+                                            CREATE TABLE IF NOT EXISTS pv_massages
+                                            (sender VARCHAR(20) not null,
+                                             receiver varchar(20) not null,
+                                             date DATE not null,
+                                             body varchar(1000) not null,
+                                             isFile boolean not null,
+                                             filename varchar(20),
+                                             filelink varchar(200));""");
+        //roles
+        stmt.executeUpdate("""
+                                            CREATE TABLE IF NOT EXISTS roles
+                                            (username VARCHAR(20) not null,
+                                             server varchar(20) not null,
+                                             roleName varchar(20),
+                                             ablilities varchar(8) not null);""");
+        stmt.executeUpdate("""
+                ALTER TABLE roles
+                ADD CONSTRAINT IF NOT EXISTS uniqueRole UNIQUE(username,server);
+            """);
+        //reactions
+        stmt.executeUpdate("""
+                                            CREATE TABLE IF NOT EXISTS reactions
+                                            (reactionSender VARCHAR(20) not null,
+                                             server varchar(20) not null,
+                                             channel varchar(20) not null,
+                                             messageDate DATE not null,
+                                             messageSender varchar(20) not null,
+                                             type int not null);""");
+        stmt.executeUpdate("""
+                ALTER TABLE reactions
+                ADD CONSTRAINT IF NOT EXISTS uniqueReaction UNIQUE(reactionSender,messageSender,messageDate);
+            """);
+    }
+    public void CmdManager(Command cmd){
+        switch (cmd.getKeyword().toLowerCase()){
+        }
+    }
+
+    public void test() throws SQLException{
+
+    }
+}
+
