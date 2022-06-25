@@ -115,21 +115,6 @@ public class Data {
         return data;
     }
 
-    public static Data changeUsername(String user,boolean changed){
-        Data data = new Data("checkChangedUsername");
-        data.user = user;
-        data.primary = changed;
-        return data;
-    }
-
-    public static Data checkNewServer(String user,String server,boolean isCreated){
-        Data data = new Data("checkNewServer");
-        data.user = user;
-        data.server= server;
-        data.primary = isCreated;
-        return data;
-    }
-
     public static Data userInfo(String username,User user){
         Data data = new Data ("userInfo");
         data.user= username;
