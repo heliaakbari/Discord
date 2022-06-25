@@ -24,6 +24,14 @@ public class Command {
         return user;
     }
 
+    public Object getPrimary() {
+        return primary;
+    }
+
+    public Object getSecondary() {
+        return secondary;
+    }
+
     private Command(String keyword){
         this.keyword= keyword;
     }
@@ -36,6 +44,15 @@ public class Command {
         return cmd;
     }
 
+    public static Command changeProfilePhoto(String user, byte[] image , String format){
+        Command cmd = new Command("changeProfilePhoto");
+        cmd.user= user;
+        cmd.primary=image;
+        cmd.secondary=format;
+        return cmd;
+    }
+
+    
     public static Command newChannelMsg(String sender, String server,String channel,Message message){
         Command cmd = new Command("newChannelMsg");
         cmd.user = sender;
