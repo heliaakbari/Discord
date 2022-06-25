@@ -24,6 +24,18 @@ public class Command {
         return user;
     }
 
+    public String getServer() {
+        return server;
+    }
+
+    public Object getPrimary() {
+        return primary;
+    }
+
+    public Object getSecondary() {
+        return secondary;
+    }
+
     private Command(String keyword){
         this.keyword= keyword;
     }
@@ -36,11 +48,19 @@ public class Command {
         return cmd;
     }
 
-    public static Command newChannelMsg(String sender, String server,String channel,Message message){
+    public static Command changeProfilePhoto(String user, byte[] image , String format){
+        Command cmd = new Command("changeProfilePhoto");
+        cmd.user= user;
+        cmd.primary=image;
+        cmd.secondary=format;
+        return cmd;
+    }
+
+    
+    public static Command newChannelMsg(String sender,Message message){
         Command cmd = new Command("newChannelMsg");
         cmd.user = sender;
-        cmd.server = server;
-        cmd.channel=channel;
+        cmd.primary= message;
         return cmd;
     }
 
@@ -60,14 +80,14 @@ public class Command {
     }
 
     //for new request: keyword: newRequest, user= sender's name, primary = a request object
-    public static Command newRelation(Object relation){
+    public static Command newRelation(Relationship relation){
         Command cmd = new Command("newRelation");
         cmd.primary= relation;
         return cmd;
     }
 
     //for new reaction: newReaction, user=reaction sender, primary= message, secondary = type of reaction(enum)
-    public static Command newReaction(String user,Message message, int type){
+    public static Command newReaction(String user,Message message, String type){
         Command cmd = new Command("newReaction");
         cmd.user = user;
         cmd.primary = message;
@@ -212,6 +232,27 @@ public class Command {
         Command cmd = new Command("getRole");
         cmd.user = user;
         cmd.server= server;
+        return cmd;
+    }
+
+    public static Command lastseenAll(String user){
+        Command cmd = new Command("lastSeenAll");
+        cmd.user= user;
+        return cmd;
+    }
+
+    public static Command lastseenPv(String user,String theOtherPerson){
+        Command cmd = new Command("lastseenPv");
+        cmd.user=user;
+        cmd.secondary = theOtherPerson;
+        return cmd;
+    }
+
+    public static Command lastseenChannel(String user,String server,String channel){
+        Command cmd = new Command("lastseenChannel");
+        cmd.user=user;
+        cmd.server = server;
+        cmd.channel = channel;
         return cmd;
     }
 }

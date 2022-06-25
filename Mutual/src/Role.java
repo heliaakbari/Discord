@@ -20,7 +20,7 @@ public class Role {
 
         for (int i = 0; i < 9; i++){
             if (values.charAt(i) == 1){
-                availableAbilities.add((availableAbilities.size() + 1) + ") " + abilities.get(i));
+                availableAbilities.add(abilities.get(i));
             }
         }
 

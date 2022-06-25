@@ -15,4 +15,13 @@ public enum Relationship {
     public void setReceiver(String receiver) {
         this.receiver = receiver;
     }
+
+    public String getReceiver() {
+        return receiver;
+    }
+
+    public String getSender() {
+        return sender;
+    }
+
 }

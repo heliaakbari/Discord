@@ -7,10 +7,11 @@ public class User {
     private String phoneNum;
     private String email;
     private Enum<Status> status;
-    private BufferedImage profilePhoto;
+    private byte[] profilePhoto;
+    private String profilePhotoFormat;
 
 
-    public User(String username, String password, String email) throws IllegalArgumentException {
+    public User(String username, String password, String email) {
         this.username = username;
         this.password = password;
         this.email = email;
@@ -20,7 +21,7 @@ public class User {
         return username;
     }
 
-    public void setUsername(String username) throws IllegalArgumentException  {
+    public void setUsername(String username)   {
         this.username = username;
     }
 
@@ -28,7 +29,7 @@ public class User {
         return password;
     }
 
-    public void setPassword(String password) throws IllegalArgumentException  {
+    public void setPassword(String password)  {
         this.password = password;
     }
 
@@ -36,7 +37,7 @@ public class User {
         return phoneNum;
     }
 
-    public void setPhoneNum(String phoneNum) throws IllegalArgumentException  {
+    public void setPhoneNum(String phoneNum) {
         this.phoneNum = phoneNum;
     }
 
@@ -44,7 +45,7 @@ public class User {
         return email;
     }
 
-    public void setEmail(String email) throws IllegalArgumentException  {
+    public void setEmail(String email) {
         this.email = email;
     }
 
@@ -52,15 +53,16 @@ public class User {
         return status;
     }
 
-    public void setStatus(String status) throws IllegalArgumentException {
+    public void setStatus(String status) {
         this.status = Status.valueOf(status);
     }
 
-    public BufferedImage getProfilePhoto() {
+    public byte[] getProfilePhoto() {
         return profilePhoto;
     }
 
-    public void setProfilePhoto(BufferedImage profilePhoto) {
+    public void setProfilePhoto(byte[] profilePhoto, String format) {
         this.profilePhoto = profilePhoto;
+        this.profilePhotoFormat = format;
     }
 }
