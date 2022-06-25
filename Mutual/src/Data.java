@@ -58,6 +58,15 @@ public class Data {
         return data;
     }
 
+
+    public static Data friends(String user, ArrayList<String> friends){
+        Data data = new Data("friends");
+        data.user = user;
+        data.primary = friends;
+        return data;
+    }
+
+
     public static Data blockList(String user,ArrayList<String> peopleTheyBlocked){
         Data data = new Data("blockList");
         data.user = user;
