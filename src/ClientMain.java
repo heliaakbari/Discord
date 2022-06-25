@@ -44,7 +44,7 @@ public class ClientMain {
     // when the login is successful and returns 1, you should communicate with server and set the client handler id
     public static int login(){
         while (true){
-             ArrayList<String> info = inputHandler.login();
+            ArrayList<String> info = inputHandler.login();
             if (info == null)
                 return 0;
             else {
@@ -59,7 +59,6 @@ public class ClientMain {
             }
         }
     }
-
 
     public static int signup(){
 
@@ -82,7 +81,6 @@ public class ClientMain {
             }
         }
     }
-
 
     public static void startDiscord(){
         getInbox();
