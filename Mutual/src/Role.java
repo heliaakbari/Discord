@@ -4,16 +4,18 @@ import java.util.Arrays;
 
 public class Role {
 
+    private String roleName;
     private String values;
     private final ArrayList<String> abilities = new ArrayList<>(Arrays.asList("creat channel", "remove channel", "remove member",
             "restrict member", "ban member", "change server name", "see chat history", "pin message", "delete server"));
 
-    public Role(String values) {
+    public Role(String values, String name) {
         this.values = values;
+        this.roleName = name;
     }
 
 
-    public ArrayList<String> getAbilities() {
+    public ArrayList<String> getAvailableAbilities() {
         ArrayList<String> availableAbilities = new ArrayList<>();
 
         for (int i = 0; i < 9; i++){
@@ -25,4 +27,7 @@ public class Role {
         return availableAbilities;
     }
 
+    public String getRoleName() {
+        return roleName;
+    }
 }

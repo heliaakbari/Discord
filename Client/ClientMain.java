@@ -115,7 +115,7 @@ public class ClientMain {
             do {
                 // create a command to get user abilities in this server
                 Role role;
-                action = inputHandler.showMenu(role.getAbilities(), role.getAbilities().size());
+                action = inputHandler.showMenu(role.getAvailableAbilities(), role.getAvailableAbilities().size());
                 // create the command, for the keyword use the value in the abilities arrayList, to get the value use action - 1 index
 
             } while (action != 0);
