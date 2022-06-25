@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class Console extends InputHandler{
@@ -38,11 +39,13 @@ public class Console extends InputHandler{
         return getUserOption(options);
     }
 
-    public int showMenu(ArrayList<String> menu, int options){
+    public int showMenu(ArrayList<String> menu){
+        int optionNumber = 1;
         for (String option: menu) {
-            System.out.println(option);
+            System.out.println(optionNumber + option);
+            optionNumber++;
         }
-        return getUserOption(options);
+        return getUserOption(optionNumber - 1);
     }
 
     private int getUserOption(int options) {
@@ -133,6 +136,18 @@ public class Console extends InputHandler{
                 }
             }
         }
+
+        System.out.println("would you like to define a status?");
+        System.out.println("1) yes    2) no");
+        option = scanner.nextInt();
+        if (option == 1){
+            ArrayList<String> status = new ArrayList<>(Arrays.asList("1) online", "2) idle", "3) do not disturb", "4) invisible", "press 0 to exit"));
+            int choice = showMenu(status);
+            if (choice != 0)
+                info.add(status.get(choice - 1));
+        }
+
+        System.out.println("you can also add a profile photo in account settings");
         return info;
     }
 
