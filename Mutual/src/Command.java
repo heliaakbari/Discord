@@ -53,11 +53,10 @@ public class Command {
     }
 
     
-    public static Command newChannelMsg(String sender, String server,String channel,Message message){
+    public static Command newChannelMsg(String sender,Message message){
         Command cmd = new Command("newChannelMsg");
         cmd.user = sender;
-        cmd.server = server;
-        cmd.channel=channel;
+        cmd.primary= message;
         return cmd;
     }
 
