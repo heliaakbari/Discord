@@ -12,7 +12,7 @@ public class Message implements Serializable {
     private LocalDateTime dateTime;
     // holds sender username, channel and server respectively
     private ArrayList<String> sourceInfo;
-    private HashMap<String, Integer> reactions;
+    private HashMap<String, Integer> reactions = new HashMap<>();
 
     public Message(String sender) {
         sourceInfo = new ArrayList<>(List.of(sender));
