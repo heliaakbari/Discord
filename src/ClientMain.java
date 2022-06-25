@@ -15,7 +15,7 @@ public class ClientMain {
 
     public static void main(String[] args) {
 
-        int choice = -1;
+        int choice;
         inputHandler = new Console();
 
         try {
@@ -69,6 +69,8 @@ public class ClientMain {
                 return 0;
             else {
                 ArrayList<String> userInfo = inputHandler.signup();
+                if (userInfo == null)
+                    return 0;
                 // create command, if not found condition is true
                 if (condition){
                     username = input;
@@ -103,7 +105,6 @@ public class ClientMain {
         } while (choice != 0);
     }
 
-    
     public static void chooseServer(){
 
         // create a command to get a list of servers

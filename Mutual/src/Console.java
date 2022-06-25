@@ -16,13 +16,16 @@ public class Console extends InputHandler{
         return choice;
     }
 
-    protected String checkInput (String regex){
+    protected String checkInput(String regex, int minLength, int maxLength) throws Exception {
         String input = scanner.nextLine();
-        if (!input.matches(regex) && !input.equals("0"))
-            return null;
+        if (!input.matches(regex))
+            throw new Exception("input doesn't match the specified format");
+        else if (input.length() < minLength)
+            throw new Exception("input must be at least " + minLength + "characters");
+        else if (input.length() > maxLength)
+            throw new Exception("input must be at most " + maxLength + "characters");
         else
             return input;
-
     }
 
     public void printMsg(String msg){
@@ -50,7 +53,7 @@ public class Console extends InputHandler{
                choice = checkInput(options);
                successful = true;
             } catch (Exception e){
-                System.err.println("you must choose one of the numbers in the menu");
+                System.err.println( e.getMessage() + "you must choose one of the numbers in the menu");
             }
         }
         return choice;
@@ -61,59 +64,75 @@ public class Console extends InputHandler{
         ArrayList<String> info = new ArrayList<>();
 
         System.out.print("username -> ");
-        String username = scanner.nextLine();
-        if (username.equals("0"))
+        input = scanner.nextLine();
+        if (input.equals("0"))
             return null;
-        info.add(username);
+        info.add(input);
 
         System.out.print("password -> ");
-        String password = scanner.nextLine();
-        if (password.equals("0"))
+        input = scanner.nextLine();
+        if (input.equals("0"))
             return null;
-        info.add(password);
+        info.add(input);
         return info;
     }
 
     public ArrayList<String> signup() {
         ArrayList<String> info = new ArrayList<>();
-        System.out.println("password must be at least 8 characters and must contain capital and small english alphabets and numbers");
+
+        System.out.println("password must contain capital and small english alphabets and numbers");
         System.out.println("press 0 to exit");
         System.out.print("password -> ");
+        boolean successful = false;
 
-        String password = checkInput("");
-        // یه کاری کن به حای ریترن استیت منت ترد داشته باشی
-        while (password == null) {
-            System.out.println("invalid password format. try again!");
-            password = checkInput("");
+        while (!successful){
+            try {
+                input = checkInput("(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])",8, 20);
+                if (input.equals("0"))
+                    return null;
+                info.add(input);
+                successful = true;
+            } catch (Exception e){
+                System.err.println(e.getMessage());
+            }
         }
-        info.add(password);
 
+        successful = false;
         System.out.println("press 0 to exit");
         System.out.print("email address -> ");
 
-        String email = checkInput("");
-        while (email == null) {
-            System.out.println("invalid email format. try again!");
-            email = checkInput("");
+        while (!successful){
+            try {
+                input = checkInput("^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$",11, 20);
+                if (input.equals("0"))
+                    return null;
+                info.add(input);
+                successful = true;
+            } catch (Exception e){
+                System.err.println(e.getMessage());
+            }
         }
-        info.add(email);
 
-        System.out.println("would yu like to add a phone number as well?");
+        System.out.println("would you like to add a phone number as well?");
         System.out.println("1) yes 2) no");
         int option = scanner.nextInt();
         if (option == 1) {
+            successful = false;
             System.out.println("press 0 to exit");
             System.out.print(" phone number -> ");
 
-            String phoneNum = checkInput("");
-            while (phoneNum == null) {
-                System.out.println("invalid phone number format. try again!");
-                phoneNum = checkInput("");
+            while (!successful){
+                try {
+                    input = checkInput("^[0-9]+$",11, 15);
+                    if (input.equals("0"))
+                        return null;
+                    info.add(input);
+                    successful = true;
+                } catch (Exception e){
+                    System.err.println(e.getMessage());
+                }
             }
-
-            info.add(phoneNum);
         }
-
         return info;
     }
 
@@ -122,11 +141,16 @@ public class Console extends InputHandler{
         System.out.println("press 0 to exit");
         System.out.print("username -> ");
 
-        input = checkInput("");
-        while (input == null){
-            System.out.println("invalid username format. try again!");
-            input = checkInput("");
+        boolean successful = false;
+        while (!successful){
+            try {
+                input = checkInput("^[0-9a-zA-Z]+$",6 , 20);
+                successful = true;
+            } catch (Exception e){
+                System.err.println(e.getMessage());
+            }
         }
+
         return input;
     }
 

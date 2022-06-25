@@ -22,6 +22,7 @@ public class Role {
             }
         }
 
-        return availableAbilities;}
+        return availableAbilities;
+    }
 
 }
