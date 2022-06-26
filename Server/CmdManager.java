@@ -520,7 +520,7 @@ public class CmdManager {
     }
 
     //get servers
-    public Data getServers(Command cmd){
+    public Data userServers(Command cmd){
         ResultSet rs = null;
         ArrayList<String> servers = new ArrayList<>();
 
@@ -534,10 +534,10 @@ public class CmdManager {
         catch (SQLException s){
             s.printStackTrace();
         }
-        return Data.memberOfServers(cmd.getUser(),servers);
+        return Data.userServers(cmd.getUser(),servers);
     }
     //get channels
-    public Data getChannels(Command cmd){
+    public Data userChannels(Command cmd){
         ResultSet rs = null;
         ArrayList<String> channels = new ArrayList<>();
 
@@ -551,7 +551,7 @@ public class CmdManager {
         catch (SQLException s){
             s.printStackTrace();
         }
-        return Data.memberOfChannels(cmd.getUser(),cmd.getServer(),channels);
+        return Data.userChannels(cmd.getUser(),cmd.getServer(),channels);
     }
 
 

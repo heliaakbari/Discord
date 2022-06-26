@@ -229,14 +229,14 @@ public class Command {
         cmd.server = server;
         return cmd;
     }
-    public static Command getServers(String user){
-        Command cmd = new Command("getServers");
+    public static Command userServers(String user){
+        Command cmd = new Command("userServers");
         cmd.user = user;
         return cmd;
     }
 
-    public static Command getChannels(String user, String server){
-        Command cmd = new Command("getChannels");
+    public static Command userChannels(String user, String server){
+        Command cmd = new Command("userChannels");
         cmd.user = user;
         cmd.server = server;
         return cmd;
