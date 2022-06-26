@@ -590,8 +590,32 @@ public class DatabaseManager {
     }
 
     //ban from channel
+    public void banFromChannel(Command cmd){
+        try{
+            stmt.executeUpdate(String.format("delete from channel_members where channel='%s' and server='%s' and username='%s'",cmd.getChannel(),cmd.getServer(),cmd.getUser()));
+        }
+        catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
+
     //ban from server
+    public void banFromServer(Command cmd){
+        try{
+            stmt.executeUpdate(String.format("delete from server_members where server='%s' and username='%s'",cmd.getServer(),cmd.getUser()));
+            stmt.executeUpdate(String.format("delete from channel_members where server='%s' and username='%s'",cmd.getServer(),cmd.getUser()));
+        }
+        catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
+
     //getrole
+    public Data getRole(Command cmd){
+        try{
+            ResultSet rs = stmt.executeQuery(String.format("select rolename,abilities from channel_members where username='%s' and server='%s'",cmd.getUser(),cmd.getServer()));
+        }
+    }
     //lastseenall
     //lastseenpv
     //lastseenchannel
