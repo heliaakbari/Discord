@@ -211,7 +211,7 @@ public class Data {
     }
 
     public static Data directChats(String user,ArrayList<String> chats){
-        Data data = new Data("direcrChats");
+        Data data = new Data("directChats");
         data.primary = chats;
         data.user = user;
         return  data;
