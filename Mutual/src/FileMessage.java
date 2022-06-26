@@ -9,11 +9,9 @@ public class FileMessage extends Message{
     private String fileName;
     private String format;
     private byte[] fileBytes;
-    private File file;
 
     public FileMessage(String sender, File file, String fileName, String format) throws IOException {
         super(sender);
-        this.file = file;
         fileBytes = Files.readAllBytes(file.toPath());
         this.fileName = fileName;
         this.format = format;
@@ -21,7 +19,6 @@ public class FileMessage extends Message{
 
     public FileMessage(String sender,String server,String channel,File file, String fileName, String format) throws IOException {
         super(sender,channel,server);
-        this.file = file;
         fileBytes = Files.readAllBytes(file.toPath());
         this.fileName = fileName;
         this.format = format;
@@ -53,10 +50,7 @@ public class FileMessage extends Message{
     public byte[] getFileBytes() {
         return fileBytes;
     }
-
-    public File getFile() {
-        return file;
-    }
+    
 
     @Override
     public String toString() {
