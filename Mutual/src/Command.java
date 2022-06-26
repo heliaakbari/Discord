@@ -131,8 +131,8 @@ public class Command {
 
     //for getting channel's messages : keyword=getChannelMsg , user=username,
     //  channel = channel, server = server, primary = number of latest massages in INTEGER
-    public static Command getChannelMsg(String user, String server, String channel,Integer numberOfMessages){
-        Command cmd = new Command("getChannelMsg");
+    public static Command getChannelMsgs(String user, String server, String channel,Integer numberOfMessages){
+        Command cmd = new Command("getChannelMsgs");
         cmd.user=user;
         cmd.channel= channel;
         cmd.server = server;

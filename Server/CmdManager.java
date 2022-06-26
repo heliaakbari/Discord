@@ -1,8 +1,6 @@
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.ResultSet;
@@ -253,23 +251,99 @@ public class CmdManager {
     public Data getNewMsgs(Command cmd){
         ArrayList<Message> messages = new ArrayList<>();
         try {
-            ResultSet rs = stmt.executeQuery(String.format("select * from pv_messages where seen=false and receiver='%s'",cmd.getUser()));
+            ResultSet rs = stmt.executeQuery(String.format("select * from pv_messages where seen=false and receiver='%s' order by date DESC,sender",cmd.getUser()));
             while (rs.next()){
                 if(rs.getBoolean("isfile")){
-                    FileMessage m = new FileMessage(rs.getString("SENDER"),rs.getString("FILENAME"),rs.getString("FILEFORMAT"));
+                    byte[] bytes = fileToBytes(rs.getString("FILELINK"));
+                    FileMessage m = new FileMessage(rs.getString("SENDER"),rs.getTimestamp("DATE").toLocalDateTime(),rs.getString("FILENAME"),bytes,rs.getString("FILEFORMAT"));
+                    messages.add(m);
                 }
                 else{
+                    TextMessage m = new TextMessage(rs.getString("SENDER"),rs.getString("BODY"),rs.getTimestamp("DATE").toLocalDateTime());
+                    messages.add(m);
+                }
+            }
+            HashMap<String,String> channelsDates = new HashMap<>();
+            rs = stmt.executeQuery(String.format("select channel,lastseen from channel_members where username='%s'",cmd.getUser()));
+            while (rs.next()){
+                channelsDates.put(rs.getString("CHANNEL"),rs.getString("LASTSEEN"));
+            }
+            for(HashMap.Entry<String, String> entry : channelsDates.entrySet()) {
+                String key = entry.getKey();
+                String value = entry.getValue();
+                rs = stmt.executeQuery(String.format("select * from channel_messages where channel='%s' and date>'%s'order by date desc",key,value));
+                while (rs.next()){
+                    if(rs.getBoolean("isfile")){
+                        byte[] bytes = fileToBytes(rs.getString("FILELINK"));
+                        FileMessage m = new FileMessage(rs.getString("SENDER"),rs.getString("SERVER"),rs.getString("CHANNEL"),rs.getTimestamp("DATE").toLocalDateTime(),rs.getString("FILENAME"),bytes,rs.getString("FILEFORMAT"));
+                        messages.add(m);
+                    }
+                    else{
+                        TextMessage m = new TextMessage(rs.getString("SENDER"),rs.getString("SERVER"),rs.getString("CHANNEL"),rs.getString("BODY"),rs.getTimestamp("DATE").toLocalDateTime());
+                        messages.add(m);
+                    }
+                }
+            }
 
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
+        return Data.newMsgs(cmd.getUser(),messages);
+    }
+
+    public Data getChannelMsgs(Command cmd){
+        int number = (int) cmd.getPrimary();
+        ArrayList<Message> messages = new ArrayList<>();
+        try {
+            ResultSet rs = stmt.executeQuery(String.format("select * from channel_messages where channel='%s' and server='%s' order by date DESC limit %d",cmd.getChannel(),cmd.getServer(),number));
+            while (rs.next()){
+                if(rs.getBoolean("isfile")){
+                    byte[] bytes = fileToBytes(rs.getString("FILELINK"));
+                    FileMessage m = new FileMessage(rs.getString("SENDER"),rs.getString("SERVER"),rs.getString("CHANNEL"),rs.getTimestamp("DATE").toLocalDateTime(),rs.getString("FILENAME"),bytes,rs.getString("FILEFORMAT"));
+                    messages.add(m);
+                }
+                else{
+                    TextMessage m = new TextMessage(rs.getString("SENDER"),rs.getString("SERVER"),rs.getString("CHANNEL"),rs.getString("BODY"),rs.getTimestamp("DATE").toLocalDateTime());
+                    messages.add(m);
                 }
             }
         }catch (SQLException e){
             e.printStackTrace();
         }
+        catch (IOException e){
+            e.printStackTrace();
+        }
+        return Data.channelMsgs(cmd.getUser(),cmd.getServer(),cmd.getChannel(),messages);
     }
-    //get channel msgs
 
-    //get pv messages
-
+    public Data getPvMsgs(Command cmd){
+        String friend =(String) cmd.getPrimary();
+        int number = (int) cmd.getSecondary();
+        ArrayList<Message> messages = new ArrayList<>();
+        try {
+            ResultSet rs = stmt.executeQuery(String.format("select * from pv_messages where (receiver='%s' and sender='%s') or (sender='%s' and receiver='%s') order by date DESC limit %d",cmd.getUser(),friend,cmd.getUser(),friend,number));
+            while (rs.next()){
+                if(rs.getBoolean("isfile")){
+                    byte[] bytes = fileToBytes(rs.getString("FILELINK"));
+                    FileMessage m = new FileMessage(rs.getString("SENDER"),rs.getTimestamp("DATE").toLocalDateTime(),rs.getString("FILENAME"),bytes,rs.getString("FILEFORMAT"));
+                    messages.add(m);
+                }
+                else{
+                    TextMessage m = new TextMessage(rs.getString("SENDER"),rs.getString("BODY"),rs.getTimestamp("DATE").toLocalDateTime());
+                    messages.add(m);
+                }
+            }
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
+            return Data.PvMsgs(cmd.getUser(),friend,messages);
+    }
 
     public Data getRequests(Command cmd){
         ResultSet rs = null;
