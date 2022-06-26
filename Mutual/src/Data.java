@@ -139,16 +139,16 @@ public class Data {
         return data;
     }
 
-    public static Data memberOfChannels(String user,String server, ArrayList<String> channels){
-        Data data = new Data("memberOfChannels");
+    public static Data userChannels(String user,String server, ArrayList<String> channels){
+        Data data = new Data("userChannels");
         data.user = user;
         data.server = server;
         data.primary = channels;
         return data;
     }
 
-    public static Data memberOfServers(String user, ArrayList<String> servers){
-        Data data = new Data("memberOfServers");
+    public static Data userServers(String user, ArrayList<String> servers){
+        Data data = new Data("userServers");
         data.user = user;
         data.primary = servers;
         return data;
@@ -170,11 +170,10 @@ public class Data {
         return data;
     }
 
-    public static Data role(String you,String personYouWannaKnowAbout,String server,Role role){
+    public static Data role(String user,String server,Role role){
         Data data = new Data("role");
         data.primary= role;
-        data.secondary= personYouWannaKnowAbout;
-        data.user = you;
+        data.user = user;
         data.server = server;
         return data;
     }
