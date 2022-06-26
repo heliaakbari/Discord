@@ -215,6 +215,20 @@ public class Command {
         return cmd;
     }
 
+    public static Command banFromChannel(String personToBeBanned,String server,String channel){
+        Command cmd = new Command("banFromChannel");
+        cmd.user=personToBeBanned;
+        cmd.server=server;
+        cmd.channel= channel;
+        return cmd;
+    }
+
+    public static Command banFromServer(String personToBeBanned,String server){
+        Command cmd = new Command("banFromServer");
+        cmd.user = personToBeBanned;
+        cmd.server = server;
+        return cmd;
+    }
     public static Command getServers(String user){
         Command cmd = new Command("getServers");
         cmd.user = user;
@@ -225,8 +239,9 @@ public class Command {
         Command cmd = new Command("getChannels");
         cmd.user = user;
         cmd.server = server;
+        return cmd;
     }
-    
+
     public static Command getUser(String user){
         Command cmd = new Command("getUser");
         cmd.user= user;
@@ -246,6 +261,7 @@ public class Command {
         cmd.server= server;
         return cmd;
     }
+
 
     public static Command lastseenAll(String user){
         Command cmd = new Command("lastSeenAll");

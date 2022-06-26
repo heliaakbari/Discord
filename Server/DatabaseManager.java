@@ -132,6 +132,7 @@ public class DatabaseManager {
                                              date TIMESTAMP not null,
                                              body varchar(1000) not null,
                                              seen boolean not null,
+                                             isPinned boolean not null,
                                              isFile boolean not null,
                                              filename varchar(20),
                                              filelink varchar(200));""");
@@ -575,13 +576,29 @@ public class DatabaseManager {
         return Data.userInfo(username,user);
     }
     //pinmsg
+    public void pinMsg(Command cmd){
+        Message message = (Message)cmd.getPrimary();
+        try {
+            if (message.getSourceInfo().size() == 3) {
+                stmt.executeUpdate(String.format("update channel_messages set ispinned=true where date='%s' and sender='%s'",message.getDateTime().format(dateTimeFormatter),message.getSourceInfo().get(0)));
+            }
+        }
+        catch (SQLException e){
+            e.printStackTrace();
+        }
 
+    }
+
+    //ban from channel
+    //ban from server
     //getrole
     //lastseenall
     //lastseenpv
     //lastseenchannel
     //get servers
     //get channels
+
+
     public byte[] fileToBytes(String path){
         // file to byte[], Path
         byte[] bytes = null;
