@@ -255,6 +255,7 @@ public class Command {
         return cmd;
     }
 
+
     public static Command getRole(String user, String server){
         Command cmd = new Command("getRole");
         cmd.user = user;

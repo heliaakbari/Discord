@@ -14,8 +14,32 @@ public class Data {
         this.keyword=keyword;
     }
 
+    public String getKeyword() {
+        return keyword;
+    }
+
+    public String getUser() {
+        return user;
+    }
+
+    public String getServer() {
+        return server;
+    }
+
+    public String getChannel() {
+        return channel;
+    }
+
+    public Object getPrimary() {
+        return primary;
+    }
+
+    public Object getSecondary() {
+        return secondary;
+    }
+
     /**
-     *returns if the sign up of a new member was successful or not
+     * returns if the sign up of a new member was successful or not
      */
     public static Data checkSignUp(String user, boolean isSignedUp){
         Data data = new Data("checkSignUp");
