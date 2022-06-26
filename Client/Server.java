@@ -60,7 +60,7 @@ public class Server {
         int action;
         do {
             // create a command to get user abilities in this server
-            cmd = Command.getRole(currentUsername, currentServerName);
+            cmd = Command.getRole(currentUsername,currentUsername, currentServerName);
             try {
                 out.writeObject(cmd);
                 data = (Data) in.readObject();

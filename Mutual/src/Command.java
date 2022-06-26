@@ -255,10 +255,10 @@ public class Command {
         return cmd;
     }
 
-    public static Command getRole(String you,String personYouaskAbout, String server){
+    public static Command getRole(String you, String personYouAskAbout, String server){
         Command cmd = new Command("getRole");
         cmd.user = you;
-        cmd.primary = personYouaskAbout;
+        cmd.primary = personYouAskAbout;
         cmd.server= server;
         return cmd;
     }
