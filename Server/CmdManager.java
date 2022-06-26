@@ -3,7 +3,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -16,21 +15,14 @@ import static java.nio.file.Files.readAllBytes;
 
 public class CmdManager {
 
-    private Statement stmt = null;
-    private String filespath = "C:\\Users\\Rpipc\\Desktop\\dbfile";
+    private static Statement stmt = null;
+    private static String filespath = null;
     private DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
 
     public CmdManager(Statement stmt,String filepath) {
-        switch(){
-            case "newPvMsg" :
-                newPvMsg(cmd);
-                break;
-            case "changeProfilePhoto":
-                changeProfilePhoto(cmd);
-                break;
-
-        }
+        this.stmt = stmt;
+        this.filespath = filepath;
     }
 
     public void process(Command cmd){
@@ -555,6 +547,12 @@ public class CmdManager {
     }
 
 
+    public void changeRole(Command cmd){
+        Role role = (Role) cmd.getPrimary();
+        try{
+            stmt.executeUpdate(String.format("update server_members set rolename='%s' and abilities='%s' "));
+        }
+    }
     public byte[] fileToBytes(String path){
         // file to byte[], Path
         byte[] bytes = null;
@@ -566,5 +564,6 @@ public class CmdManager {
         }
         return bytes;
     }
+
 }
 

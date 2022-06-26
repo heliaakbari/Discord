@@ -223,6 +223,15 @@ public class Command {
         return cmd;
     }
 
+    public static Command changeRole (String user, String userToChange,String server,Role role){
+        Command cmd = new Command("changeRole");
+        cmd.user = user;
+        cmd.user = server;
+        cmd.primary = role;
+        cmd.secondary = userToChange;
+        return cmd;
+    }
+
     public static Command banFromServer(String personToBeBanned,String server){
         Command cmd = new Command("banFromServer");
         cmd.user = personToBeBanned;

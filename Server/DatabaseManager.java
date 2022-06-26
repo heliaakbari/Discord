@@ -20,6 +20,7 @@ public class DatabaseManager {
    private  Statement stmt = null;
    private String filespath = "C:\\Users\\Rpipc\\Desktop\\dbfile";
    private DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+   public CmdManager cmdManager= null;
     public void start (){
         try {
 
@@ -37,6 +38,7 @@ public class DatabaseManager {
             } else {
                 newDatabase();
             }
+            cmdManager = new CmdManager(stmt,filespath);
         }
         catch (SQLException sqlException){
             sqlException.printStackTrace();
