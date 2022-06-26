@@ -15,5 +15,9 @@ public abstract class InputHandler {
     public abstract User signup();
     public abstract String usernameValidation();
 
+    public abstract String friendRequest();
+    public abstract boolean showFriendInfo(User friend);
+    public abstract int showRequest(User user);
+
 
 }

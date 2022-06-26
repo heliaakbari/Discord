@@ -66,4 +66,13 @@ public class User {
         this.profilePhoto = profilePhoto;
         this.profilePhotoFormat = format;
     }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "username='" + username + '\'' +
+                ", phoneNum='" + phoneNum + '\'' +
+                ", status=" + status +
+                '}';
+    }
 }

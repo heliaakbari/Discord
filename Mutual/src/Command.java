@@ -40,11 +40,11 @@ public class Command {
         this.keyword= keyword;
     }
 
-    public static Command newPvMsg(String sender,String reciever,Message message){
+    public static Command newPvMsg(String sender,String receiver ,Message message){
         Command cmd = new Command("newPvMsg");
         cmd.user = sender;
         cmd.primary = message;
-        cmd.secondary = reciever;
+        cmd.secondary = receiver;
         return cmd;
     }
 

@@ -95,7 +95,9 @@ public class Discord {
 
     }
 
-    public void createServer(){}
+    public void createServer(){
+
+    }
 
     public void enterDirectMessages(){}
 
@@ -104,22 +106,114 @@ public class Discord {
         do {
             choice = inputHandler.showMenu("""
                     1) friends list
-                    2) blocked list
-                    3) pending list
-                    4) send friend request
-                    5) block someone
+                    2) block list
+                    3) Requests list
                     press 0 to exit""", 5);
 
             // create appropriate command based on each option
-            switch (choice) {
-                case 1 -> ;
-                case 2 -> ;
-                case 3 -> ;
-                case 4 -> ;
-                case 5 -> ;
+            switch (choice){
+                case 1 -> friendList();
+                case 2 -> blocklist();
+                case 3 -> requestList();
             }
         } while (choice != 0);
     }
+
+    private void friendList(){
+        cmd = Command.getFriends(currentUsername);
+        transfer();
+        ArrayList<String> friends = (ArrayList<String>) data.getPrimary();
+        friends.add("send friend request");
+        int choice;
+
+        // showing the list of friends
+        do {
+            choice = inputHandler.showMenu(friends);
+
+            // sending friend request
+            if (choice == friends.size()){
+                String friendUsername;
+
+                while (true){
+                    friendUsername = inputHandler.friendRequest();
+                    if (friendUsername.equals("0"))
+                        break;
+                    cmd = Command.getUser(friendUsername);
+                    transfer();
+                    if (data.getPrimary() == null){
+                        inputHandler.printMsg("there is no such user with this username!");
+                    }
+                    else {
+                        Relationship friendRequest = Relationship.Friend_pending;
+                        friendRequest.setSender(currentUsername);
+                        friendRequest.setReceiver(friendUsername);
+                        cmd = Command.newRelation(friendRequest);
+                        transfer();
+                        if ((boolean)data.getPrimary()){
+                            inputHandler.printMsg("request sent");
+                        } else {
+                            inputHandler.printMsg("something went wrong, try again later");
+                        }
+                        break;
+                    }
+                }
+            }
+
+            // showing the chosen friend
+            else {
+                cmd = Command.getUser(friends.get(choice - 1));
+                transfer();
+                User friend = (User) data.getPrimary();
+                if (inputHandler.showFriendInfo(friend)){
+                    Relationship block = Relationship.Block;
+                    block.setSender(currentUsername);
+                    block.setReceiver(friend.getUsername());
+                    cmd = Command.newRelation(block);
+                    transfer();
+                    if (!(boolean)data.getPrimary()){
+                        inputHandler.printMsg("something went wrong, try again later");
+                    }
+                }
+            }
+
+        } while (choice != 0);
+    }
+
+    private void blocklist(){
+        cmd = Command.getBlockList(currentUsername);
+        transfer();
+        ArrayList<String> blocks = (ArrayList<String>) data.getPrimary();
+        blocks.add("press 0 to exit");
+        inputHandler.showMenu(blocks);
+    }
+
+    private void requestList(){
+        cmd = Command.getRequests(currentUsername);
+        transfer();
+        ArrayList<String> requests = (ArrayList<String>) data.getPrimary();
+        int choice;
+        while (true){
+            choice = inputHandler.showMenu(requests);
+            if (choice == 0)
+                break;
+            cmd = Command.getUser(requests.get(choice - 1));
+            transfer();
+            User user = (User) data.getPrimary();
+            int decision = inputHandler.showRequest(user);
+            if (decision != 0) {
+                Relationship result = null;
+                if (decision == 1) {
+                    result = Relationship.Friend;
+                } else if (decision == 2) {
+                    result = Relationship.Rejected;
+                }
+                cmd = Command.newRelation(result);
+                transfer();
+            }
+        }
+
+    }
+
 
     public void setting(){
         int choice;
@@ -130,19 +224,27 @@ public class Discord {
                     2) change username""", 2);
             switch (choice) {
                 case 1:
+                    byte[] photo = null;
+                    String fileType = null;
                     JFileChooser fileChooser = new JFileChooser();
                     fileChooser.setCurrentDirectory(new File(System.getProperty("c:\\")));
                     int result = fileChooser.showOpenDialog(null);
                     if (result == JFileChooser.APPROVE_OPTION) {
                         File selectedFile = fileChooser.getSelectedFile();
                         try {
-                            byte[] photo = Files.readAllBytes(selectedFile.toPath());
-                            String fileType = fileChooser.getTypeDescription(selectedFile);
+                            photo = Files.readAllBytes(selectedFile.toPath());
+                            fileType = fileChooser.getTypeDescription(selectedFile);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
                     }
                     // create a command to set profile photo
+                    cmd = Command.changeProfilePhoto(currentUsername,photo, fileType);
+                    try {
+                        out.writeObject(cmd);
+                    } catch (IOException e){
+                        inputHandler.printError(e);
+                    }
                     break;
                 case 2 :
                     while (true) {
@@ -150,8 +252,12 @@ public class Discord {
                         if (newUsername.equals("0"))
                             break;
                         // create a command to check if it exists if not found the condition is true
-                        if (condition){
+                        cmd = Command.getUser(newUsername);
+                        transfer();
+                        if (data.getPrimary() == null){
                             // create a command to set the new username
+                            cmd = Command.changeUsername(currentUsername, newUsername);
+                            currentUsername = newUsername;
                             break;
                         }
                     }
@@ -159,6 +265,15 @@ public class Discord {
             }
 
         } while (choice != 0);
+    }
+
+    private void transfer(){
+        try {
+            out.writeObject(cmd);
+            data = (Data) in.readObject();
+        } catch (IOException | ClassNotFoundException e){
+            inputHandler.printError(e);
+        }
     }
 
 }

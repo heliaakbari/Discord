@@ -3,7 +3,8 @@
 public enum Relationship {
     Friend,
     Block,
-    Friend_pending;
+    Friend_pending,
+    Rejected;
 
     private String sender;
     private String receiver;
