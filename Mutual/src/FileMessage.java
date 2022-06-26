@@ -18,6 +18,28 @@ public class FileMessage extends Message{
         this.format = format;
     }
 
+    public FileMessage(String sender,String server,String channel,File file, String fileName, String format) throws IOException {
+        super(sender,channel,server);
+        this.file = file;
+        fileBytes = Files.readAllBytes(file.toPath());
+        this.fileName = fileName;
+        this.format = format;
+    }
+
+    public FileMessage(String sender, String fileName,byte[] fileBytes, String format) throws IOException {
+        super(sender);
+        this.fileBytes = fileBytes;
+        this.fileName = fileName;
+        this.format = format;
+    }
+
+    public FileMessage(String sender,String server,String channel, String fileName,byte[] fileBytes, String format) throws IOException {
+        super(sender,channel,server);
+        this.fileBytes = fileBytes;
+        this.fileName = fileName;
+        this.format = format;
+    }
+
     public String getFileName() {
         return fileName;
     }

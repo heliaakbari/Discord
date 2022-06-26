@@ -62,6 +62,10 @@ public class User {
         return profilePhoto;
     }
 
+    public String getProfilePhotoFormat() {
+        return profilePhotoFormat;
+    }
+
     public void setProfilePhoto(byte[] profilePhoto, String format) {
         this.profilePhoto = profilePhoto;
         this.profilePhotoFormat = format;

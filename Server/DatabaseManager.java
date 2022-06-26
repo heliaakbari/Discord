@@ -124,6 +124,7 @@ public class DatabaseManager {
                                              isPinned boolean not null,
                                              isFile boolean not null,
                                              filename varchar(20),
+                                             fileformat varchar(10),
                                              filelink varchar(200));""");
 
         //pv messages
