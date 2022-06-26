@@ -1,5 +1,3 @@
-
-
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -12,7 +10,7 @@ public class Message implements Serializable {
     private LocalDateTime dateTime;
     // holds sender username, channel and server respectively
     private ArrayList<String> sourceInfo;
-    private HashMap<String, Integer> reactions;
+    private HashMap<String, Integer> reactions = new HashMap<>();
 
     public Message(String sender) {
         sourceInfo = new ArrayList<>(List.of(sender));
@@ -23,7 +21,7 @@ public class Message implements Serializable {
 
     }
 
-    public Message (String sender, String channel, String server){
+    public Message(String sender, String channel, String server) {
         sourceInfo = new ArrayList<>(Arrays.asList(sender, channel, server));
         dateTime = LocalDateTime.now();
         reactions.put("like", 0);
