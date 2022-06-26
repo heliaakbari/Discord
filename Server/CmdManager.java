@@ -474,11 +474,11 @@ public class CmdManager {
 
     //getrole
     public Data getRole(Command cmd){
-        Data dt = Data.role(cmd.getUser(),(String) cmd.getPrimary(),cmd.getServer(),null);
+        Data dt = Data.role(cmd.getUser(),cmd.getServer(),null);
         try{
-            ResultSet rs = stmt.executeQuery(String.format("select rolename,abilities from channel_members where username='%s' and server='%s'",(String)cmd.getPrimary(),cmd.getServer()));
+            ResultSet rs = stmt.executeQuery(String.format("select rolename,abilities from channel_members where username='%s' and server='%s'",(String)cmd.getUser(),cmd.getServer()));
             while (rs.next()) {
-                dt = Data.role(cmd.getUser(), (String) cmd.getPrimary(), cmd.getServer(), new Role(rs.getString("ROLENAME"), rs.getString("ABILITIES")));
+                dt = Data.role(cmd.getUser(),cmd.getServer(), new Role(rs.getString("ROLENAME"), rs.getString("ABILITIES")));
             }
         }
         catch (SQLException e){
