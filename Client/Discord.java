@@ -66,7 +66,7 @@ public class Discord {
     public void enterServersList(){
 
         // create a command to get a list of servers
-        cmd = Command.getServers(currentUsername);
+        cmd = Command.userServers(currentUsername);
         try {
             out.writeObject(cmd);
             data = (Data) in.readObject();
