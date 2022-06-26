@@ -5,6 +5,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Discord {
 
@@ -96,6 +98,21 @@ public class Discord {
     }
 
     public void createServer(){
+        ArrayList<ArrayList<String>> serverInfo = inputHandler.createServer();
+        cmd = Command.newServer(currentUsername, serverInfo.get(0).get(0));
+        transfer();
+        for (String channelName: serverInfo.get(1)) {
+            cmd = Command.newChannel(currentUsername,serverInfo.get(0).get(0), channelName );
+            transfer();
+        }
+        cmd = Command.addPeopleToServer(currentUsername, serverInfo.get(0).get(0), serverInfo.get(2));
+        transfer();
+
+        HashMap<String, Role> roles = inputHandler.defineRoles();
+        for (Map.Entry<String, Role> role: roles.entrySet()) {
+            cmd = Command.changeRole(currentUsername, role.getKey(), serverInfo.get(0).get(0), role.getValue());
+            transfer();
+        }
 
     }
 
@@ -137,7 +154,7 @@ public class Discord {
                 String friendUsername;
 
                 while (true){
-                    friendUsername = inputHandler.friendRequest();
+                    friendUsername = inputHandler.receiveData("type the username");
                     if (friendUsername.equals("0"))
                         break;
                     cmd = Command.getUser(friendUsername);

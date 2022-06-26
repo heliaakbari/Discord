@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Scanner;
 
 public class Console extends InputHandler{
@@ -175,10 +176,9 @@ public class Console extends InputHandler{
         e.printStackTrace();
     }
 
-    public String friendRequest() {
-        System.out.println("enter the username");
-        String username = scanner.nextLine();
-        return username;
+    public String receiveData(String question){
+        System.out.println(question);
+        return scanner.nextLine();
     }
 
     public boolean showFriendInfo(User friend){
@@ -193,4 +193,70 @@ public class Console extends InputHandler{
         return showMenu("1) accept    2) reject\npress 0 to exit", 2);
     }
 
+    public ArrayList<ArrayList<String>> createServer(){
+        ArrayList<ArrayList<String>> serverInfo = new ArrayList<>();
+        ArrayList<String> eachInfo = new ArrayList<>();
+        System.out.println("enter the name of the server");
+        eachInfo.add(scanner.nextLine());
+        serverInfo.add(eachInfo);
+
+        eachInfo = new ArrayList<>();
+        String input;
+        System.out.println("ok now let's create channels, type the name of the channels, press 0 when finished");
+        while (true){
+            input = scanner.nextLine();
+            if (input.equals("0"))
+                break;
+            else
+                eachInfo.add(input);
+        }
+        serverInfo.add(eachInfo);
+
+
+        eachInfo = new ArrayList<>();
+        System.out.println("now type the username of the people you want to add to server, press 0 when finished");
+        while (true){
+            input = scanner.nextLine();
+            if (input.equals("0"))
+                break;
+            else
+                eachInfo.add(input);
+        }
+        serverInfo.add(eachInfo);
+
+        return serverInfo;
+
+    }
+
+    public HashMap<String, Role> defineRoles() {
+        System.out.println("you can define special roles in server. to do so, you must first define the role and then give the corresponding username");
+        Role role;
+        String roleName, username;
+        StringBuilder values = new StringBuilder();
+        int choice;
+        HashMap<String, Role> roles = new HashMap<>();
+
+        while (true){
+            System.out.println("enter the role name");
+            roleName = scanner.nextLine();
+            for (String ability : Role.abilities){
+                System.out.println(ability + " ?");
+                System.out.println("1) yes    2) no");
+                choice = scanner.nextInt();
+                values.append((choice == 1) ? "1" : "0");
+            }
+            role = new Role(values.toString(), roleName);
+            System.out.println("type the username for this role");
+            scanner.nextLine();
+            username = scanner.nextLine();
+            roles.put(username, role);
+
+
+            System.out.println("wanna add another role?\n1) yes    2) no");
+            choice = scanner.nextInt();
+            if (choice == 2)
+                break;
+        }
+        return roles;
+    }
 }

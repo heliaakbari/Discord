@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public abstract class InputHandler {
 
@@ -15,9 +16,12 @@ public abstract class InputHandler {
     public abstract User signup();
     public abstract String usernameValidation();
 
-    public abstract String friendRequest();
+    public abstract String receiveData(String question);
     public abstract boolean showFriendInfo(User friend);
     public abstract int showRequest(User user);
+
+    public abstract ArrayList<ArrayList<String>> createServer();
+    public abstract HashMap<String, Role> defineRoles();
 
 
 }

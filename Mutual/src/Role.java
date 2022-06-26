@@ -6,7 +6,7 @@ public class Role {
 
     private String roleName;
     private String values;
-    private final ArrayList<String> abilities = new ArrayList<>(Arrays.asList("creat channel", "remove channel", "remove member",
+    public static final ArrayList<String> abilities = new ArrayList<>(Arrays.asList("creat channel", "remove channel", "remove member",
             "restrict member", "ban member", "change server name", "see chat history", "pin message", "delete server"));
 
     public Role(String values, String name) {

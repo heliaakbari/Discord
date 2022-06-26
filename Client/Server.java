@@ -5,11 +5,11 @@ import java.util.ArrayList;
 
 public class Server {
 
-    private  String currentServerName;
-    private  InputHandler inputHandler;
-    private  ObjectOutputStream out;
-    private  ObjectInputStream in;
-    private  Command cmd;
+    private String currentServerName;
+    private InputHandler inputHandler;
+    private ObjectOutputStream out;
+    private ObjectInputStream in;
+    private Command cmd;
     private Data data;
 
     public Server(String name, ObjectOutputStream out, ObjectInputStream in){
@@ -27,30 +27,54 @@ public class Server {
              if (choice == 1)
                  actionsList(currentUsername);
              else if (choice == 2)
-                 channelsList();
+                 channelsList(currentUsername);
 
         } while (choice != 0);
 
     }
 
-    public void channelsList(){
+    public void channelsList(String currentUsername){
+
         // create a command to get a list of channels in this server
-        ArrayList<String> channelsList;
+        cmd = Command.userChannels(currentUsername, currentServerName);
+        transfer();
+        ArrayList<String> channelsList = (ArrayList<String>) data.getPrimary();
         channelsList.add("press 0 to exit");
         int choice;
+        String channelName;
+
         do {
             choice = inputHandler.showMenu(channelsList);
+            channelName = channelsList.get(choice - 1);
 
             int action;
             do {
                 action = inputHandler.showMenu("1) start chatting\n2) see the channel members\npress 0 to exit", 2);
+
                 if (action == 1) {
                     inputHandler.printMsg("you can type your messages now, to react to a message type the message number and then your reaction.");
                     // transfer messages with server
-                } else if (action == 2) {
-                    // creat a command to get the members
-                    // also remember to add "add new member to channel" at the end of the list of members
                 }
+                else if (action == 2) {
+                    // creat a command to get the members
+                    cmd = Command.getChannelMembers(currentUsername, currentServerName, channelName);
+                    transfer();
+                    ArrayList<String> members = (ArrayList<String>) data.getPrimary();
+                    members.add("add new member to channel");
+
+                    int option = inputHandler.showMenu(members);
+                    if (option == members.size()){
+                        String newMember = inputHandler.receiveData("type the username that you want to add to channel");
+                        cmd = Command.addOneMemberToChannel(currentUsername,newMember, currentServerName,channelName);
+                        transfer();
+                        if (data.getKeyword().equals("checkNewChannel") && (boolean) data.getPrimary()){
+                            inputHandler.printMsg("member successfully added to channel");
+                        } else {
+                            inputHandler.printMsg("something went wrong. try again later");
+                        }
+                    }
+                }
+
             } while (action != 0);
 
         } while (choice != 0);
@@ -61,12 +85,7 @@ public class Server {
         do {
             // create a command to get user abilities in this server
             cmd = Command.getRole(currentUsername, currentServerName);
-            try {
-                out.writeObject(cmd);
-                data = (Data) in.readObject();
-            } catch (IOException | ClassNotFoundException e){
-                inputHandler.printError(e);
-            }
+            transfer();
             Role role = (Role) data.getPrimary();
             ArrayList<String> actions = role.getAvailableAbilities();
             action = inputHandler.showMenu(actions);
@@ -74,5 +93,14 @@ public class Server {
 
         } while (action != 0);
 
+    }
+
+    private void transfer(){
+        try {
+            out.writeObject(cmd);
+            data = (Data) in.readObject();
+        } catch (IOException | ClassNotFoundException e){
+            inputHandler.printError(e);
+        }
     }
 }

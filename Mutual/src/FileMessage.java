@@ -50,7 +50,7 @@ public class FileMessage extends Message{
     public byte[] getFileBytes() {
         return fileBytes;
     }
-    
+
 
     @Override
     public String toString() {
