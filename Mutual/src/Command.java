@@ -80,6 +80,14 @@ public class Command {
         return cmd;
     }
 
+    public static Command getPinnedMsgs(String user,String server,String channel){
+        Command cmd = new Command("getPinnedMsgs");
+        cmd.user=user;
+        cmd.channel=channel;
+        cmd.server = server;
+        return cmd;
+    }
+
     //for new request: keyword: newRequest, user= sender's name, primary = a request object
     public static Command newRelation(Relationship relation){
         Command cmd = new Command("newRelation");
@@ -135,7 +143,7 @@ public class Command {
         cmd.primary = message;
         return cmd;
     }
-    
+
     //for getting channel's messages : keyword=getChannelMsg , user=username,
     //  channel = channel, server = server, primary = number of latest massages in INTEGER
     public static Command getChannelMsgs(String user, String server, String channel,Integer numberOfMessages){
@@ -248,6 +256,7 @@ public class Command {
         return cmd;
      }
 
+
     public static Command addPeopleToServer(String user, String server, ArrayList<String> peopleToAdd){
         Command cmd = new Command("addPeopleToServer");
         cmd.user = user;
@@ -288,6 +297,12 @@ public class Command {
         return cmd;
     }
 
+
+    public static Command getDirectChats(String user){
+        Command cmd = new Command("getDirectChats");
+        cmd.user = user;
+        return cmd;
+    }
 
     public static Command getRole(String user, String server){
         Command cmd = new Command("getRole");

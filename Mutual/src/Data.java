@@ -91,6 +91,15 @@ public class Data {
     }
 
 
+    public static Data pinnedMsgs(String user,String server,String channel,ArrayList<Message> messages){
+        Data data = new Data("pinnedMsgs");
+        data.user = user;
+        data.server = server;
+        data.channel = channel;
+        data.primary = messages;
+        return data;
+    }
+
     public static Data blockList(String user,ArrayList<String> peopleTheyBlocked){
         Data data = new Data("blockList");
         data.user = user;
@@ -161,27 +170,51 @@ public class Data {
         return data;
     }
 
-    public static Data pinnedMessages(String user,String server,String channel,ArrayList<Message> messages){
-        Data data = new Data("pinnedMessages");
-        data.primary = messages;
-        data.user= user;
-        data.server=server;
-        data.channel = channel;
-        return data;
-    }
-
     public static Data reactions(String user,Message message,HashMap<String,Integer> reactions){
         Data data = new Data("reactions");
         data.primary = reactions;
         data.secondary = message;
         return data;
     }
+
     public static Data role(String user,String server,Role role){
         Data data = new Data("role");
         data.primary= role;
         data.user = user;
         data.server = server;
         return data;
+    }
+
+    public static Data checkChangeUsername(String oldName,String newName,Boolean successful){
+        Data data = new Data("checkChangeUsername");
+        data.user = oldName;
+        data.secondary= newName;
+        data.primary = successful;
+        return data;
+    }
+
+    public static Data checkChangeServerName(String user,String oldName,String newName,boolean successful){
+        Data data = new Data("checkChangeServerName");
+        data.user = user;
+        data.server=oldName;
+        data.secondary=newName;
+        data.primary = successful;
+        return data;
+    }
+
+    public static Data checkNewServer(String user,String server, boolean successful){
+        Data data = new Data("checkNewServer");
+        data.user = user;
+        data.server = server;
+        data.primary = successful;
+        return data;
+    }
+
+    public static Data directChats(String user,ArrayList<String> chats){
+        Data data = new Data("direcrChats");
+        data.primary = chats;
+        data.user = user;
+        return  data;
     }
 }
 
