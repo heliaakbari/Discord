@@ -33,4 +33,9 @@ public class FileMessage extends Message{
     public File getFile() {
         return file;
     }
+
+    @Override
+    public String toString() {
+        return super.getSourceInfo() + " a file";
+    }
 }

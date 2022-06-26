@@ -170,10 +170,10 @@ public class Data {
         return data;
     }
 
-    public static Data role(String you,String personYouwannaKnowAbout,String server,Role role){
+    public static Data role(String you,String personYouWannaKnowAbout,String server,Role role){
         Data data = new Data("role");
         data.primary= role;
-        data.secondary= personYouwannaKnowAbout;
+        data.secondary= personYouWannaKnowAbout;
         data.user = you;
         data.server = server;
         return data;

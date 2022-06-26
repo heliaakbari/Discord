@@ -10,4 +10,9 @@ public class TextMessage extends Message {
     public String getText() {
         return text;
     }
+
+    @Override
+    public String toString() {
+        return super.getSourceInfo() + text;
+    }
 }

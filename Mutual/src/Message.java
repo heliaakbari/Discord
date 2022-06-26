@@ -12,6 +12,7 @@ public class Message implements Serializable {
     private ArrayList<String> sourceInfo;
     private HashMap<String, Integer> reactions = new HashMap<>();
 
+
     public Message(String sender) {
         sourceInfo = new ArrayList<>(List.of(sender));
         dateTime = LocalDateTime.now();
@@ -33,7 +34,12 @@ public class Message implements Serializable {
         return dateTime;
     }
 
-    public ArrayList<String> getSourceInfo() {
-        return sourceInfo;
+    public String getSourceInfo() {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i = sourceInfo.size() - 1; i >= 0; i--){
+            stringBuilder.append(sourceInfo.get(i)).append("-> ");
+        }
+        stringBuilder.append(" : ");
+        return stringBuilder.toString();
     }
 }

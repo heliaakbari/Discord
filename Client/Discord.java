@@ -8,10 +8,12 @@ import java.util.ArrayList;
 
 public class Discord {
 
-    private  String currentUsername;
-    private  InputHandler inputHandler;
-    private  ObjectOutputStream out;
-    private  ObjectInputStream in;
+    private String currentUsername;
+    private InputHandler inputHandler;
+    private ObjectOutputStream out;
+    private ObjectInputStream in;
+    private Command cmd;
+    private Data data;
 
     public Discord(String username, ObjectOutputStream out, ObjectInputStream in){
         currentUsername = username;
@@ -41,12 +43,37 @@ public class Discord {
         } while (choice != 0);
     }
 
-    public void getInbox(){}
+    public void getInbox(){
+        cmd = Command.getNewMsgs(currentUsername);
+        try {
+            out.writeObject(cmd);
+            data = (Data) in.readObject();
+        } catch (IOException | ClassNotFoundException e){
+            inputHandler.printError(e);
+        }
+        ArrayList<Message> messages = (ArrayList<Message>) data.getPrimary();
+
+        // creating a list of messages and passing it to inputHandler to be printed
+        StringBuilder stringBuilder = new StringBuilder("INBOX");
+        stringBuilder.append("=============================================================================================\n");
+        for (Message message : messages) {
+            stringBuilder.append(message);
+        }
+        stringBuilder.append("=============================================================================================\n");
+        inputHandler.printMsg(stringBuilder.toString());
+    }
 
     public void enterServersList(){
 
         // create a command to get a list of servers
-        ArrayList<String> serversList;
+        cmd = Command.getServers(currentUsername);
+        try {
+            out.writeObject(cmd);
+            data = (Data) in.readObject();
+        } catch (IOException | ClassNotFoundException e){
+            inputHandler.printError(e);
+        }
+        ArrayList<String> serversList = (ArrayList<String>) data.getPrimary();
         serversList.add("create new server");
         serversList.add("press 0 to exit");
 
