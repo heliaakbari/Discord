@@ -209,5 +209,12 @@ public class Data {
         data.primary = successful;
         return data;
     }
+
+    public static Data directChats(String user,ArrayList<String> chats){
+        Data data = new Data("direcrChats");
+        data.primary = chats;
+        data.user = user;
+        return  data;
+    }
 }
 

@@ -10,6 +10,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 
 import static java.nio.file.Files.readAllBytes;
 
@@ -25,8 +27,83 @@ public class CmdManager {
         this.filespath = filepath;
     }
 
-    public void process(Command cmd){
+    public Data process(Command cmd){
         
+    return null;}
+
+    public void addPeopleToServer(Command cmd){
+        ArrayList<String> people =(ArrayList<String>) cmd.getPrimary();
+        Iterator it = people.iterator();
+        while (it.hasNext()){
+            try {
+                ResultSet rs = stmt.executeQuery(String.format("select count(*) as C1 from server_members where username='%s' and server='%s'",it.next(),cmd.getServer()));
+                rs.next();
+                if(rs.getInt("C1")>0){
+                    it.remove();
+                }
+            }
+           catch (SQLException e){
+                e.printStackTrace();
+           }
+         }
+
+        for(String p : people){
+            try {
+                stmt.executeUpdate(String.format("insert into server_members values ('%s','%s','member','000000000')",p,cmd.getServer()));
+                ResultSet rs = stmt.executeQuery(String.format("select distinct channel as C from channel_members where server='%s'",cmd.getServer()));
+                ArrayList<String> channels = new ArrayList<String>();
+                while(rs.next()){
+                    channels.add(rs.getString("C"));
+                }
+
+                for(String ch : channels){
+                    stmt.executeUpdate(String.format("insert into channel_members values ('%s,'%s','%s',%s');",p, cmd.getServer(), ch, LocalDateTime.now().format(dateTimeFormatter)));
+                }
+
+            }
+            catch (SQLException e){
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void addOneMemberToChannel(Command cmd){
+        try {
+            ResultSet rs = stmt.executeQuery(String.format("select count(*) as C1 from channel_members where username='%s' and server='%s' and channel='%s'",cmd.getPrimary(),cmd.getServer(),cmd.getChannel()));
+            rs.next();
+            if(rs.getInt("C1")>0){
+               return;
+            }
+            stmt.executeUpdate(String.format("insert into channel_members values ('%s,'%s','%s',%s');",(String)cmd.getPrimary(), cmd.getServer(), cmd.getChannel(), LocalDateTime.now().format(dateTimeFormatter)));
+            stmt.executeUpdate(String.format("insert into server_members values ('%s','%s','member','000000000')",(String)cmd.getPrimary(),cmd.getServer()));
+        }
+        catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
+
+    public Data getDirectChats(Command cmd){
+        HashSet<String> chats = new HashSet<>();
+        ArrayList<String> chatsArray = new ArrayList<>();
+        try{
+            ResultSet rs = stmt.executeQuery(String.format("select distinct sender as S from pv_messages where receiver='%s'"));
+            while(rs.next()){
+                chats.add(rs.getString("S"));
+            }
+            rs = stmt.executeQuery(String.format("select distinct receiver as S from pv_messages where sender='%s'"));
+            while(rs.next()){
+                chats.add(rs.getString("S"));
+            }
+
+            for(String ch : chats){
+                chatsArray.add(ch);
+            }
+
+        }
+        catch (SQLException e){
+            e.printStackTrace();
+        }
+        return Data.directChats(cmd.getUser(),chatsArray);
     }
 
     public void newPvMsg(Command cmd){
@@ -273,7 +350,7 @@ public class CmdManager {
         }
         return Data.reactions(cmd.getUser(),message,reactions);
     }
-    
+
     public Data getNewMsgs(Command cmd){
         ArrayList<Message> messages = new ArrayList<>();
         try {
