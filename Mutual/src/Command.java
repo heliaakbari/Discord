@@ -256,6 +256,7 @@ public class Command {
         return cmd;
      }
 
+
     public static Command addPeopleToServer(String user, String server, ArrayList<String> peopleToAdd){
         Command cmd = new Command("addPeopleToServer");
         cmd.user = user;
@@ -296,6 +297,12 @@ public class Command {
         return cmd;
     }
 
+
+    public static Command getDirectChats(String user){
+        Command cmd = new Command("getDirectChats");
+        cmd.user = user;
+        return cmd;
+    }
 
     public static Command getRole(String user, String server){
         Command cmd = new Command("getRole");
