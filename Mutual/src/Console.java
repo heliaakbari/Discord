@@ -175,4 +175,22 @@ public class Console extends InputHandler{
         e.printStackTrace();
     }
 
+    public String friendRequest() {
+        System.out.println("enter the username");
+        String username = scanner.nextLine();
+        return username;
+    }
+
+    public boolean showFriendInfo(User friend){
+        System.out.println(friend);
+        int choice = showMenu("0) back\n1) block this person", 1);
+        return (choice == 1);
+    }
+
+    public int showRequest(User user){
+        System.out.println(user.getUsername() + " wants to follow you");
+        System.out.println(user);
+        return showMenu("1) accept    2) reject\npress 0 to exit", 2);
+    }
+
 }
