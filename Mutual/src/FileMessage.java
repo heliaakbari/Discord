@@ -17,7 +17,7 @@ public class FileMessage extends Message{
         this.format = format;
     }
 
-    public FileMessage(String sender,String server,String channel,File file, String fileName, String format) throws IOException {
+    public FileMessage(String sender, String server, String channel, File file, String fileName, String format) throws IOException {
         super(sender,channel,server);
         fileBytes = Files.readAllBytes(file.toPath());
         this.fileName = fileName;

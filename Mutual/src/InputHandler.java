@@ -17,8 +17,7 @@ public abstract class InputHandler {
     public abstract String usernameValidation();
 
     public abstract String receiveData(String question);
-    public abstract boolean showFriendInfo(User friend);
-    public abstract int showRequest(User user);
+    public abstract int receiveData(User user, String optionsList, int numberOfOptions);
 
     public abstract ArrayList<ArrayList<String>> createServer();
     public abstract HashMap<String, Role> defineRoles();

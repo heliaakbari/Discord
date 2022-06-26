@@ -118,6 +118,7 @@ public class Discord {
 
     public void enterDirectMessages(){
 
+
     }
 
     public void enterRelationshipsList(){
@@ -183,7 +184,7 @@ public class Discord {
                 cmd = Command.getUser(friends.get(choice - 1));
                 transfer();
                 User friend = (User) data.getPrimary();
-                if (inputHandler.showFriendInfo(friend)){
+                if (inputHandler.receiveData(friend, "0) back\n1) block this person", 1) == 1){
                     Relationship block = Relationship.Block;
                     block.setSender(currentUsername);
                     block.setReceiver(friend.getUsername());
@@ -218,7 +219,7 @@ public class Discord {
             cmd = Command.getUser(requests.get(choice - 1));
             transfer();
             User user = (User) data.getPrimary();
-            int decision = inputHandler.showRequest(user);
+            int decision = inputHandler.receiveData(user, "1) accept    2) reject\npress 0 to exit", 2);
             if (decision != 0) {
                 Relationship result = null;
                 if (decision == 1) {
@@ -232,7 +233,6 @@ public class Discord {
         }
 
     }
-
 
     public void setting(){
         int choice;

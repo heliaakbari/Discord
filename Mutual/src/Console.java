@@ -181,16 +181,10 @@ public class Console extends InputHandler{
         return scanner.nextLine();
     }
 
-    public boolean showFriendInfo(User friend){
-        System.out.println(friend);
-        int choice = showMenu("0) back\n1) block this person", 1);
-        return (choice == 1);
-    }
-
-    public int showRequest(User user){
-        System.out.println(user.getUsername() + " wants to follow you");
+    public int receiveData(User user, String optionsList, int numberOfOptions){
         System.out.println(user);
-        return showMenu("1) accept    2) reject\npress 0 to exit", 2);
+        return showMenu(optionsList, numberOfOptions);
+
     }
 
     public ArrayList<ArrayList<String>> createServer(){

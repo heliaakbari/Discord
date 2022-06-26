@@ -15,8 +15,13 @@ public class TextMessage extends Message {
         this.text = text;
     }
 
-    public TextMessage(String sender,String server,String channel,String text,LocalDateTime date) throws IOException {
+    public TextMessage(String sender, String server, String channel, String text, LocalDateTime date) throws IOException {
         super(sender,channel,server,date);
+        this.text = text;
+    }
+
+    public TextMessage(String sender, String server, String channel, String text){
+        super(sender,channel , server);
         this.text = text;
     }
 

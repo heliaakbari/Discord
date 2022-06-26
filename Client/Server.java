@@ -2,6 +2,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Server {
 
@@ -52,8 +53,14 @@ public class Server {
                 action = inputHandler.showMenu("1) start chatting\n2) see the channel members\npress 0 to exit", 2);
 
                 if (action == 1) {
-                    inputHandler.printMsg("you can type your messages now, to react to a message type the message number and then your reaction.");
+                    inputHandler.printMsg("you can type your messages now, to react to a message type the message number and then your reaction.\n" +
+                            "to send a file type 'send file'. to download a file type 'open file <file name>'. press 0 to exit the chat");
                     // transfer messages with server
+                    MessageReader messageReader = new MessageReader(in, inputHandler);
+                    messageReader.start();
+
+                    MessageWriter messageWriter = new MessageWriter(out, new ArrayList<>(Arrays.asList(currentUsername, channelName, currentServerName)));
+                    messageWriter.start();
                 }
                 else if (action == 2) {
                     // creat a command to get the members
