@@ -80,8 +80,9 @@ public class Console extends InputHandler{
         return info;
     }
 
-    public ArrayList<String> signup() {
-        ArrayList<String> info = new ArrayList<>();
+    public User signup() {
+
+        User user = new User();
 
         System.out.println("password must contain capital and small english alphabets and numbers");
         System.out.println("press 0 to exit");
@@ -93,7 +94,7 @@ public class Console extends InputHandler{
                 input = checkInput("(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])",8, 20);
                 if (input.equals("0"))
                     return null;
-                info.add(input);
+                user.setPassword(input);
                 successful = true;
             } catch (Exception e){
                 System.err.println(e.getMessage());
@@ -109,7 +110,7 @@ public class Console extends InputHandler{
                 input = checkInput("^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$",11, 20);
                 if (input.equals("0"))
                     return null;
-                info.add(input);
+                user.setEmail(input);
                 successful = true;
             } catch (Exception e){
                 System.err.println(e.getMessage());
@@ -129,7 +130,7 @@ public class Console extends InputHandler{
                     input = checkInput("^[0-9]+$",11, 15);
                     if (input.equals("0"))
                         return null;
-                    info.add(input);
+                    user.setPhoneNum(input);
                     successful = true;
                 } catch (Exception e){
                     System.err.println(e.getMessage());
@@ -144,11 +145,12 @@ public class Console extends InputHandler{
             ArrayList<String> status = new ArrayList<>(Arrays.asList("1) online", "2) idle", "3) do not disturb", "4) invisible", "press 0 to exit"));
             int choice = showMenu(status);
             if (choice != 0)
-                info.add(status.get(choice - 1));
+                user.setStatus(status.get(choice - 1));
+
         }
 
         System.out.println("you can also add a profile photo in account settings");
-        return info;
+        return user;
     }
 
     public String usernameValidation(){
@@ -167,6 +169,10 @@ public class Console extends InputHandler{
         }
 
         return input;
+    }
+
+    public void printError(Exception e){
+        e.printStackTrace();
     }
 
 }

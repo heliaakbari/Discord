@@ -11,11 +11,12 @@ public class User {
     private String profilePhotoFormat;
 
 
-    public User(String username, String password, String email) {
+    public User (String username, String password, String email) {
         this.username = username;
         this.password = password;
         this.email = email;
     }
+    public User() {}
 
     public String getUsername() {
         return username;
