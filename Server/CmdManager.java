@@ -1,4 +1,6 @@
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -28,13 +30,14 @@ public class CmdManager {
     public void process(Command cmd){
         
     }
+
     public void newPvMsg(Command cmd){
         String sender = cmd.getUser();
         String receiver=(String) cmd.getSecondary();
-        Message message = (Message) cmd.getPrimary();
-        String date = message.getDateTime().format(dateTimeFormatter);
-        if(message instanceof TextMessage){
-            message = (TextMessage)message;
+        Message message1 = (Message) cmd.getPrimary();
+        String date = message1.getDateTime().format(dateTimeFormatter);
+        if(message1 instanceof TextMessage){
+            TextMessage message = (TextMessage)message1;
             String body = ((TextMessage) message).getText();
             try {
                 stmt.executeUpdate(String.format("insert into pv_messages(sender,receiver,date,body,isfile,seen) values ('%s','%s','%s','%s',false,false);", sender, receiver, date, body));
@@ -44,8 +47,19 @@ public class CmdManager {
                 FeedBack.say("sender+\"'s text message was not sent to \"+receiver");
             }
         }
-        if(message instanceof FileMessage){
-            ////to be completed
+        if(message1 instanceof FileMessage){
+            FileMessage message = (FileMessage)message1;
+            String address = filespath+"\\"+message.getDateTime().format(dateTimeFormatter)+message.getFileBytes().length+"."+message.getFormat();
+            try {
+                stmt.executeUpdate(String.format("insert into pv_messages(sender,receiver,date,isfile,seen,filename,filelink) values ('%s','%s','%s','%s',true,false,'%s');", sender, receiver, date, message.getFileName(), address));
+                bytesToFile(message.getFileBytes(),address);
+            }
+            catch (SQLException e){
+                e.printStackTrace();
+            }
+            catch (Exception e){
+                e.printStackTrace();
+            }
         }
 
 
@@ -550,7 +564,10 @@ public class CmdManager {
     public void changeRole(Command cmd){
         Role role = (Role) cmd.getPrimary();
         try{
-            stmt.executeUpdate(String.format("update server_members set rolename='%s' and abilities='%s' "));
+            stmt.executeUpdate(String.format("update server_members set rolename='%s' and abilities='%s' where username='%s' and server='%s'; ",role.getRoleName(),role.getValues(),(String)cmd.getSecondary(),cmd.getServer()));
+        }
+        catch (SQLException e){
+            e.printStackTrace();
         }
     }
     public byte[] fileToBytes(String path){
@@ -563,6 +580,13 @@ public class CmdManager {
             e.printStackTrace();
         }
         return bytes;
+    }
+
+    public static void bytesToFile (byte[] dataForWriting, String path) throws Exception{
+        File outputFile = new File(path);
+        FileOutputStream outputStream = new FileOutputStream(outputFile);
+            outputStream.write(dataForWriting);
+
     }
 
 }

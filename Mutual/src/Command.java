@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 
 public class Command {
     /**
@@ -229,6 +230,22 @@ public class Command {
         cmd.user = server;
         cmd.primary = role;
         cmd.secondary = userToChange;
+        return cmd;
+    }
+     public static Command addOneMemberToChannel(String user,String perseonToAdd,String server,String channel){
+        Command cmd = new Command("addOneMemberToChannel");
+        cmd.user = user;
+        cmd.primary = perseonToAdd;
+        cmd.server = server;
+        cmd.channel = channel;
+        return cmd;
+     }
+
+    public static Command addPeopleToServer(String user, String server, ArrayList<String> peopleToAdd){
+        Command cmd = new Command("addPeopleToServer");
+        cmd.user = user;
+        cmd.primary = peopleToAdd;
+        cmd.server = server;
         return cmd;
     }
 

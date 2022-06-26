@@ -30,4 +30,8 @@ public class Role {
     public String getRoleName() {
         return roleName;
     }
+
+    public String getValues() {
+        return values;
+    }
 }
