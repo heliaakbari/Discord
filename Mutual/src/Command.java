@@ -129,6 +129,13 @@ public class Command {
         return cmd;
     }
 
+    public static Command getReactions(String user, Message message){
+        Command cmd = new Command("getReactions");
+        cmd.user = user;
+        cmd.primary = message;
+        return cmd;
+    }
+    
     //for getting channel's messages : keyword=getChannelMsg , user=username,
     //  channel = channel, server = server, primary = number of latest massages in INTEGER
     public static Command getChannelMsgs(String user, String server, String channel,Integer numberOfMessages){

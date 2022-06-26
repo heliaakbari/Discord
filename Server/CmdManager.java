@@ -247,7 +247,28 @@ public class CmdManager {
         }
     }
 
+    public Data getReactions(Command cmd){
+        HashMap<String,Integer> reactions = new HashMap<>();
+        Message message = (Message) cmd.getPrimary();
+
+        try{
+            ResultSet rs = stmt.executeQuery(String.format("select count(*) as C1 from reactions where messageSender='%s' and messageDate='%s' and type='like'",message.getSourceInfo().get(0),message.getDateTime().format(dateTimeFormatter)));
+            rs.next();
+            reactions.put("like",rs.getInt("C1"));
+            rs = stmt.executeQuery(String.format("select count(*) as C1 from reactions where messageSender='%s' and messageDate='%s' and type='dislike'",message.getSourceInfo().get(0),message.getDateTime().format(dateTimeFormatter)));
+            rs.next();
+            reactions.put("dislike",rs.getInt("C1"));
+             rs = stmt.executeQuery(String.format("select count(*) as C1 from reactions where messageSender='%s' and messageDate='%s' and type='laugh'",message.getSourceInfo().get(0),message.getDateTime().format(dateTimeFormatter)));
+            rs.next();
+            reactions.put("laugh",rs.getInt("C1"));
+        }
+        catch (SQLException e){
+            e.printStackTrace();
+        }
+        return Data.reactions(cmd.getUser(),message,reactions);
+    }
     //getNewMsgs to be written
+
     public Data getNewMsgs(Command cmd){
         ArrayList<Message> messages = new ArrayList<>();
         try {
