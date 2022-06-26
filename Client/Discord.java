@@ -99,7 +99,9 @@ public class Discord {
 
     }
 
-    public void enterDirectMessages(){}
+    public void enterDirectMessages(){
+
+    }
 
     public void enterRelationshipsList(){
         int choice;
