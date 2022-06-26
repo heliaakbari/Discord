@@ -13,6 +13,6 @@ public class TextMessage extends Message {
 
     @Override
     public String toString() {
-        return super.getSourceInfo() + text;
+        return super.getSourceInfoAsString() + text;
     }
 }

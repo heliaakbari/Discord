@@ -34,12 +34,17 @@ public class Message implements Serializable {
         return dateTime;
     }
 
-    public String getSourceInfo() {
+
+    public String getSourceInfoAsString(){
         StringBuilder stringBuilder = new StringBuilder();
         for (int i = sourceInfo.size() - 1; i >= 0; i--){
             stringBuilder.append(sourceInfo.get(i)).append("-> ");
         }
         stringBuilder.append(" : ");
         return stringBuilder.toString();
+    }
+
+    public ArrayList<String> getSourceInfo() {
+        return sourceInfo;
     }
 }
