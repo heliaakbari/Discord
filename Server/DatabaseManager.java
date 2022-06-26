@@ -580,7 +580,8 @@ public class DatabaseManager {
     //lastseenall
     //lastseenpv
     //lastseenchannel
-
+    //get servers
+    //get channels
     public byte[] fileToBytes(String path){
         // file to byte[], Path
         byte[] bytes = null;

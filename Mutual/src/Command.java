@@ -215,6 +215,18 @@ public class Command {
         return cmd;
     }
 
+    public static Command getServers(String user){
+        Command cmd = new Command("getServers");
+        cmd.user = user;
+        return cmd;
+    }
+
+    public static Command getChannels(String user, String server){
+        Command cmd = new Command("getChannels");
+        cmd.user = user;
+        cmd.server = server;
+    }
+    
     public static Command getUser(String user){
         Command cmd = new Command("getUser");
         cmd.user= user;
