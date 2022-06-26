@@ -1,9 +1,8 @@
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -16,33 +15,27 @@ import static java.nio.file.Files.readAllBytes;
 
 public class CmdManager {
 
-    private Statement stmt = null;
-    private String filespath = "C:\\Users\\Rpipc\\Desktop\\dbfile";
+    private static Statement stmt = null;
+    private static String filespath = null;
     private DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
 
     public CmdManager(Statement stmt,String filepath) {
-        switch(){
-            case "newPvMsg" :
-                newPvMsg(cmd);
-                break;
-            case "changeProfilePhoto":
-                changeProfilePhoto(cmd);
-                break;
-
-        }
+        this.stmt = stmt;
+        this.filespath = filepath;
     }
 
     public void process(Command cmd){
         
     }
+
     public void newPvMsg(Command cmd){
         String sender = cmd.getUser();
         String receiver=(String) cmd.getSecondary();
-        Message message = (Message) cmd.getPrimary();
-        String date = message.getDateTime().format(dateTimeFormatter);
-        if(message instanceof TextMessage){
-            message = (TextMessage)message;
+        Message message1 = (Message) cmd.getPrimary();
+        String date = message1.getDateTime().format(dateTimeFormatter);
+        if(message1 instanceof TextMessage){
+            TextMessage message = (TextMessage)message1;
             String body = ((TextMessage) message).getText();
             try {
                 stmt.executeUpdate(String.format("insert into pv_messages(sender,receiver,date,body,isfile,seen) values ('%s','%s','%s','%s',false,false);", sender, receiver, date, body));
@@ -52,27 +45,44 @@ public class CmdManager {
                 FeedBack.say("sender+\"'s text message was not sent to \"+receiver");
             }
         }
-        if(message instanceof FileMessage){
-            ////to be completed
+        if(message1 instanceof FileMessage){
+            FileMessage message = (FileMessage)message1;
+            String address = filespath+"\\"+message.getDateTime().format(dateTimeFormatter)+message.getFileBytes().length+"."+message.getFormat();
+            try {
+                stmt.executeUpdate(String.format("insert into pv_messages(sender,receiver,date,isfile,seen,filename,filelink,fileformat) values ('%s','%s','%s','%s',true,false,'%s','%s');", sender, receiver, date, message.getFileName(), address,message.getFormat()));
+                bytesToFile(message.getFileBytes(),address);
+            }
+            catch (SQLException e){
+                e.printStackTrace();
+            }
+            catch (Exception e){
+                e.printStackTrace();
+            }
         }
 
 
     }
 
     public void changeProfilePhoto(Command cmd){
-        String user = cmd.getUser();
+        User user =(User) getUser(Command.getUser(cmd.getUser())).getPrimary();
         byte[] image = (byte[])cmd.getPrimary();
         String format = (String) cmd.getSecondary();
-        String address = filespath + "\\profilePhoto_" + user + "." + format;
+
+        String address = filespath + "\\profilePhoto_" + user.getEmail() + "." + format;
         Path url = Paths.get(address);
         File file = new File(address);
         file.delete();
+
         try{
-            Files.write( url,image);
+            bytesToFile(image,address);
         }
         catch (IOException e){
             FeedBack.say("could not save profile photo of "+user);
         }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+
         try {
             stmt.executeUpdate(String.format("UPDATE users SET picturelink ='%s' WHERE username='%s')",url,user));
         }catch (SQLException e){
@@ -82,12 +92,12 @@ public class CmdManager {
 
     public void NewChannelMsg(Command cmd){
         String sender = cmd.getUser();
-        Message message = (Message) cmd.getPrimary();
-        String server=message.getSourceInfo().get(1);
-        String channel = message.getSourceInfo().get(2);
-        String date = message.getDateTime().format(dateTimeFormatter);
-        if(message instanceof TextMessage){
-            message = (TextMessage)message;
+        Message message1 = (Message) cmd.getPrimary();
+        String server=message1.getSourceInfo().get(1);
+        String channel = message1.getSourceInfo().get(2);
+        String date = message1.getDateTime().format(dateTimeFormatter);
+        if(message1 instanceof TextMessage){
+            TextMessage message = (TextMessage)message1;
             String body = ((TextMessage) message).getText();
             try {
                 stmt.executeUpdate(String.format("insert into channel_messages(sender,server,channel,date,body,isfile) values ('%s','%s','%s','%s',false);", sender, server,channel, date, body));
@@ -97,8 +107,19 @@ public class CmdManager {
                 FeedBack.say(sender+"'s text message was not sent to "+server+"/"+channel);
             }
         }
-        if(message instanceof FileMessage){
-            ////to be completed
+        if(message1 instanceof FileMessage){
+            FileMessage message = (FileMessage)message1;
+            String address = filespath+"\\"+message.getDateTime().format(dateTimeFormatter)+message.getFileBytes().length+"."+message.getFormat();
+            try {
+                stmt.executeUpdate(String.format("insert into pv_messages(sender,server,channel,date,isfile,seen,filename,filelink,fileformat) values ('%s','%s','%s','%s',true,false,'%s','%s');", sender, server,channel, date, message.getFileName(), address,message.getFormat()));
+                bytesToFile(message.getFileBytes(),address);
+            }
+            catch (SQLException e){
+                e.printStackTrace();
+            }
+            catch (Exception e){
+                e.printStackTrace();
+            }
         }
 
 
@@ -106,10 +127,9 @@ public class CmdManager {
 
     public void newUser(Command cmd){
         User user = (User) cmd.getPrimary();
-        byte[] image = (byte[])user.getProfilePhoto();
+        byte[] image = user.getProfilePhoto();
         String format = (String) cmd.getSecondary();
-        String address = filespath + "\\profilePhoto_" + user.getUsername() + "." + format;
-        Path url = Paths.get(address);
+        String address = filespath + "\\profilePhoto_" + user.getEmail() + "." + format;
         try {
             ResultSet r = stmt.executeQuery(String.format("select count(*) as C1 from server_members where username='%s'", user.getUsername()));
             r.next();
@@ -122,14 +142,18 @@ public class CmdManager {
             FeedBack.say("a member with username: "+user.getUsername()+ "already exists");
         }
         try{
-            Files.write( url,image);
+            bytesToFile(user.getProfilePhoto(),address);
             FeedBack.say("profile photo of "+user.getUsername()+" is saved");
         }
         catch (IOException e){
             FeedBack.say("could not save profile photo of "+user.getUsername());
         }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+
         try {
-            stmt.executeUpdate(String.format("insert into users values ('%s','%s','%s','%S','%S','%S');", user.getUsername(), user.getPassword(), user.getPhoneNum(), user.getEmail(), user.getStatus() == null ? null : user.getStatus().toString(), address));
+            stmt.executeUpdate(String.format("insert into users values ('%s','%s','%s','%S','%S','%S');", user.getUsername(), user.getPassword(), user.getPhoneNum(), user.getEmail(), user.getStatus() == null ? null : user.getStatus().toString(),user.getProfilePhotoFormat(),address));
         }
         catch (SQLException e){
             FeedBack.say("could not add new User with username : "+user.getUsername());
@@ -172,6 +196,10 @@ public class CmdManager {
             String s1 = String.format("delete from relationships where (receiver='%s' and sender='%s') or (sender='%s' and receiver='%s');",rel.getReceiver(),rel.getSender(),rel.getReceiver(),rel.getSender());
             String s2 = String.format("insert into relationships values('%s','%s','%s');",rel.getSender(),rel.getReceiver(),rel.toString());
             statement = s1 +"\n"+s2;
+        }
+        else if (rel == Relationship.Rejected) {
+            String s1 = String.format("delete from relationships where (receiver='%s' and sender='%s') or (sender='%s' and receiver='%s');",rel.getReceiver(),rel.getSender(),rel.getReceiver(),rel.getSender());
+            statement = s1;
         }
         else if(rel==Relationship.Friend){
             String s1 = String.format("delete from relationships where (receiver='%s' and sender='%s') or (sender='%s' and receiver='%s');",rel.getReceiver(),rel.getSender(),rel.getReceiver(),rel.getSender());
@@ -219,10 +247,125 @@ public class CmdManager {
         }
     }
 
-    //getNewMsgs to be written
-    public void getNewMsgs(Command cmd){
+    public Data getReactions(Command cmd){
+        HashMap<String,Integer> reactions = new HashMap<>();
+        Message message = (Message) cmd.getPrimary();
 
+        try{
+            ResultSet rs = stmt.executeQuery(String.format("select count(*) as C1 from reactions where messageSender='%s' and messageDate='%s' and type='like'",message.getSourceInfo().get(0),message.getDateTime().format(dateTimeFormatter)));
+            rs.next();
+            reactions.put("like",rs.getInt("C1"));
+            rs = stmt.executeQuery(String.format("select count(*) as C1 from reactions where messageSender='%s' and messageDate='%s' and type='dislike'",message.getSourceInfo().get(0),message.getDateTime().format(dateTimeFormatter)));
+            rs.next();
+            reactions.put("dislike",rs.getInt("C1"));
+             rs = stmt.executeQuery(String.format("select count(*) as C1 from reactions where messageSender='%s' and messageDate='%s' and type='laugh'",message.getSourceInfo().get(0),message.getDateTime().format(dateTimeFormatter)));
+            rs.next();
+            reactions.put("laugh",rs.getInt("C1"));
+        }
+        catch (SQLException e){
+            e.printStackTrace();
+        }
+        return Data.reactions(cmd.getUser(),message,reactions);
     }
+    //getNewMsgs to be written
+
+    public Data getNewMsgs(Command cmd){
+        ArrayList<Message> messages = new ArrayList<>();
+        try {
+            ResultSet rs = stmt.executeQuery(String.format("select * from pv_messages where seen=false and receiver='%s' order by date DESC,sender",cmd.getUser()));
+            while (rs.next()){
+                if(rs.getBoolean("isfile")){
+                    byte[] bytes = fileToBytes(rs.getString("FILELINK"));
+                    FileMessage m = new FileMessage(rs.getString("SENDER"),rs.getTimestamp("DATE").toLocalDateTime(),rs.getString("FILENAME"),bytes,rs.getString("FILEFORMAT"));
+                    messages.add(m);
+                }
+                else{
+                    TextMessage m = new TextMessage(rs.getString("SENDER"),rs.getString("BODY"),rs.getTimestamp("DATE").toLocalDateTime());
+                    messages.add(m);
+                }
+            }
+            HashMap<String,String> channelsDates = new HashMap<>();
+            rs = stmt.executeQuery(String.format("select channel,lastseen from channel_members where username='%s'",cmd.getUser()));
+            while (rs.next()){
+                channelsDates.put(rs.getString("CHANNEL"),rs.getString("LASTSEEN"));
+            }
+            for(HashMap.Entry<String, String> entry : channelsDates.entrySet()) {
+                String key = entry.getKey();
+                String value = entry.getValue();
+                rs = stmt.executeQuery(String.format("select * from channel_messages where channel='%s' and date>'%s'order by date desc",key,value));
+                while (rs.next()){
+                    if(rs.getBoolean("isfile")){
+                        byte[] bytes = fileToBytes(rs.getString("FILELINK"));
+                        FileMessage m = new FileMessage(rs.getString("SENDER"),rs.getString("SERVER"),rs.getString("CHANNEL"),rs.getTimestamp("DATE").toLocalDateTime(),rs.getString("FILENAME"),bytes,rs.getString("FILEFORMAT"));
+                        messages.add(m);
+                    }
+                    else{
+                        TextMessage m = new TextMessage(rs.getString("SENDER"),rs.getString("SERVER"),rs.getString("CHANNEL"),rs.getString("BODY"),rs.getTimestamp("DATE").toLocalDateTime());
+                        messages.add(m);
+                    }
+                }
+            }
+
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
+        return Data.newMsgs(cmd.getUser(),messages);
+    }
+
+    public Data getChannelMsgs(Command cmd){
+        int number = (int) cmd.getPrimary();
+        ArrayList<Message> messages = new ArrayList<>();
+        try {
+            ResultSet rs = stmt.executeQuery(String.format("select * from channel_messages where channel='%s' and server='%s' order by date DESC limit %d",cmd.getChannel(),cmd.getServer(),number));
+            while (rs.next()){
+                if(rs.getBoolean("isfile")){
+                    byte[] bytes = fileToBytes(rs.getString("FILELINK"));
+                    FileMessage m = new FileMessage(rs.getString("SENDER"),rs.getString("SERVER"),rs.getString("CHANNEL"),rs.getTimestamp("DATE").toLocalDateTime(),rs.getString("FILENAME"),bytes,rs.getString("FILEFORMAT"));
+                    messages.add(m);
+                }
+                else{
+                    TextMessage m = new TextMessage(rs.getString("SENDER"),rs.getString("SERVER"),rs.getString("CHANNEL"),rs.getString("BODY"),rs.getTimestamp("DATE").toLocalDateTime());
+                    messages.add(m);
+                }
+            }
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
+        return Data.channelMsgs(cmd.getUser(),cmd.getServer(),cmd.getChannel(),messages);
+    }
+
+    public Data getPvMsgs(Command cmd){
+        String friend =(String) cmd.getPrimary();
+        int number = (int) cmd.getSecondary();
+        ArrayList<Message> messages = new ArrayList<>();
+        try {
+            ResultSet rs = stmt.executeQuery(String.format("select * from pv_messages where (receiver='%s' and sender='%s') or (sender='%s' and receiver='%s') order by date DESC limit %d",cmd.getUser(),friend,cmd.getUser(),friend,number));
+            while (rs.next()){
+                if(rs.getBoolean("isfile")){
+                    byte[] bytes = fileToBytes(rs.getString("FILELINK"));
+                    FileMessage m = new FileMessage(rs.getString("SENDER"),rs.getTimestamp("DATE").toLocalDateTime(),rs.getString("FILENAME"),bytes,rs.getString("FILEFORMAT"));
+                    messages.add(m);
+                }
+                else{
+                    TextMessage m = new TextMessage(rs.getString("SENDER"),rs.getString("BODY"),rs.getTimestamp("DATE").toLocalDateTime());
+                    messages.add(m);
+                }
+            }
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
+            return Data.PvMsgs(cmd.getUser(),friend,messages);
+    }
+
     public Data getRequests(Command cmd){
         ResultSet rs = null;
         ArrayList<String> requesters = new ArrayList<>();
@@ -293,10 +436,6 @@ public class CmdManager {
         return Data.blockList(cmd.getUser(),blockedBys);
     }
 
-    //get channel msgs
-
-    //get pv messages
-
     public Data getChannelMembers(Command cmd){
         ResultSet rs = null;
         ArrayList<String> members = new ArrayList<>();
@@ -330,7 +469,6 @@ public class CmdManager {
         return Data.serverMembers(cmd.getUser(),cmd.getServer(),members);
     }
 
-
     public void deleteServer(Command cmd){
         try{
             stmt.executeUpdate(String.format("Delete from server_members where server='%s'",cmd.getServer()));
@@ -354,7 +492,6 @@ public class CmdManager {
         }
     }
 
-    //change username
     public void changeUsername(Command cmd){
         String old = cmd.getUser();
         String newName = (String) cmd.getPrimary();
@@ -381,7 +518,7 @@ public class CmdManager {
             s.printStackTrace();
         }
     }
-    //change server name
+
     public void changeServerName(Command cmd){
         String old = cmd.getServer();
         String newName = (String) cmd.getPrimary();
@@ -403,7 +540,7 @@ public class CmdManager {
             s.printStackTrace();
         }
     }
-    //new server
+
     public void newServer(Command cmd){
 
         try {
@@ -419,7 +556,7 @@ public class CmdManager {
             s.printStackTrace();
         }
     }
-    //getuser
+
     public Data getUser(Command cmd){
         String username = cmd.getUser();
         User user = null;
@@ -437,7 +574,7 @@ public class CmdManager {
         }
         return Data.userInfo(username,user);
     }
-    //pinmsg
+
     public void pinMsg(Command cmd){
         Message message = (Message)cmd.getPrimary();
         try {
@@ -451,7 +588,6 @@ public class CmdManager {
 
     }
 
-    //ban from channel
     public void banFromChannel(Command cmd){
         try{
             stmt.executeUpdate(String.format("delete from channel_members where channel='%s' and server='%s' and username='%s'",cmd.getChannel(),cmd.getServer(),cmd.getUser()));
@@ -461,7 +597,6 @@ public class CmdManager {
         }
     }
 
-    //ban from server
     public void banFromServer(Command cmd){
         try{
             stmt.executeUpdate(String.format("delete from server_members where server='%s' and username='%s'",cmd.getServer(),cmd.getUser()));
@@ -472,7 +607,6 @@ public class CmdManager {
         }
     }
 
-    //getrole
     public Data getRole(Command cmd){
         Data dt = Data.role(cmd.getUser(),cmd.getServer(),null);
         try{
@@ -487,7 +621,6 @@ public class CmdManager {
         return dt;
     }
 
-    //lastseenall
     public void lastseenAll(Command cmd){
         try{
             stmt.executeUpdate(String.format("update channel_members set lastseen='%s' where username='%s'",LocalDateTime.now().format(dateTimeFormatter),cmd.getUser()));
@@ -498,7 +631,7 @@ public class CmdManager {
         }
 
     }
-    //lastseenpv
+
     public void lastseenPv(Command cmd){
         try{
             stmt.executeUpdate(String.format("update pv_messages set seen=true where receiver='%s' and sender='%s' and date<'%s';",cmd.getUser(),(String)cmd.getPrimary(),LocalDateTime.now().format(dateTimeFormatter)));
@@ -508,7 +641,7 @@ public class CmdManager {
         }
 
     }
-    //lastseenchannel
+
     public void lastseenChannel(Command cmd){
         try{
             stmt.executeUpdate(String.format("update channel_members set lastseen='%s' where username='%s' and channel='%s'",LocalDateTime.now().format(dateTimeFormatter),cmd.getUser(),cmd.getChannel()));
@@ -519,7 +652,6 @@ public class CmdManager {
 
     }
 
-    //get servers
     public Data userServers(Command cmd){
         ResultSet rs = null;
         ArrayList<String> servers = new ArrayList<>();
@@ -536,7 +668,7 @@ public class CmdManager {
         }
         return Data.userServers(cmd.getUser(),servers);
     }
-    //get channels
+
     public Data userChannels(Command cmd){
         ResultSet rs = null;
         ArrayList<String> channels = new ArrayList<>();
@@ -554,6 +686,15 @@ public class CmdManager {
         return Data.userChannels(cmd.getUser(),cmd.getServer(),channels);
     }
 
+    public void changeRole(Command cmd){
+        Role role = (Role) cmd.getPrimary();
+        try{
+            stmt.executeUpdate(String.format("update server_members set rolename='%s' and abilities='%s' where username='%s' and server='%s'; ",role.getRoleName(),role.getValues(),(String)cmd.getSecondary(),cmd.getServer()));
+        }
+        catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
 
     public byte[] fileToBytes(String path){
         // file to byte[], Path
@@ -566,5 +707,13 @@ public class CmdManager {
         }
         return bytes;
     }
+
+    public static void bytesToFile (byte[] dataForWriting, String path) throws Exception{
+        File outputFile = new File(path);
+        FileOutputStream outputStream = new FileOutputStream(outputFile);
+            outputStream.write(dataForWriting);
+
+    }
+
 }
 

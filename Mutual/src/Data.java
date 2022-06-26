@@ -170,6 +170,12 @@ public class Data {
         return data;
     }
 
+    public static Data reactions(String user,Message message,HashMap<String,Integer> reactions){
+        Data data = new Data("reactions");
+        data.primary = reactions;
+        data.secondary = message;
+        return data;
+    }
     public static Data role(String user,String server,Role role){
         Data data = new Data("role");
         data.primary= role;

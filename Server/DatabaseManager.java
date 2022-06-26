@@ -14,13 +14,15 @@ import static java.nio.file.Files.exists;
 import static java.nio.file.Files.readAllBytes;
 
 public class DatabaseManager {
-   private  Connection con = null;
-   public   Scanner get = new Scanner(System.in);
-   private  String dbUrl = "jdbc:hsqldb:hsql://localhost/testdb";
-   private  Statement stmt = null;
-   private String filespath = "C:\\Users\\Rpipc\\Desktop\\dbfile";
-   private DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-    public void start (){
+    private Connection con = null;
+    public Scanner get = new Scanner(System.in);
+    private String dbUrl = "jdbc:hsqldb:hsql://localhost/testdb";
+    private Statement stmt = null;
+    private String filespath = "C:\\DiscordFiles";
+    private DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    public CmdManager cmdManager = null;
+
+    public void start() {
         try {
 
             System.out.println("1.existing database    2.new database");
@@ -29,7 +31,7 @@ public class DatabaseManager {
                 ResultSet result = stmt.executeQuery("SELECT COUNT(*) AS tablecount\n" +
                         "FROM   INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA='PUBLIC';");
                 while (result.next()) {
-                    if(result.getInt("tablecount")==0){
+                    if (result.getInt("tablecount") == 0) {
                         newDatabase();
                     }
                 }
@@ -37,39 +39,38 @@ public class DatabaseManager {
             } else {
                 newDatabase();
             }
-        }
-        catch (SQLException sqlException){
+            cmdManager = new CmdManager(stmt, filespath);
+        } catch (SQLException sqlException) {
             sqlException.printStackTrace();
         }
     }
-
     public void connect() throws SQLException{
-            //Registering the HSQLDB JDBC driver
+        //Registering the HSQLDB JDBC driver
         try {
             Class.forName("org.hsqldb.jdbc.JDBCDriver");
         }
-           catch (ClassNotFoundException classNotFoundException){
+        catch (ClassNotFoundException classNotFoundException){
             classNotFoundException.printStackTrace();
-           }
-            //Creating the connection with HSQLDB
-            con = DriverManager.getConnection(dbUrl, "SA", "");
-            if (con!= null){
-                System.out.println("Connection created successfully");
-                stmt = con.createStatement();
-                ResultSet result = stmt.executeQuery ("SELECT COUNT(*) AS tablecount\n" +
-                        "FROM   INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA='PUBLIC';");
-                while (result.next()) {
-                    System.out.println(result.getInt("tablecount"));
-                }
-            }else{
-                System.out.println("Problem with creating connection");
+        }
+        //Creating the connection with HSQLDB
+        con = DriverManager.getConnection(dbUrl, "SA", "");
+        if (con!= null){
+            System.out.println("Connection created successfully");
+            stmt = con.createStatement();
+            ResultSet result = stmt.executeQuery ("SELECT COUNT(*) AS tablecount\n" +
+                    "FROM   INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA='PUBLIC';");
+            while (result.next()) {
+                System.out.println(result.getInt("tablecount"));
             }
+        }else{
+            System.out.println("Problem with creating connection");
+        }
     }
 
     public void newDatabase() throws SQLException{
         //clears all databases rows
-            stmt.executeUpdate("truncate schema PUBLIC and commit");
-            stmt.executeUpdate("""
+        stmt.executeUpdate("truncate schema PUBLIC and commit");
+        stmt.executeUpdate("""
             drop table IF EXISTS channel_members;
             drop table IF EXISTS relationships;
             drop table IF EXISTS users;
@@ -78,16 +79,16 @@ public class DatabaseManager {
             drop table IF EXISTS server_members;
             drop table IF EXISTS reactions;
             """);
-            //delete images and files in pc too
+        //delete images and files in pc too
 
         //add table member of channels
-            stmt.executeUpdate("""
+        stmt.executeUpdate("""
                                             CREATE TABLE IF NOT EXISTS channel_members
                                             (username VARCHAR(20) not null,
                                              server varchar(20) not null,
                                              channel varchar(20),
                                              lastseen Date);""");
-            stmt.executeUpdate("""
+        stmt.executeUpdate("""
                 ALTER TABLE channel_members
                 ADD CONSTRAINT  IF NOT EXISTS uniquePersonInchannel UNIQUE(username,server,channel);
             """);
@@ -119,10 +120,11 @@ public class DatabaseManager {
                                              server varchar(20) not null,
                                              channel varchar(20) not null,
                                              date TIMESTAMP not null,
-                                             body varchar(1000) not null,
+                                             body varchar(1000),
                                              isPinned boolean not null,
                                              isFile boolean not null,
                                              filename varchar(20),
+                                             fileformat varchar(10),
                                              filelink varchar(200));""");
 
         //pv messages
@@ -131,7 +133,7 @@ public class DatabaseManager {
                                             (sender VARCHAR(20) not null,
                                              receiver varchar(20) not null,
                                              date TIMESTAMP not null,
-                                             body varchar(1000) not null,
+                                             body varchar(1000),
                                              seen boolean not null,
                                              isFile boolean not null,
                                              filename varchar(20),
@@ -161,5 +163,6 @@ public class DatabaseManager {
                 ADD CONSTRAINT  IF NOT EXISTS uniqueReaction UNIQUE(reactionSender,messageSender,messageDate);
             """);
     }
+}
 
 

@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 
 public class Command {
     /**
@@ -128,10 +129,17 @@ public class Command {
         return cmd;
     }
 
+    public static Command getReactions(String user, Message message){
+        Command cmd = new Command("getReactions");
+        cmd.user = user;
+        cmd.primary = message;
+        return cmd;
+    }
+    
     //for getting channel's messages : keyword=getChannelMsg , user=username,
     //  channel = channel, server = server, primary = number of latest massages in INTEGER
-    public static Command getChannelMsg(String user, String server, String channel,Integer numberOfMessages){
-        Command cmd = new Command("getChannelMsg");
+    public static Command getChannelMsgs(String user, String server, String channel,Integer numberOfMessages){
+        Command cmd = new Command("getChannelMsgs");
         cmd.user=user;
         cmd.channel= channel;
         cmd.server = server;
@@ -220,6 +228,31 @@ public class Command {
         cmd.user=personToBeBanned;
         cmd.server=server;
         cmd.channel= channel;
+        return cmd;
+    }
+
+    public static Command changeRole (String user, String userToChange,String server,Role role){
+        Command cmd = new Command("changeRole");
+        cmd.user = user;
+        cmd.user = server;
+        cmd.primary = role;
+        cmd.secondary = userToChange;
+        return cmd;
+    }
+     public static Command addOneMemberToChannel(String user,String perseonToAdd,String server,String channel){
+        Command cmd = new Command("addOneMemberToChannel");
+        cmd.user = user;
+        cmd.primary = perseonToAdd;
+        cmd.server = server;
+        cmd.channel = channel;
+        return cmd;
+     }
+
+    public static Command addPeopleToServer(String user, String server, ArrayList<String> peopleToAdd){
+        Command cmd = new Command("addPeopleToServer");
+        cmd.user = user;
+        cmd.primary = peopleToAdd;
+        cmd.server = server;
         return cmd;
     }
 
