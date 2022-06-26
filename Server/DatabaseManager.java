@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
+import static java.nio.file.Files.exists;
 import static java.nio.file.Files.readAllBytes;
 
 public class DatabaseManager {
@@ -132,7 +133,6 @@ public class DatabaseManager {
                                              date TIMESTAMP not null,
                                              body varchar(1000) not null,
                                              seen boolean not null,
-                                             isPinned boolean not null,
                                              isFile boolean not null,
                                              filename varchar(20),
                                              filelink varchar(200));""");
@@ -612,17 +612,87 @@ public class DatabaseManager {
 
     //getrole
     public Data getRole(Command cmd){
+        Data dt = Data.role(cmd.getUser(),(String) cmd.getPrimary(),cmd.getServer(),null);
         try{
-            ResultSet rs = stmt.executeQuery(String.format("select rolename,abilities from channel_members where username='%s' and server='%s'",cmd.getUser(),cmd.getServer()));
+            ResultSet rs = stmt.executeQuery(String.format("select rolename,abilities from channel_members where username='%s' and server='%s'",(String)cmd.getPrimary(),cmd.getServer()));
+            while (rs.next()) {
+                dt = Data.role(cmd.getUser(), (String) cmd.getPrimary(), cmd.getServer(), new Role(rs.getString("ROLENAME"), rs.getString("ABILITIES")));
+            }
         }
+        catch (SQLException e){
+            e.printStackTrace();
+        }
+        return dt;
     }
+
     //lastseenall
+    public void lastseenAll(Command cmd){
+        try{
+            stmt.executeUpdate(String.format("update channel_members set lastseen='%s' where username='%s'",LocalDateTime.now().format(dateTimeFormatter),cmd.getUser()));
+            stmt.executeUpdate(String.format("update pv_messages set seen=true where receiver='%s' and date<'%s';",cmd.getUser(),LocalDateTime.now().format(dateTimeFormatter)));
+        }
+        catch (SQLException e){
+            e.printStackTrace();
+        }
+
+    }
     //lastseenpv
+    public void lastseenPv(Command cmd){
+        try{
+            stmt.executeUpdate(String.format("update pv_messages set seen=true where receiver='%s' and sender='%s' and date<'%s';",cmd.getUser(),(String)cmd.getPrimary(),LocalDateTime.now().format(dateTimeFormatter)));
+        }
+        catch (SQLException e){
+            e.printStackTrace();
+        }
+
+    }
     //lastseenchannel
+    public void lastseenChannel(Command cmd){
+        try{
+            stmt.executeUpdate(String.format("update channel_members set lastseen='%s' where username='%s' and channel='%s'",LocalDateTime.now().format(dateTimeFormatter),cmd.getUser(),cmd.getChannel()));
+        }
+        catch (SQLException e){
+            e.printStackTrace();
+        }
+
+    }
+
     //get servers
+    public Data getServers(Command cmd){
+        ResultSet rs = null;
+        ArrayList<String> servers = new ArrayList<>();
+
+        try{
+            rs = stmt.executeQuery(String.format("select server as U from server_members where username='%s'",cmd.getUser()));
+
+            while (rs.next()){
+                servers.add(rs.getString("U"));
+            }
+        }
+        catch (SQLException s){
+            s.printStackTrace();
+        }
+        return Data.memberOfServers(cmd.getUser(),servers);
+    }
     //get channels
+    public Data getChannels(Command cmd){
+        ResultSet rs = null;
+        ArrayList<String> channels = new ArrayList<>();
 
+        try{
+            rs = stmt.executeQuery(String.format("select channel as U from channel_members where username='%s' and server='%s'",cmd.getUser(),cmd.getServer()));
 
+            while (rs.next()){
+                servers.add(rs.getString("U"));
+            }
+        }
+        catch (SQLException s){
+            s.printStackTrace();
+        }
+        return Data.memberOfChannels(cmd.getUser(),cmd.getServer(),channels);
+    }
+
+    
     public byte[] fileToBytes(String path){
         // file to byte[], Path
         byte[] bytes = null;

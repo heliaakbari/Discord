@@ -273,7 +273,7 @@ public class Command {
     public static Command lastseenPv(String user,String theOtherPerson){
         Command cmd = new Command("lastseenPv");
         cmd.user=user;
-        cmd.secondary = theOtherPerson;
+        cmd.primary = theOtherPerson;
         return cmd;
     }
 
