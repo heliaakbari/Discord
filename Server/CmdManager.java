@@ -125,7 +125,7 @@ public class CmdManager {
 
     }
 
-    public void newUser(Command cmd){
+    public Data newUser(Command cmd){
         User user = (User) cmd.getPrimary();
         byte[] image = user.getProfilePhoto();
         String format = (String) cmd.getSecondary();
@@ -135,11 +135,12 @@ public class CmdManager {
             r.next();
             int count = r.getInt("C1");
             if (count > 0) {
-                throw new SQLException();
+                return Data.checkSignUp(cmd.getUser(),false);
             }
         }
         catch (SQLException e){
             FeedBack.say("a member with username: "+user.getUsername()+ "already exists");
+            return Data.checkSignUp(cmd.getUser(),false);
         }
         try{
             bytesToFile(user.getProfilePhoto(),address);
@@ -147,9 +148,11 @@ public class CmdManager {
         }
         catch (IOException e){
             FeedBack.say("could not save profile photo of "+user.getUsername());
+            return Data.checkSignUp(cmd.getUser(),false);
         }
         catch (Exception e){
             e.printStackTrace();
+            return Data.checkSignUp(cmd.getUser(),false);
         }
 
         try {
@@ -157,23 +160,26 @@ public class CmdManager {
         }
         catch (SQLException e){
             FeedBack.say("could not add new User with username : "+user.getUsername());
+            return Data.checkSignUp(cmd.getUser(),false);
         }
+        return Data.checkSignUp(cmd.getUser(),true);
     }
 
-    public void newChannel(Command cmd){
+    public Data newChannel(Command cmd) {
         try {
-            ResultSet r = stmt.executeQuery(String.format("select count(*) as C1 from channel_members where channel='%s'",cmd.getChannel()));
+            ResultSet r = stmt.executeQuery(String.format("select count(*) as C1 from channel_members where channel='%s'", cmd.getChannel()));
             r.next();
             int count = r.getInt("C1");
-            if(count>0){
-                throw new SQLException();
+            if (count > 0) {
+                return Data.checkNewChannel(cmd.getUser(), cmd.getServer(), cmd.getChannel(), false);
+
             }
             stmt.executeUpdate(String.format("insert into channel_members values ('%s,'%s','%s',%s');", cmd.getUser(), cmd.getServer(), cmd.getChannel(), LocalDateTime.now().format(dateTimeFormatter)));
-            FeedBack.say("channel "+cmd.getChannel()+" created successfully");
-
-        }
-        catch(SQLException e){
-            FeedBack.say("could not create channel "+cmd.getChannel());
+            FeedBack.say("channel " + cmd.getChannel() + " created successfully");
+            return Data.checkNewChannel(cmd.getUser(), cmd.getServer(), cmd.getChannel(), true);
+        } catch (SQLException e) {
+            FeedBack.say("could not create channel " + cmd.getChannel());
+            return Data.checkNewChannel(cmd.getUser(), cmd.getServer(), cmd.getChannel(), false);
         }
     }
 
@@ -267,8 +273,7 @@ public class CmdManager {
         }
         return Data.reactions(cmd.getUser(),message,reactions);
     }
-    //getNewMsgs to be written
-
+    
     public Data getNewMsgs(Command cmd){
         ArrayList<Message> messages = new ArrayList<>();
         try {
@@ -433,7 +438,7 @@ public class CmdManager {
         catch (SQLException s){
             s.printStackTrace();
         }
-        return Data.blockList(cmd.getUser(),blockedBys);
+        return Data.blockedBy(cmd.getUser(),blockedBys);
     }
 
     public Data getChannelMembers(Command cmd){
@@ -492,7 +497,7 @@ public class CmdManager {
         }
     }
 
-    public void changeUsername(Command cmd){
+    public Data changeUsername(Command cmd){
         String old = cmd.getUser();
         String newName = (String) cmd.getPrimary();
 
@@ -501,7 +506,7 @@ public class CmdManager {
             r.next();
             int count = r.getInt("C1");
             if (count > 0) {
-                throw new SQLException();
+                return Data.checkChangeUsername(old,newName,false);
             }
             stmt.executeUpdate(String.format("UPDATE relationships SET sender = '%s' WHERE sender='%s';",newName,old));
             stmt.executeUpdate(String.format("UPDATE relationships SET receiver = '%s' WHERE receiver='%s';",newName,old));
@@ -513,13 +518,14 @@ public class CmdManager {
             stmt.executeUpdate(String.format("UPDATE reactions SET messagesender = '%s' WHERE messagesender='%s';",newName,old));
             stmt.executeUpdate(String.format("UPDATE server_members SET username = '%s' WHERE username='%s';",newName,old));
             stmt.executeUpdate(String.format("UPDATE users SET username = '%s' WHERE username='%s';",newName,old));
+            return Data.checkChangeUsername(old,newName,true);
         }
         catch (SQLException s){
-            s.printStackTrace();
+            return Data.checkChangeUsername(old,newName,false);
         }
     }
 
-    public void changeServerName(Command cmd){
+    public Data changeServerName(Command cmd){
         String old = cmd.getServer();
         String newName = (String) cmd.getPrimary();
 
@@ -528,33 +534,35 @@ public class CmdManager {
             r.next();
             int count = r.getInt("C1");
             if (count > 0) {
-                throw new SQLException();
+                return Data.checkChangeServerName(cmd.getUser(),old,newName,false);
             }
 
             stmt.executeUpdate(String.format("UPDATE channel_members SET server = '%s' WHERE server='%s';",newName,old));
             stmt.executeUpdate(String.format("UPDATE channel_messages SET server = '%s' WHERE server='%s';",newName,old));
             stmt.executeUpdate(String.format("UPDATE reactions SET server = '%s' WHERE server='%s';",newName,old));
             stmt.executeUpdate(String.format("UPDATE server_members SET server = '%s' WHERE server='%s';",newName,old));
+            return Data.checkChangeServerName(cmd.getUser(),old,newName,true);
         }
         catch (SQLException s){
-            s.printStackTrace();
+            return Data.checkChangeServerName(cmd.getUser(),old,newName,false);
         }
     }
 
-    public void newServer(Command cmd){
+    public Data newServer(Command cmd){
 
         try {
             ResultSet r = stmt.executeQuery(String.format("select count(*) as C1 from server_members where server='%s'",cmd.getServer()));
             r.next();
             int count = r.getInt("C1");
             if (count > 0) {
-                throw new SQLException();
+                return Data.checkNewServer(cmd.getUser(),cmd.getServer(),false);
             }
             stmt.executeUpdate(String.format("insert into server_members values('%s','%s','creator','111111111')",cmd.getUser(),cmd.getServer()));
         }
         catch (SQLException s){
-            s.printStackTrace();
+            return Data.checkNewServer(cmd.getUser(),cmd.getServer(),false);
         }
+        return Data.checkNewServer(cmd.getUser(),cmd.getServer(),true);
     }
 
     public Data getUser(Command cmd){
@@ -562,12 +570,12 @@ public class CmdManager {
         User user = null;
         try{
             ResultSet rs = stmt.executeQuery(String.format("select * from users where username='%s'",username));
-            rs.next();
-            user = new User(username,rs.getString("PASSWORD"),rs.getString("EMAIL"));
-            user.setPhoneNum(rs.getString("PHONE"));
-            user.setStatus(rs.getString("STATUS"));
-            user.setProfilePhoto(fileToBytes(rs.getString("PICTURELINK")),rs.getString("PICTUREFORMAT"));
-
+           while(rs.next()) {
+               user = new User(username, rs.getString("PASSWORD"), rs.getString("EMAIL"));
+               user.setPhoneNum(rs.getString("PHONE"));
+               user.setStatus(rs.getString("STATUS"));
+               user.setProfilePhoto(fileToBytes(rs.getString("PICTURELINK")), rs.getString("PICTUREFORMAT"));
+           }
 
         }catch (SQLException s){
 
@@ -586,6 +594,30 @@ public class CmdManager {
             e.printStackTrace();
         }
 
+    }
+
+    public Data getPinnedMsgs(Command cmd){
+        ArrayList<Message> messages = new ArrayList<>();
+        try {
+            ResultSet rs = stmt.executeQuery(String.format("select * from channel_messages where channel='%s' and server='%s' and ispinned=true order by date DESC",cmd.getChannel(),cmd.getServer()));
+            while (rs.next()){
+                if(rs.getBoolean("isfile")){
+                    byte[] bytes = fileToBytes(rs.getString("FILELINK"));
+                    FileMessage m = new FileMessage(rs.getString("SENDER"),rs.getString("SERVER"),rs.getString("CHANNEL"),rs.getTimestamp("DATE").toLocalDateTime(),rs.getString("FILENAME"),bytes,rs.getString("FILEFORMAT"));
+                    messages.add(m);
+                }
+                else{
+                    TextMessage m = new TextMessage(rs.getString("SENDER"),rs.getString("SERVER"),rs.getString("CHANNEL"),rs.getString("BODY"),rs.getTimestamp("DATE").toLocalDateTime());
+                    messages.add(m);
+                }
+            }
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
+        return Data.pinnedMsgs(cmd.getUser(),cmd.getServer(),cmd.getChannel(),messages);
     }
 
     public void banFromChannel(Command cmd){
