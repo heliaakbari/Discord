@@ -52,12 +52,14 @@ public class ClientMain {
                 // if found the condition is true
                 cmd = Command.getUser(info.get(0));
                 transfer();
-                User user = (User) data.getPrimary();
-                if (user.getPassword().equals(info.get(1)) && data.getUser().equals(info.get(0))) {
-                    currentUsername = info.get(0);
-                    return 1;
-                } else
-                    inputHandler.printMsg("incorrect username or password, try again!\npress 0 to exit");
+                if (data.getKeyword().equals("userInfo")) {
+                    User user = (User) data.getPrimary();
+                    if (user.getPassword().equals(info.get(1)) && data.getUser().equals(info.get(0))) {
+                        currentUsername = info.get(0);
+                        return 1;
+                    } else
+                        inputHandler.printMsg("incorrect username or password, try again!\npress 0 to exit");
+                }
             }
         }
     }
@@ -73,7 +75,7 @@ public class ClientMain {
                 cmd = Command.getUser(input);
                 transfer();
 
-                if (data == null) {
+                if (data.getPrimary() == null) {
                     currentUsername = input;
                     break;
                 } else
@@ -89,9 +91,12 @@ public class ClientMain {
             userInfo.setUsername(currentUsername);
             cmd = Command.newUser(userInfo);
             transfer();
-            if ((boolean) data.getPrimary())
+            if (data.getKeyword().equals("checkSignUp") && (boolean) data.getPrimary()) {
                 inputHandler.printMsg("successfully signed up.");
-            return 1;
+                return 1;
+            }
+            else
+                return 0;
         }
     }
 

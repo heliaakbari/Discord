@@ -253,4 +253,13 @@ public class Console extends InputHandler{
         }
         return roles;
     }
+
+    public int showMessages(ArrayList<Message> messages){
+        StringBuilder stringBuilder = new StringBuilder("=================================================================================\n");
+        for (Message message: messages) {
+            stringBuilder.append(messages).append("\n");
+        }
+        stringBuilder.append("press 0 to exit");
+        return showMenu(stringBuilder.toString(), messages.size());
+    }
 }
