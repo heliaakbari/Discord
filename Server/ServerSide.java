@@ -22,7 +22,7 @@ public class ServerSide {
 
     public ServerSide() {
         try {
-            serverSocket = new ServerSocket(8642);
+            serverSocket = new ServerSocket(8643);
             clientHandlers = new HashMap<>();
         } catch (IOException e) {
             e.printStackTrace();

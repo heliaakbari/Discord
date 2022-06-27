@@ -1,0 +1,54 @@
+/*C4*/SET SCHEMA PUBLIC
+DISCONNECT
+/*C5*/SET SCHEMA PUBLIC
+DISCONNECT
+/*C6*/SET SCHEMA PUBLIC
+DISCONNECT
+/*C7*/SET SCHEMA PUBLIC
+DISCONNECT
+/*C8*/SET SCHEMA PUBLIC
+DISCONNECT
+/*C9*/SET SCHEMA PUBLIC
+DISCONNECT
+/*C10*/SET SCHEMA PUBLIC
+DISCONNECT
+/*C11*/SET SCHEMA PUBLIC
+DISCONNECT
+/*C12*/SET SCHEMA PUBLIC
+DISCONNECT
+/*C13*/SET SCHEMA PUBLIC
+DISCONNECT
+/*C14*/SET SCHEMA PUBLIC
+DISCONNECT
+/*C15*/SET SCHEMA PUBLIC
+DISCONNECT
+/*C16*/SET SCHEMA PUBLIC
+DISCONNECT
+/*C18*/SET SCHEMA PUBLIC
+DISCONNECT
+/*C19*/SET SCHEMA PUBLIC
+DISCONNECT
+/*C20*/SET SCHEMA PUBLIC
+DISCONNECT
+/*C21*/SET SCHEMA PUBLIC
+truncate schema PUBLIC and commit
+drop table IF EXISTS channel_members
+drop table IF EXISTS relationships
+drop table IF EXISTS users
+drop table IF EXISTS pv_messages
+drop table IF EXISTS channel_messages
+drop table IF EXISTS server_members
+drop table IF EXISTS reactions
+CREATE TABLE IF NOT EXISTS channel_members\u000a(username VARCHAR(20) not null,\u000a server varchar(20) not null,\u000a channel varchar(20),\u000a lastseen Date)
+    ALTER TABLE channel_members\u000a    ADD CONSTRAINT  IF NOT EXISTS uniquePersonInchannel UNIQUE(username,server,channel)
+CREATE TABLE IF NOT EXISTS relationships\u000a(sender VARCHAR(20) not null,\u000a receiver varchar(20) not null,\u000a status varchar(20))
+  ALTER TABLE relationships\u000aADD CONSTRAINT  IF NOT EXISTS  uniqueRelationship UNIQUE(sender,receiver)
+CREATE TABLE IF NOT EXISTS users\u000a(username VARCHAR(20) unique not null,\u000a password varchar(20) not null,\u000a phone varchar(15),\u000a email varchar(50) unique not null,\u000a status varchar(20),\u000a pictureFormat varchar(10),\u000a picturelink varchar(200))
+CREATE TABLE IF NOT EXISTS channel_messages\u000a(sender VARCHAR(20) not null,\u000a server varchar(20) not null,\u000a channel varchar(20) not null,\u000a date TIMESTAMP not null,\u000a body varchar(1000),\u000a isPinned boolean not null,\u000a isFile boolean not null,\u000a filename varchar(20),\u000a fileformat varchar(10),\u000a filelink varchar(200))
+CREATE TABLE IF NOT EXISTS pv_messages\u000a(sender VARCHAR(20) not null,\u000a receiver varchar(20) not null,\u000a date TIMESTAMP not null,\u000a body varchar(1000),\u000a seen boolean not null,\u000a isFile boolean not null,\u000a filename varchar(20),\u000a filelink varchar(200))
+CREATE TABLE IF NOT EXISTS server_members\u000a(username VARCHAR(20) not null,\u000a server varchar(20) not null,\u000a roleName varchar(20),\u000a abilities varchar(9) not null)
+    ALTER TABLE server_members\u000a    ADD CONSTRAINT IF NOT EXISTS uniqueRole UNIQUE(username,server)
+CREATE TABLE IF NOT EXISTS reactions\u000a(reactionSender VARCHAR(20) not null,\u000a server varchar(20) not null,\u000a channel varchar(20) not null,\u000a messageDate TIMESTAMP not null,\u000a messageSender varchar(20) not null,\u000a type int not null)
+    ALTER TABLE reactions\u000a    ADD CONSTRAINT  IF NOT EXISTS uniqueReaction UNIQUE(reactionSender,messageSender,messageDate)
+INSERT INTO USERS VALUES('Helia713','2331382713','null','HELIA@GMAIL.COM','NULL','NULL','C:\DiscordFiles\profilePhoto_Helia@gmail.com.null')
+COMMIT

@@ -20,7 +20,8 @@ public class ClientMain {
         inputHandler = new Console();
 
         try {
-            socket = new Socket("localhost", 8642);
+            socket = new Socket("localhost", 8643);
+            System.out.println(socket.getInetAddress());
             out = new ObjectOutputStream(socket.getOutputStream());
             in = new ObjectInputStream(socket.getInputStream());
         } catch (IOException e) {

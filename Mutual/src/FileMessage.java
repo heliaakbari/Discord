@@ -1,10 +1,11 @@
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.nio.file.Files;
 import java.time.LocalDateTime;
 
-public class FileMessage extends Message{
+public class FileMessage extends Message implements Serializable {
 
     private String fileName;
     private String format;

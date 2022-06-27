@@ -67,6 +67,7 @@ public class Console extends InputHandler{
 
         ArrayList<String> info = new ArrayList<>();
 
+        scanner.nextLine();
         System.out.print("username -> ");
         input = scanner.nextLine();
         if (input.equals("0"))
@@ -92,7 +93,7 @@ public class Console extends InputHandler{
 
         while (!successful){
             try {
-                input = checkInput("(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])",8, 20);
+                input = checkInput("[0-9]+",8, 20);
                 if (input.equals("0"))
                     return null;
                 user.setPassword(input);
@@ -108,7 +109,7 @@ public class Console extends InputHandler{
 
         while (!successful){
             try {
-                input = checkInput("^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$",11, 20);
+                input = checkInput("^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$",11, 50);
                 if (input.equals("0"))
                     return null;
                 user.setEmail(input);
@@ -143,7 +144,7 @@ public class Console extends InputHandler{
         System.out.println("1) yes    2) no");
         option = scanner.nextInt();
         if (option == 1){
-            ArrayList<String> status = new ArrayList<>(Arrays.asList("1) online", "2) idle", "3) do not disturb", "4) invisible", "press 0 to exit"));
+            ArrayList<String> status = new ArrayList<>(Arrays.asList("online", "idle", "do_not_disturb", "invisible", "press 0 to exit"));
             int choice = showMenu(status);
             if (choice != 0)
                 user.setStatus(status.get(choice - 1));

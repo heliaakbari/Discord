@@ -1,8 +1,9 @@
 import java.io.IOException;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
-public class TextMessage extends Message {
+public class TextMessage extends Message  implements Serializable {
     private String text;
 
     public TextMessage(String sender, String text) {

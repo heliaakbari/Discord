@@ -17,13 +17,14 @@ public class Listener extends Thread{
             cmd = null;
             try {
                 cmd =(Command) in.readObject();
+                System.out.println("got a command");
+                clientHandler.getCommandFromListener(cmd);
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
 
-            clientHandler.getCommandFromListener(cmd);
         }
     }
 }

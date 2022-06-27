@@ -1,9 +1,9 @@
 
 public enum Status {
-    ONLINE,
-    IDLE,
-    DO_NOT_DISTURB,
-    INVISIBLE,
-    OFFLINE;
+    online,
+    idle,
+    do_not_disturb,
+    invisible,
+    offline;
 
 }

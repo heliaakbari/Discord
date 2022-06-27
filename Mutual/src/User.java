@@ -1,14 +1,15 @@
 
-import java.awt.image.BufferedImage;
 
-public class User {
+import java.io.Serializable;
+
+public class User  implements Serializable {
     private String username;
     private String password;
     private String phoneNum;
     private String email;
-    private Enum<Status> status;
-    private byte[] profilePhoto;
-    private String profilePhotoFormat;
+    private Enum<Status> status=null;
+    private byte[] profilePhoto=null;
+    private String profilePhotoFormat=null;
 
 
     public User (String username, String password, String email) {

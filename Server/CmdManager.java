@@ -358,8 +358,10 @@ public class CmdManager {
             return Data.checkSignUp(cmd.getUser(),false);
         }
         try{
-            bytesToFile(user.getProfilePhoto(),address);
-            FeedBack.say("profile photo of "+user.getUsername()+" is saved");
+            if(user.getProfilePhoto()!=null) {
+                bytesToFile(user.getProfilePhoto(), address);
+                FeedBack.say("profile photo of " + user.getUsername() + " is saved");
+            }
         }
         catch (IOException e){
             FeedBack.say("could not save profile photo of "+user.getUsername());
@@ -371,7 +373,7 @@ public class CmdManager {
         }
 
         try {
-            stmt.executeUpdate(String.format("insert into users values ('%s','%s','%s','%S','%S','%S');", user.getUsername(), user.getPassword(), user.getPhoneNum(), user.getEmail(), user.getStatus() == null ? null : user.getStatus().toString(),user.getProfilePhotoFormat(),address));
+            stmt.executeUpdate(String.format("insert into users values ('%s','%s','%s','%S','%S','%S','%s');", user.getUsername(), user.getPassword(), user.getPhoneNum(), user.getEmail(), user.getStatus() == null ? null : user.getStatus().toString(),user.getProfilePhotoFormat(),address));
         }
         catch (SQLException e){
             FeedBack.say("could not add new User with username : "+user.getUsername());

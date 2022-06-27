@@ -1,14 +1,15 @@
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class Data {
+public class Data  implements Serializable {
     private String keyword;
     private String user;
     private String server;
     private String channel;
-    private Object primary;
-    private Object secondary;
+    private Serializable primary;
+    private Serializable secondary;
 
     private Data(String keyword){
         this.keyword=keyword;
@@ -85,7 +86,7 @@ public class Data {
         return data;
     }
 
-    public static Data checkNewRelation(String user,Object relation, Boolean created){
+    public static Data checkNewRelation(String user,Relationship relation, Boolean created){
         Data data = new Data("checkNewRelation");
         data.user = user;
         data.primary = created;

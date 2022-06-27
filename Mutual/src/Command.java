@@ -1,6 +1,7 @@
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Command {
+public class Command implements Serializable {
     /**
      * possible keywords : newMsg,newUser, newServer, newChannel, newRequest, newReaction,
      * getNewMsgs, getRequests, getChannelMsg, getPvMsgs, getChannelMembers, getServerMembers
@@ -10,8 +11,8 @@ public class Command {
     private String server;
     private String channel;
     private String user;
-    private Object primary;
-    private Object secondary;
+    private Serializable primary;
+    private Serializable secondary;
 
     public String getKeyword() {
         return keyword;

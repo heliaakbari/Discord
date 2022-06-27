@@ -1,6 +1,6 @@
+import java.io.Serializable;
 
-
-public enum Relationship {
+public enum Relationship  implements Serializable {
     Friend,
     Block,
     Friend_pending,

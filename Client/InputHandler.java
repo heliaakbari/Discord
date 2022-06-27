@@ -1,7 +1,8 @@
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public abstract class InputHandler {
+public abstract class InputHandler  implements Serializable {
 
     public abstract int showMenu(String menu, int options);
     public abstract int showMenu(ArrayList<String> menu);
