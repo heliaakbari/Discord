@@ -106,6 +106,22 @@ public class CmdManager {
         return Data.directChats(cmd.getUser(),chatsArray);
     }
 
+    public Data login(Command cmd){
+        try {
+           ResultSet rs = stmt.executeQuery(String.format("select count(*) as C1 from users where username='%s' and password='%s'",cmd.getUser(),(String)cmd.getPrimary()));
+            rs.next();
+            if(rs.getInt("C1")>0){
+                return Data.checkLogin(cmd.getUser(),false);
+            }
+            else {
+                return Data.checkLogin(cmd.getUser(),true);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return Data.checkLogin(cmd.getUser(),false);
+        }
+    }
+
     public void newPvMsg(Command cmd){
         String sender = cmd.getUser();
         String receiver=(String) cmd.getSecondary();
