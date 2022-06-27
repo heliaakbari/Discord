@@ -71,6 +71,14 @@ public class Command {
         cmd.primary=user;
         return cmd;
     }
+
+    public static Command login(String username,String password) {
+        Command cmd = new Command("login");
+        cmd.user = username;
+        cmd.primary = password;
+        return cmd;
+    }
+
     //for new channel : keyword: newChannel server= server's name  channel= new channel's name   user= creator's name
     public static Command newChannel(String creator, String server, String channel){
         Command cmd = new Command("newChannel");
@@ -300,6 +308,21 @@ public class Command {
 
     public static Command getDirectChats(String user){
         Command cmd = new Command("getDirectChats");
+        cmd.user = user;
+        return cmd;
+    }
+
+    public static Command tellPv(String user, String otherPerson){
+        Command cmd = new Command("tellPv");
+        cmd.user = user;
+        cmd.primary = otherPerson;
+        return cmd;
+    }
+
+    public static Command tellChannel(String user,String server,String channel){
+        Command cmd = new Command("tellChannel");
+        cmd.channel = channel;
+        cmd.server = server;
         cmd.user = user;
         return cmd;
     }
