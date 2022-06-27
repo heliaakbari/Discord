@@ -17,7 +17,7 @@ public class ServerSide {
     private DatabaseManager dbm = new DatabaseManager();
     //first one is the person and the other is their friend
     private HashMap<String,String> activePvs= new HashMap<>();
-    //first one is the user and the other is server/channel form
+    //first one is the user and the other is array [server,channel] form
     private HashMap<String,ArrayList<String>> activeChannels= new HashMap<>();
 
     public ServerSide() {
@@ -50,6 +50,7 @@ public class ServerSide {
             try {
                 clientHandler = new ClientHandler(client, in, out, this);
                 Thread thread = new Thread(clientHandler);
+                thread.getId()
                 thread.start();
             } catch (SocketException e) {
                 System.out.println("client disconnected successfully");
@@ -63,6 +64,34 @@ public class ServerSide {
 
     public Data moveCmd(Command cmd,ClientHandler clientHandler){
         Data dt = dbm.cmdManager.process(cmd);
+        switch (dt.getKeyword()){
+            case "checkSignUp" :
+            case "checkLogin" :
+                if (((boolean)dt.getPrimary())){
+                    addClientHandler(dt.getUser(),clientHandler);
+                }
+            break;
+            case "checkChangeUsername":
+                if (((boolean)dt.getPrimary())){
+                   if (clientHandlers.containsKey(dt.getUser())){
+                       ClientHandler ch = clientHandlers.get(dt.getUser();
+                       clientHandlers.remove(dt.getUser());
+                       clientHandlers.put((String) dt.getSecondary(),ch);
+                   }
+
+                   if(activePvs.containsKey(dt.getUser())){
+                       String theOther = activePvs.get(dt.getUser());
+                       activePvs.remove(dt.getUser());
+                       activePvs.put((String) dt.getSecondary(),theOther);
+                   }
+
+                   else if(activeChannels.containsKey(dt.getUser())){
+                       ArrayList<String> place = activeChannels.get(dt.getUser());
+                       activeChannels.remove(dt.getUser());
+                       activeChannels.put((String)dt.getSecondary(),place);
+                   }
+                }
+        }
         return dt;
     }
 

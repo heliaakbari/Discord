@@ -8,7 +8,6 @@ import java.net.SocketException;
 public class ClientHandler extends Thread{
     private Socket client;
     private ServerSide serverSide;
-    private String threadID;
     private ObjectOutputStream out;
     private ObjectInputStream in;
 
@@ -36,7 +35,11 @@ public class ClientHandler extends Thread{
     }
 
     public void sendInstantMessage(Data dt){
-
+        try {
+            out.writeObject(dt);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }
