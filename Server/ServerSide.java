@@ -50,7 +50,6 @@ public class ServerSide {
             try {
                 clientHandler = new ClientHandler(client, in, out, this);
                 Thread thread = new Thread(clientHandler);
-                thread.getId()
                 thread.start();
             } catch (SocketException e) {
                 System.out.println("client disconnected successfully");
@@ -74,7 +73,7 @@ public class ServerSide {
             case "checkChangeUsername":
                 if (((boolean)dt.getPrimary())){
                    if (clientHandlers.containsKey(dt.getUser())){
-                       ClientHandler ch = clientHandlers.get(dt.getUser();
+                       ClientHandler ch = clientHandlers.get(dt.getUser());
                        clientHandlers.remove(dt.getUser());
                        clientHandlers.put((String) dt.getSecondary(),ch);
                    }
@@ -91,6 +90,69 @@ public class ServerSide {
                        activeChannels.put((String)dt.getSecondary(),place);
                    }
                 }
+            break;
+            case "checkChangeServerName":
+                for (HashMap.Entry<String, ArrayList<String>> set :
+                        activeChannels.entrySet()) {
+                    if(set.getValue().get(0).equals(dt.getServer())){
+                        ArrayList<String> newPlace = new ArrayList<>();
+                        newPlace.add((String) dt.getSecondary());
+                        newPlace.add(set.getValue().get(1));
+                        activeChannels.replace(set.getKey(),newPlace);
+                    }
+                }
+            break;
+
+            case "checkDeleteChannel":
+                if(((boolean) dt.getPrimary())==true){
+                    for (HashMap.Entry<String, ArrayList<String>> set :
+                            activeChannels.entrySet()) {
+                        if(set.getValue().get(0).equals(dt.getServer()) && set.getValue().get(1).equals(dt.getChannel())){
+                            activeChannels.remove(set);
+                        }
+                    }
+                }
+            break;
+
+            case "checkDeleteServer":
+                if(((boolean) dt.getPrimary())==true){
+                    for (HashMap.Entry<String, ArrayList<String>> set :
+                            activeChannels.entrySet()) {
+                        if(set.getValue().get(0).equals(dt.getServer()) ){
+                            activeChannels.remove(set);
+                        }
+                    }
+                }
+            break;
+        }
+
+        switch (cmd.getKeyword()){
+            case "lastseenPv":
+                activePvs.remove(cmd.getUser());
+            break;
+
+            case "lastseenChannel":
+                activeChannels.remove(cmd.getUser());
+            break;
+
+            case "tellPv":
+                activePvs.put(cmd.getUser(),(String)cmd.getPrimary());
+            break;
+
+            case "tellChannel":
+                ArrayList<String> place = new ArrayList<>();
+                place.add(cmd.getServer());
+                place.add(cmd.getChannel());
+                activeChannels.put(cmd.getUser(),place);
+            break;
+
+            case "newPvMsg" :
+                instantPvMsg(cmd);
+            break;
+
+            case "newChannelMsg" :
+                instantChannelMsg(cmd);
+            break;
         }
         return dt;
     }

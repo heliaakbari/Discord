@@ -28,8 +28,130 @@ public class CmdManager {
     }
 
     public Data process(Command cmd){
-        
-    return null;}
+        Data dt = Data.fake();
+        switch (cmd.getKeyword()){
+            case "newPvMsg":
+                newPvMsg(cmd);
+                break;
+            case "changeProfilePhoto":
+                changeProfilePhoto(cmd);
+                break;
+            case "newChannelMsg" :
+                newChannelMsg(cmd);
+                break;
+            case "newUser" :
+                dt = newUser(cmd);
+                break;
+            case "login":
+                dt = login(cmd);
+                break;
+            case "newChannel":
+                dt = newChannel(cmd);
+                break;
+            case "getPinnedMsgs":
+                dt = getPinnedMsgs(cmd);
+                break;
+            case "newRelation":
+                newRelation(cmd);
+                break;
+            case "newReaction":
+                newReaction(cmd);
+                break;
+            case "getNewMsgs":
+                dt = getNewMsgs(cmd);
+                break;
+            case "getRequests":
+                dt = getRequests(cmd);
+                break;
+            case "getFriends":
+                dt = friends(cmd);
+                break;
+            case "getBlockList":
+                dt = getBlockList(cmd);
+                break;
+            case "getBlockedBy":
+                dt = getBlockedBy(cmd);
+                break;
+            case "getReactions":
+                dt = getReactions(cmd);
+                break;
+            case "getChannelMsgs":
+                dt = getChannelMsgs(cmd);
+                break;
+            case "getPvMsgs":
+                dt = getPvMsgs(cmd);
+                break;
+            case "getChannelMembers":
+                dt = getChannelMsgs(cmd);
+                break;
+            case "getServerMembers":
+                dt = serverMembers(cmd);
+                break;
+            case "deleteServer":
+                dt = deleteServer(cmd);
+                break;
+            case "deleteChannel":
+                dt = deleteChannel(cmd);
+                break;
+            case "changeUsername":
+                dt = changeUsername(cmd);
+                break;
+            case "changeServername":
+                dt = changeServerName(cmd);
+                break;
+            case "newServer":
+                dt = newServer(cmd);
+                break;
+            case "banFromChannel":
+                banFromChannel(cmd);
+                break;
+            case "changeRole":
+                changeRole(cmd);
+                break;
+            case "addOneMemberToChannel":
+                addOneMemberToChannel(cmd);
+                break;
+            case "addPeopleToServer":
+                addPeopleToServer(cmd);
+                break;
+            case "banFromServer":
+                banFromServer(cmd);
+                break;
+            case "userServers":
+                dt = userServers(cmd);
+                break;
+            case "userChannels":
+                dt = userChannels(cmd);
+                break;
+            case "getUser":
+                dt = getUser(cmd);
+                break;
+            case "pinMsg":
+                pinMsg(cmd);
+                break;
+            case "getDirectChats":
+                dt = getDirectChats(cmd);
+                break;
+            case "tellPv":
+                break;
+            case "tellChannel":
+                break;
+            case "getRole":
+               dt = getRole(cmd);
+               break;
+            case "lastSeenAll":
+                lastseenAll(cmd);
+                break;
+            case "lastseenPv":
+                lastseenPv(cmd);
+                break;
+            case "lastseenChannel":
+                lastseenChannel(cmd);
+                break;
+        }
+
+        return dt;
+    }
 
     public void addPeopleToServer(Command cmd){
         ArrayList<String> people =(ArrayList<String>) cmd.getPrimary();
@@ -183,7 +305,7 @@ public class CmdManager {
         }
     }
 
-    public void NewChannelMsg(Command cmd){
+    public void newChannelMsg(Command cmd){
         String sender = cmd.getUser();
         Message message1 = (Message) cmd.getPrimary();
         String server=message1.getSourceInfo().get(1);
@@ -567,7 +689,7 @@ public class CmdManager {
         return Data.serverMembers(cmd.getUser(),cmd.getServer(),members);
     }
 
-    public void deleteServer(Command cmd){
+    public Data deleteServer(Command cmd){
         try{
             stmt.executeUpdate(String.format("Delete from server_members where server='%s'",cmd.getServer()));
             stmt.executeUpdate(String.format("Delete from channel_messages where server='%s'",cmd.getServer()));
@@ -576,10 +698,12 @@ public class CmdManager {
         }
         catch (SQLException s){
             s.printStackTrace();
+            return Data.checkDeleteServer(cmd.getServer(),false);
         }
+        return Data.checkDeleteServer(cmd.getServer(),true);
     }
 
-    public void deleteChannel(Command cmd){
+    public Data deleteChannel(Command cmd){
         try{
             stmt.executeUpdate(String.format("Delete from channel_messages where server='%s' and channel='%s'",cmd.getServer(),cmd.getChannel()));
             stmt.executeUpdate(String.format("Delete from channel_members where server='%s' and channel='%s'",cmd.getServer(),cmd.getChannel()));
@@ -587,7 +711,9 @@ public class CmdManager {
         }
         catch (SQLException s){
             s.printStackTrace();
+            return Data.checkDeleteChannel(cmd.getServer(),cmd.getChannel(),false);
         }
+        return Data.checkDeleteChannel(cmd.getServer(),cmd.getChannel(),true);
     }
 
     public Data changeUsername(Command cmd){
