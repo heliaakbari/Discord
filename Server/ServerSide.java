@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class ServerSide {
-    //private Inventory inventory;
+
     private ServerSocket serverSocket;
     private HashMap<String,ClientHandler> clientHandlers;
     private Socket client;
@@ -50,7 +50,7 @@ public class ServerSide {
             try {
                 clientHandler = new ClientHandler(client, in, out, this);
                 Thread thread = new Thread(clientHandler);
-                thread.getId()
+                thread.getId();
                 thread.start();
             } catch (SocketException e) {
                 System.out.println("client disconnected successfully");
@@ -74,7 +74,7 @@ public class ServerSide {
             case "checkChangeUsername":
                 if (((boolean)dt.getPrimary())){
                    if (clientHandlers.containsKey(dt.getUser())){
-                       ClientHandler ch = clientHandlers.get(dt.getUser();
+                       ClientHandler ch = clientHandlers.get(dt.getUser());
                        clientHandlers.remove(dt.getUser());
                        clientHandlers.put((String) dt.getSecondary(),ch);
                    }
