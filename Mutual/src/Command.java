@@ -164,6 +164,7 @@ public class Command {
         cmd.secondary= numberOfMessages;
         return cmd;
     }
+
     //for getting list of channel members:keyword=getChannelMembers user = username, server = server,
     //channel=channel
     public static Command getChannelMembers(String user,String server, String channel){
@@ -181,9 +182,6 @@ public class Command {
         cmd.server= server;
         return cmd;
     }
-
-
-
 
     //for deleting server: keyword=deleteServer, user= user, server=server
     public static Command deleteServer(String user,String server){

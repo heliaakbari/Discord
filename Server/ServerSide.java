@@ -7,7 +7,9 @@ import java.net.SocketException;
 import java.util.ArrayList;
 
 public class ServerSide {
-    //private Inventory inventory;
+    // مقداردهی اولیه با هلیا
+    private DatabaseManager dbManager;
+
     private ServerSocket serverSocket;
     private ArrayList<ClientHandler> clientHandlers;
     private Socket client;
@@ -27,7 +29,6 @@ public class ServerSide {
     public void startServer(){
 
         while (true) {
-
             // making connection with client
             System.out.println("waiting for connection");
             try {
@@ -42,7 +43,7 @@ public class ServerSide {
             // creating new thread for handling new connection
             ClientHandler clientHandler;
             try {
-                clientHandler = new ClientHandler(client, this);
+                clientHandler = new ClientHandler(client, this,String.valueOf(clientHandlers.size() + 1) );
                 clientHandlers.add(clientHandler);
                 Thread thread = new Thread(clientHandler);
                 thread.start();
