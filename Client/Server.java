@@ -60,13 +60,21 @@ public class Server {
                 if (action == 1) {
                     inputHandler.printMsg("you can type your messages now, to react to a message type the message number and then your reaction.\n" +
                             "to send a file type 'send file'. to download a file type 'open file <file name>'. press 0 to exit the chat");
+                    cmd = Command.tellChannel(currentUsername, currentServerName, channelName);
+                    transfer();
                     // transfer messages with server
                     MessageReader messageReader = new MessageReader(in, inputHandler);
                     messageReader.start();
 
                     MessageWriter messageWriter = new MessageWriter(out, new ArrayList<>(Arrays.asList(currentUsername, channelName, currentServerName)));
                     messageWriter.start();
-                } else if (action == 2) {
+
+                    if (!messageReader.isAlive() && !messageWriter.isAlive()){
+                        cmd = Command.lastseenChannel(currentUsername,currentServerName, channelName);
+                        transfer();
+                    }
+                }
+                else if (action == 2) {
                     // creat a command to get the members
                     cmd = Command.getChannelMembers(currentUsername, currentServerName, channelName);
                     transfer();

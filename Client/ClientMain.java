@@ -50,16 +50,12 @@ public class ClientMain {
             else {
                 // create command
                 // if found the condition is true
-                cmd = Command.getUser(info.get(0));
+                cmd = Command.login(info.get(0), info.get(1));
                 transfer();
-                if (data.getKeyword().equals("userInfo")) {
-                    User user = (User) data.getPrimary();
-                    if (user.getPassword().equals(info.get(1)) && data.getUser().equals(info.get(0))) {
-                        currentUsername = info.get(0);
-                        return 1;
-                    } else
-                        inputHandler.printMsg("incorrect username or password, try again!\npress 0 to exit");
-                }
+                if (data.getKeyword().equals("checkLogin") && (boolean) data.getPrimary())
+                    return 1;
+                else
+                    inputHandler.printMsg("incorrect username or password, try again!\npress 0 to exit");
             }
         }
     }
@@ -94,17 +90,16 @@ public class ClientMain {
             if (data.getKeyword().equals("checkSignUp") && (boolean) data.getPrimary()) {
                 inputHandler.printMsg("successfully signed up.");
                 return 1;
-            }
-            else
+            } else
                 return 0;
         }
     }
 
-    public static void transfer(){
+    public static void transfer() {
         try {
             out.writeObject(cmd);
             data = (Data) in.readObject();
-        } catch (IOException | ClassNotFoundException e){
+        } catch (IOException | ClassNotFoundException e) {
             inputHandler.printError(e);
         }
     }

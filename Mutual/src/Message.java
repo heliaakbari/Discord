@@ -1,9 +1,6 @@
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class Message implements Serializable {
 
@@ -72,5 +69,13 @@ public class Message implements Serializable {
 
     public ArrayList<String> getSourceInfo() {
         return sourceInfo;
+    }
+
+    public String reactions(){
+        StringBuilder stringBuilder = new StringBuilder();
+        for (Map.Entry<String, Integer> reaction: reactions.entrySet()) {
+            stringBuilder.append(reaction.getValue()).append(" ").append(reaction.getKey()).append("    ");
+        }
+        return stringBuilder.toString();
     }
 }

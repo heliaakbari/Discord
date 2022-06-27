@@ -53,6 +53,8 @@ public class Discord {
             inputHandler.printMsg("INBOX");
             inputHandler.showMessages(messages);
         }
+        cmd = Command.lastseenAll(currentUsername);
+        transfer();
 
     }
 
@@ -124,6 +126,8 @@ public class Discord {
             if (choice == 0)
                 break;
 
+            cmd = Command.tellPv(currentUsername, directChats.get(choice - 1));
+            transfer();
             cmd = Command.getPvMsgs(currentUsername, directChats.get(choice - 1), 10);
             transfer();
 
@@ -141,7 +145,13 @@ public class Discord {
 
             MessageWriter messageWriter = new MessageWriter(out, currentUsername, directChats.get(choice - 1));
             messageWriter.start();
+
+            if (!messageReader.isAlive() && !messageWriter.isAlive()) {
+                cmd = Command.lastseenPv(currentUsername, directChats.get(choice - 1));
+                transfer();
+            }
         }
+
 
     }
 

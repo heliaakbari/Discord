@@ -54,6 +54,9 @@ public class FileMessage extends Message{
 
     @Override
     public String toString() {
-        return super.getSourceInfoAsString() + " a file";
+        if (super.getSourceInfo().size() > 1)
+            return super.getSourceInfoAsString() + " a file\n" + super.reactions();
+        else
+            return super.getSourceInfoAsString() + " a file";
     }
 }
