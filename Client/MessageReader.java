@@ -1,5 +1,4 @@
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 
 public class MessageReader extends Thread{
@@ -22,7 +21,7 @@ public class MessageReader extends Thread{
             } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();
             }
-            inputHandler.printMsg((String) data.getPrimary());
+
         }
 
     }

@@ -1,5 +1,6 @@
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 public class TextMessage extends Message {
     private String text;
@@ -20,10 +21,11 @@ public class TextMessage extends Message {
         this.text = text;
     }
 
-    public TextMessage(String sender, String server, String channel, String text){
-        super(sender,channel , server);
+    public TextMessage(ArrayList<String> sourceInfo, String text){
+        super(sourceInfo);
         this.text = text;
     }
+
 
     public String getText() {
         return text;

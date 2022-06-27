@@ -13,28 +13,29 @@ public class Server {
     private Command cmd;
     private Data data;
 
-    public Server(String name, ObjectOutputStream out, ObjectInputStream in){
+    public Server(String name, ObjectOutputStream out, ObjectInputStream in) {
         currentServerName = name;
         inputHandler = new Console();
         this.out = out;
         this.in = in;
     }
 
-    public void enterServer(String currentUsername){
+    public void enterServer(String currentUsername) {
         // دوتا اپشن لیست قابلیت ها و لیست کانال ها برای کاربر تو هر سرور نمایش داده میشه
         int choice;
         do {
-             choice = inputHandler.showMenu("1) actions list\n2) channels list\npress 0 to exit ", 2);
-             if (choice == 1)
-                 actionsList(currentUsername);
-             else if (choice == 2)
-                 channelsList(currentUsername);
+            choice = inputHandler.showMenu("1) actions list\n2) channels list\npress 0 to exit ", 2);
+            if (choice == 1)
+                if (actionsList(currentUsername) == -1)
+                    break;
+                else if (choice == 2)
+                    channelsList(currentUsername);
 
         } while (choice != 0);
 
     }
 
-    public void channelsList(String currentUsername){
+    public void channelsList(String currentUsername) {
 
         // create a command to get a list of channels in this server
         cmd = Command.userChannels(currentUsername, currentServerName);
@@ -61,8 +62,7 @@ public class Server {
 
                     MessageWriter messageWriter = new MessageWriter(out, new ArrayList<>(Arrays.asList(currentUsername, channelName, currentServerName)));
                     messageWriter.start();
-                }
-                else if (action == 2) {
+                } else if (action == 2) {
                     // creat a command to get the members
                     cmd = Command.getChannelMembers(currentUsername, currentServerName, channelName);
                     transfer();
@@ -70,11 +70,11 @@ public class Server {
                     members.add("add new member to channel");
 
                     int option = inputHandler.showMenu(members);
-                    if (option == members.size()){
+                    if (option == members.size()) {
                         String newMember = inputHandler.receiveData("type the username that you want to add to channel");
-                        cmd = Command.addOneMemberToChannel(currentUsername,newMember, currentServerName,channelName);
+                        cmd = Command.addOneMemberToChannel(currentUsername, newMember, currentServerName, channelName);
                         transfer();
-                        if (data.getKeyword().equals("checkNewChannel") && (boolean) data.getPrimary()){
+                        if (data.getKeyword().equals("checkNewChannel") && (boolean) data.getPrimary()) {
                             inputHandler.printMsg("member successfully added to channel");
                         } else {
                             inputHandler.printMsg("something went wrong. try again later");
@@ -87,7 +87,7 @@ public class Server {
         } while (choice != 0);
     }
 
-    public void actionsList(String currentUsername){
+    public int actionsList(String currentUsername) {
         int action;
         do {
             // create a command to get user abilities in this server
@@ -95,19 +95,91 @@ public class Server {
             transfer();
             Role role = (Role) data.getPrimary();
             ArrayList<String> actions = role.getAvailableAbilities();
+            actions.add("press 0 to exit");
+
             action = inputHandler.showMenu(actions);
             // create the command, for the keyword use the value in the abilities arrayList, to get the value use action - 1 index
+            switch (actions.get(action - 1)) {
+                case "create channel":
+                    String newChannel = inputHandler.receiveData("enter channel name");
+                    cmd = Command.newChannel(currentUsername, currentServerName, newChannel);
+                    transfer();
+                    break;
+                case "remove channel":
+                    String removableChannel = inputHandler.receiveData("enter channel name to be deleted");
+                    cmd = Command.deleteChannel(currentUsername, currentServerName, removableChannel);
+                    transfer();
+                    break;
+                case "remove member":
+                    String person = inputHandler.receiveData("who do you want  to remove?");
+                    cmd = Command.banFromServer(person, currentServerName);
+                    transfer();
+                    break;
+                case "restrict member":
+                    person = inputHandler.receiveData("type the username you want to ban");
+                    String channel = inputHandler.receiveData("type the channel you want to ban this person from");
+                    cmd = Command.banFromChannel(person, currentServerName, channel);
+                    transfer();
+                    break;
+                case "ban member":
+                    person = inputHandler.receiveData("type the username you want to ban from server");
+                    cmd = Command.banFromServer(person, currentServerName);
+                    transfer();
+                    break;
+                case "change sever name":
+                    String newName = inputHandler.receiveData("type the new name for the server");
+                    cmd = Command.changeServerName(currentUsername, currentServerName, newName);
+                    transfer();
+                    currentServerName = newName;
+                    break;
+                case "see chat history ":
+                    chatHistory(currentUsername);
+                    break;
+                case "pin message ":
+                    Message message = chatHistory(currentUsername);
+                    if (message != null) {
+                        cmd = Command.pinMsg(currentUsername, message);
+                        transfer();
+                    }
+                    break;
+                case "delete server":
+                    cmd = Command.deleteServer(currentUsername, currentServerName);
+                    transfer();
+                    return -1;
+            }
 
         } while (action != 0);
 
+        return 0;
     }
 
-    private void transfer(){
+    private Message chatHistory(String currentUsername) {
+        String channel = inputHandler.receiveData("type a channel name to see chat history");
+
+        cmd = Command.getChannelMsgs(currentUsername, currentServerName, channel, 10);
+        transfer();
+        ArrayList<Message> recentMessages = (ArrayList<Message>) data.getPrimary();
+
+        StringBuilder stringBuilder = new StringBuilder();
+        for (Message message : recentMessages) {
+            stringBuilder.append(message).append("    ").append(message.getDateTime());
+        }
+        stringBuilder.append("press 0 to exit");
+        int messageNum = inputHandler.showMenu(stringBuilder.toString(), recentMessages.size());
+        if (messageNum == 0)
+            return null;
+        else
+            return recentMessages.get(messageNum - 1);
+    }
+
+    private void transfer() {
         try {
             out.writeObject(cmd);
             data = (Data) in.readObject();
-        } catch (IOException | ClassNotFoundException e){
+        } catch (IOException | ClassNotFoundException e) {
             inputHandler.printError(e);
         }
     }
+
+
 }

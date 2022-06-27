@@ -30,6 +30,14 @@ public class Message implements Serializable {
         reactions.put("laugh", 0);
     }
 
+    public Message (ArrayList<String> sourceInfo){
+        this.sourceInfo = sourceInfo;
+        dateTime = LocalDateTime.now();
+        reactions.put("like", 0);
+        reactions.put("dislike", 0);
+        reactions.put("laugh", 0);
+    }
+
     //for database to message
     public Message(String sender,LocalDateTime date) {
         sourceInfo = new ArrayList<>(List.of(sender));

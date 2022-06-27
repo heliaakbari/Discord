@@ -51,12 +51,7 @@ public class ClientMain {
                 // create command
                 // if found the condition is true
                 cmd = Command.getUser(info.get(0));
-                try {
-                    out.writeObject(cmd);
-                    data = (Data) in.readObject();
-                } catch (IOException | ClassNotFoundException e) {
-                    inputHandler.printError(e);
-                }
+                transfer();
                 User user = (User) data.getPrimary();
                 if (user.getPassword().equals(info.get(1)) && data.getUser().equals(info.get(0))) {
                     currentUsername = info.get(0);
@@ -76,12 +71,7 @@ public class ClientMain {
             else {
                 // create command, if not found condition is true
                 cmd = Command.getUser(input);
-                try {
-                    out.writeObject(cmd);
-                    data = (Data) in.readObject();
-                } catch (IOException | ClassNotFoundException e) {
-                    inputHandler.printError(e);
-                }
+                transfer();
 
                 if (data == null) {
                     currentUsername = input;
@@ -98,15 +88,19 @@ public class ClientMain {
             // command to add new user to database
             userInfo.setUsername(currentUsername);
             cmd = Command.newUser(userInfo);
-            try {
-                out.writeObject(cmd);
-                data = (Data) in.readObject();
-            } catch (IOException | ClassNotFoundException e) {
-                inputHandler.printError(e);
-            }
+            transfer();
             if ((boolean) data.getPrimary())
                 inputHandler.printMsg("successfully signed up.");
             return 1;
+        }
+    }
+
+    public static void transfer(){
+        try {
+            out.writeObject(cmd);
+            data = (Data) in.readObject();
+        } catch (IOException | ClassNotFoundException e){
+            inputHandler.printError(e);
         }
     }
 }

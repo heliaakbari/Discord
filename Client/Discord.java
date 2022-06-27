@@ -4,9 +4,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class Discord {
 
@@ -47,19 +45,14 @@ public class Discord {
 
     public void getInbox(){
         cmd = Command.getNewMsgs(currentUsername);
-        try {
-            out.writeObject(cmd);
-            data = (Data) in.readObject();
-        } catch (IOException | ClassNotFoundException e){
-            inputHandler.printError(e);
-        }
+        transfer();
         ArrayList<Message> messages = (ArrayList<Message>) data.getPrimary();
 
         // creating a list of messages and passing it to inputHandler to be printed
         StringBuilder stringBuilder = new StringBuilder("INBOX");
         stringBuilder.append("=============================================================================================\n");
         for (Message message : messages) {
-            stringBuilder.append(message);
+            stringBuilder.append(message).append("\n");
         }
         stringBuilder.append("=============================================================================================\n");
         inputHandler.printMsg(stringBuilder.toString());
@@ -69,12 +62,7 @@ public class Discord {
 
         // create a command to get a list of servers
         cmd = Command.userServers(currentUsername);
-        try {
-            out.writeObject(cmd);
-            data = (Data) in.readObject();
-        } catch (IOException | ClassNotFoundException e){
-            inputHandler.printError(e);
-        }
+        transfer();
         ArrayList<String> serversList = (ArrayList<String>) data.getPrimary();
         serversList.add("create new server");
         serversList.add("press 0 to exit");
@@ -117,7 +105,34 @@ public class Discord {
     }
 
     public void enterDirectMessages(){
+        cmd = Command.getDirectChats(currentUsername);
+        transfer();
+        ArrayList<String> directChats = new ArrayList<>();
+        if (data.getKeyword().equals("directChats"))
+            directChats = (ArrayList<String>) data.getPrimary();
+        directChats.add("press 0 to exit");
 
+        while (true) {
+            int choice = inputHandler.showMenu(directChats);
+            if (choice == 0)
+                break;
+
+            cmd = Command.getPvMsgs(currentUsername, directChats.get(choice - 1), 10);
+            transfer();
+            ArrayList<Message> recentMessages = (ArrayList<Message>) data.getPrimary();
+            StringBuilder stringBuilder = new StringBuilder();
+            for (Message message: recentMessages) {
+                stringBuilder. append(message).append("\n");
+            }
+            stringBuilder.append("press 0 to exit");
+            inputHandler.showMenu(stringBuilder.toString(), recentMessages.size());
+
+            MessageReader messageReader = new MessageReader(in, inputHandler);
+            messageReader.start();
+
+            MessageWriter messageWriter = new MessageWriter(out, currentUsername, directChats.get(choice - 1));
+            messageWriter.start();
+        }
 
     }
 
@@ -270,12 +285,13 @@ public class Discord {
                         String newUsername = inputHandler.usernameValidation();
                         if (newUsername.equals("0"))
                             break;
-                        // create a command to check if it exists if not found the condition is true
+                        // create a command to check if it exists
                         cmd = Command.getUser(newUsername);
                         transfer();
                         if (data.getPrimary() == null){
                             // create a command to set the new username
                             cmd = Command.changeUsername(currentUsername, newUsername);
+                            transfer();
                             currentUsername = newUsername;
                             break;
                         }
