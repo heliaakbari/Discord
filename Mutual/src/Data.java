@@ -48,6 +48,12 @@ public class Data {
         return data;
     }
 
+    public static Data checkLogin(String user, boolean isLoggedIn){
+        Data data = new Data("checkLogin");
+        data.user = user;
+        data.primary = isLoggedIn;
+        return data;
+    }
     /**
      * returns if the new channel was successfully created
      */
@@ -72,6 +78,19 @@ public class Data {
         Data data = new Data("newMsgs");
         data.user = user;
         data.primary = messages;
+        return data;
+    }
+
+    public static Data newChannelMsg(String server,String channel,Message msg){
+        Data data = new Data("newChannelMsg");
+        data.server = server;
+        data.channel = channel;
+        return data;
+    }
+
+    public static Data newPvMsg(String receiver,Message msg){
+        Data data = new Data("newChannelMsg");
+        data.user = receiver;
         return data;
     }
 
