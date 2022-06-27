@@ -74,10 +74,14 @@ public class User  implements Serializable {
 
     @Override
     public String toString() {
-        return "User{" +
-                "username='" + username + '\'' +
-                ", phoneNum='" + phoneNum + '\'' +
-                ", status=" + status +
-                '}';
+       StringBuilder stringBuilder = new StringBuilder("======================================\n");
+       stringBuilder.append("username : ").append(username).append("\n");
+       if (phoneNum != null)
+           stringBuilder.append("phone number : ").append(phoneNum).append("\n");
+       if (status != null)
+           stringBuilder.append("status : ").append(status).append("\n");
+       stringBuilder.append("======================================\n");
+
+       return stringBuilder.toString();
     }
 }

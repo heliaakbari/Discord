@@ -10,7 +10,7 @@ public class Console extends InputHandler{
 
     protected int checkInput(int numberOfChoices) throws Exception {
         int choice;
-        choice = scanner.nextInt();
+        choice = Integer.parseInt(scanner.nextLine());
         if (choice == 0)
             return 0;
         if (choice < 1 || choice > numberOfChoices)
@@ -43,7 +43,7 @@ public class Console extends InputHandler{
     public int showMenu(ArrayList<String> menu){
         int optionNumber = 1;
         for (String option: menu) {
-            System.out.println(optionNumber + option);
+            System.out.println(optionNumber + ") " + option);
             optionNumber++;
         }
         return getUserOption(optionNumber - 1);
@@ -67,7 +67,6 @@ public class Console extends InputHandler{
 
         ArrayList<String> info = new ArrayList<>();
 
-        scanner.nextLine();
         System.out.print("username -> ");
         input = scanner.nextLine();
         if (input.equals("0"))
@@ -93,7 +92,7 @@ public class Console extends InputHandler{
 
         while (!successful){
             try {
-                input = checkInput("[0-9]+",8, 20);
+                input = checkInput("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d]{8,}$",8, 20);
                 if (input.equals("0"))
                     return null;
                 user.setPassword(input);
@@ -121,7 +120,7 @@ public class Console extends InputHandler{
 
         System.out.println("would you like to add a phone number as well?");
         System.out.println("1) yes 2) no");
-        int option = scanner.nextInt();
+        int option = Integer.parseInt(scanner.nextLine());
         if (option == 1) {
             successful = false;
             System.out.println("press 0 to exit");
@@ -142,7 +141,7 @@ public class Console extends InputHandler{
 
         System.out.println("would you like to define a status?");
         System.out.println("1) yes    2) no");
-        option = scanner.nextInt();
+        option = Integer.parseInt(scanner.nextLine());
         if (option == 1){
             ArrayList<String> status = new ArrayList<>(Arrays.asList("online", "idle", "do_not_disturb", "invisible", "press 0 to exit"));
             int choice = showMenu(status);
@@ -237,18 +236,17 @@ public class Console extends InputHandler{
             for (String ability : Role.abilities){
                 System.out.println(ability + " ?");
                 System.out.println("1) yes    2) no");
-                choice = scanner.nextInt();
+                choice = Integer.parseInt(scanner.nextLine());
                 values.append((choice == 1) ? "1" : "0");
             }
             role = new Role(values.toString(), roleName);
             System.out.println("type the username for this role");
-            scanner.nextLine();
             username = scanner.nextLine();
             roles.put(username, role);
 
 
             System.out.println("wanna add another role?\n1) yes    2) no");
-            choice = scanner.nextInt();
+            choice = Integer.parseInt(scanner.nextLine());
             if (choice == 2)
                 break;
         }

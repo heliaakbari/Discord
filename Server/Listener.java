@@ -20,7 +20,8 @@ public class Listener extends Thread{
                 System.out.println("got a command");
                 clientHandler.getCommandFromListener(cmd);
             } catch (IOException e) {
-                e.printStackTrace();
+                clientHandler.interrupt();
+                break;
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }

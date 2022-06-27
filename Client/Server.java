@@ -25,10 +25,11 @@ public class Server {
         int choice;
         do {
             choice = inputHandler.showMenu("1) actions list\n2) channels list\npress 0 to exit ", 2);
-            if (choice == 1)
+            if (choice == 1) {
                 if (actionsList(currentUsername) == -1)
                     break;
-                else if (choice == 2)
+            }
+            else if (choice == 2)
                     channelsList(currentUsername);
 
         } while (choice != 0);
@@ -51,6 +52,8 @@ public class Server {
 
         do {
             choice = inputHandler.showMenu(channelsList);
+            if (choice == 0)
+                break;
             channelName = channelsList.get(choice - 1);
 
             int action;
@@ -133,6 +136,8 @@ public class Server {
             actions.add("press 0 to exit");
 
             action = inputHandler.showMenu(actions);
+            if (action == 0)
+                break;
             // create the command, for the keyword use the value in the abilities arrayList, to get the value use action - 1 index
             switch (actions.get(action - 1)) {
                 case "create channel":

@@ -80,7 +80,7 @@ public class Discord {
                 createServer();
             }
             // or enter an existing server and do some actions there
-            else {
+            else if (choice != 0){
                 String currentServer = serversList.get(choice - 1);
                 Server server = new Server(currentServer, out, in);
                 server.enterServer(currentUsername);
@@ -218,7 +218,7 @@ public class Discord {
             }
 
             // showing the chosen friend
-            else {
+            else if (choice != 0){
                 cmd = Command.getUser(friends.get(choice - 1));
                 transfer();
                 if (!data.getKeyword().equals("userInfo")){
