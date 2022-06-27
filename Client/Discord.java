@@ -94,6 +94,7 @@ public class Discord {
         ArrayList<ArrayList<String>> serverInfo = inputHandler.createServer();
         cmd = Command.newServer(currentUsername, serverInfo.get(0).get(0));
         transfer();
+
         for (String channelName : serverInfo.get(1)) {
             cmd = Command.newChannel(currentUsername, serverInfo.get(0).get(0), channelName);
             transfer();
@@ -231,7 +232,7 @@ public class Discord {
                         block.setReceiver(friend.getUsername());
                         cmd = Command.newRelation(block);
                         transfer();
-                        if (!(boolean) data.getPrimary()) {
+                        if (!data.getKeyword().equals("checkNewRelation") ||!(boolean) data.getPrimary()) {
                             inputHandler.printMsg("something went wrong, try again later");
                         }
                     }
@@ -348,5 +349,6 @@ public class Discord {
             inputHandler.printError(e);
         }
     }
+
 
 }

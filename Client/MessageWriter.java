@@ -11,12 +11,16 @@ public class MessageWriter extends Thread{
     private Command cmd;
     private ArrayList<String> senderInfo;
     private String receiverInfo;
+    private ArrayList<Message> messageNumbering;
 
-    public MessageWriter(ObjectOutputStream out, ArrayList<String > senderInfo){
+    // for channels
+    public MessageWriter(ObjectOutputStream out, ArrayList<String > senderInfo, ArrayList<Message> messageNumbering){
         this.out = out;
         this.senderInfo = senderInfo;
+        this.messageNumbering = messageNumbering;
     }
 
+    // for private messages
     public MessageWriter(ObjectOutputStream out, String senderInfo, String receiverInfo){
         this.out = out;
         this.senderInfo = new ArrayList<>(List.of(senderInfo));
@@ -36,7 +40,7 @@ public class MessageWriter extends Thread{
     }
 
     private void channelChat(){
-        Message message;
+        Message message = null;
         Scanner scanner = new Scanner(System.in);
         String text;
 
@@ -44,10 +48,17 @@ public class MessageWriter extends Thread{
             text = scanner.nextLine();
             if (text.equals("0"))
                 break;
-            else
-                message = new TextMessage(senderInfo, text);
+            else if (text.contains("react ")){
+                String[] splitted = text.split(" ");
+                message = messageNumbering.get(Integer.parseInt(splitted[1]));
+                message.changeReaction(splitted[2], 1);
 
-            cmd = Command.newChannelMsg(senderInfo.get(0), message);
+                cmd = Command.newReaction(senderInfo.get(0), message, splitted[2]);
+            }
+            else {
+                message = new TextMessage(senderInfo, text);
+                cmd = Command.newChannelMsg(senderInfo.get(0), message);
+            }
             try {
                 out.writeObject(cmd);
             } catch (IOException e) {
@@ -66,7 +77,7 @@ public class MessageWriter extends Thread{
             if (text.equals("0"))
                 break;
             message = new TextMessage(senderInfo, text);
-            cmd = Command.newPvMsg(senderInfo.get(0), receiverInfo, message );
+            cmd = Command.newPvMsg(senderInfo.get(0), receiverInfo, message);
             try {
                 out.writeObject(cmd);
             } catch (IOException e) {

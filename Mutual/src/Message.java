@@ -2,7 +2,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.*;
 
-public class Message implements Serializable {
+public abstract class Message implements Serializable {
 
     private LocalDateTime dateTime;
     // holds sender username, channel and server respectively
@@ -71,11 +71,17 @@ public class Message implements Serializable {
         return sourceInfo;
     }
 
-    public String reactions(){
+    public void changeReaction(String key, int valueIncreament){
+        reactions.put(key, reactions.get(key) + valueIncreament);
+    }
+
+    public String getReactions(){
         StringBuilder stringBuilder = new StringBuilder();
         for (Map.Entry<String, Integer> reaction: reactions.entrySet()) {
             stringBuilder.append(reaction.getValue()).append(" ").append(reaction.getKey()).append("    ");
         }
         return stringBuilder.toString();
     }
+
+    public abstract String getText();
 }

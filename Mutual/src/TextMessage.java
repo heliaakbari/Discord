@@ -34,7 +34,7 @@ public class TextMessage extends Message {
     @Override
     public String toString() {
         if (super.getSourceInfo().size() > 1)
-            return super.getSourceInfoAsString() + text + "\n" + super.reactions();
+            return super.getSourceInfoAsString() + text + "\n" + super.getReactions();
         else
             return super.getSourceInfoAsString() + text;
     }

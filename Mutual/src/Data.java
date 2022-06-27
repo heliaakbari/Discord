@@ -81,15 +81,16 @@ public class Data {
         return data;
     }
 
-    public static Data newChannelMsg(String server,String channel,Message msg){
+    public static Data newChannelMsg(String server, String channel, Message msg){
         Data data = new Data("newChannelMsg");
         data.server = server;
         data.channel = channel;
+        data.primary = msg;
         return data;
     }
 
-    public static Data newPvMsg(String receiver,Message msg){
-        Data data = new Data("newChannelMsg");
+    public static Data newPvMsg(String receiver, Message msg){
+        Data data = new Data("newPvMsg");
         data.user = receiver;
         return data;
     }

@@ -58,15 +58,18 @@ public class Server {
                 action = inputHandler.showMenu("1) start chatting\n2) see the channel members\n3) see pin bar\npress 0 to exit", 3);
 
                 if (action == 1) {
-                    inputHandler.printMsg("you can type your messages now, to react to a message type the message number and then your reaction.\n" +
+                    inputHandler.printMsg("you can type your messages now, to react to a message type 'react <message number> <reaction> '.\n" +
                             "to send a file type 'send file'. to download a file type 'open file <file name>'. press 0 to exit the chat");
                     cmd = Command.tellChannel(currentUsername, currentServerName, channelName);
                     transfer();
+
                     // transfer messages with server
-                    MessageReader messageReader = new MessageReader(in, inputHandler);
+
+                    ArrayList<Message> messageNumbering = new ArrayList<>();
+                    MessageReader messageReader = new MessageReader(in, inputHandler, messageNumbering, currentUsername);
                     messageReader.start();
 
-                    MessageWriter messageWriter = new MessageWriter(out, new ArrayList<>(Arrays.asList(currentUsername, channelName, currentServerName)));
+                    MessageWriter messageWriter = new MessageWriter(out, new ArrayList<>(Arrays.asList(currentUsername, channelName, currentServerName)), messageNumbering);
                     messageWriter.start();
 
                     if (!messageReader.isAlive() && !messageWriter.isAlive()){
