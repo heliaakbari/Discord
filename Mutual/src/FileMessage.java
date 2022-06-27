@@ -59,4 +59,9 @@ public class FileMessage extends Message{
         else
             return super.getSourceInfoAsString() + " a file";
     }
+
+    @Override
+    public String getText() {
+        return fileName;
+    }
 }
