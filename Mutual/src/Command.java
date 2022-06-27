@@ -305,7 +305,7 @@ public class Command {
 
 
     public static Command getDirectChats(String user){
-        Command cmd = new Command("getDirectChats");
+    Command cmd = new Command("getDirectChats");
         cmd.user = user;
         return cmd;
     }

@@ -41,14 +41,14 @@ public class Data {
     /**
      * returns if the sign up of a new member was successful or not
      */
-    public static Data checkSignUp(String user, boolean isSignedUp){
+    public static Data checkSignUp(String user, Boolean isSignedUp){
         Data data = new Data("checkSignUp");
         data.user = user;
         data.primary = isSignedUp;
         return data;
     }
 
-    public static Data checkLogin(String user, boolean isLoggedIn){
+    public static Data checkLogin(String user, Boolean isLoggedIn){
         Data data = new Data("checkLogin");
         data.user = user;
         data.primary = isLoggedIn;
@@ -57,7 +57,7 @@ public class Data {
     /**
      * returns if the new channel was successfully created
      */
-    public static Data checkNewChannel(String creator, String server, String channel, boolean isCreated){
+    public static Data checkNewChannel(String creator, String server, String channel, Boolean isCreated){
         Data data = new Data("checkNewChannel");
         data.user = creator;
         data.server = server;
@@ -65,8 +65,27 @@ public class Data {
         data.primary = isCreated;
         return data;
     }
+    public static Data checkDeleteChannel(String server,String channel,Boolean isDeleted){
+        Data dt = new Data("checkDeleteChannel");
+        dt.server = server;
+        dt.channel = channel;
+        dt.primary = isDeleted;
+        return dt;
+    }
 
-    public static Data checkNewRelation(String user,Object relation, boolean created){
+    public static Data checkDeleteServer(String server,Boolean isDeleted){
+        Data dt = new Data("checkDeleteServer");
+        dt.server = server;
+        dt.primary = isDeleted;
+        return dt;
+    }
+
+    public static Data fake(){
+        Data data = new Data("fake");
+        return data;
+    }
+
+    public static Data checkNewRelation(String user,Object relation, Boolean created){
         Data data = new Data("checkNewRelation");
         data.user = user;
         data.primary = created;
@@ -213,7 +232,7 @@ public class Data {
         return data;
     }
 
-    public static Data checkChangeServerName(String user,String oldName,String newName,boolean successful){
+    public static Data checkChangeServerName(String user,String oldName,String newName,Boolean successful){
         Data data = new Data("checkChangeServerName");
         data.user = user;
         data.server=oldName;
@@ -222,7 +241,7 @@ public class Data {
         return data;
     }
 
-    public static Data checkNewServer(String user,String server, boolean successful){
+    public static Data checkNewServer(String user,String server, Boolean successful){
         Data data = new Data("checkNewServer");
         data.user = user;
         data.server = server;
