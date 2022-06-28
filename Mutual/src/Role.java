@@ -18,7 +18,6 @@ public class Role implements Serializable {
 
     public ArrayList<String> getAvailableAbilities() {
         ArrayList<String> availableAbilities = new ArrayList<>();
-
         for (int i = 0; i < 9; i++){
             if (values.charAt(i) == 1){
                 availableAbilities.add(abilities.get(i));
