@@ -98,9 +98,11 @@ public class Command implements Serializable {
     }
 
     //for new request: keyword: newRequest, user= sender's name, primary = a request object
-    public static Command newRelation(Relationship relation){
+    public static Command newRelation(Relationship relation,String sender,String receiver){
         Command cmd = new Command("newRelation");
         cmd.primary= relation;
+        cmd.user = sender;
+        cmd.secondary = receiver;
         return cmd;
     }
 

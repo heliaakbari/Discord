@@ -231,7 +231,7 @@ public class Discord {
                         Relationship friendRequest = Relationship.Friend_pending;
                         friendRequest.setSender(currentUsername);
                         friendRequest.setReceiver(friendUsername);
-                        cmd = Command.newRelation(friendRequest);
+                        cmd = Command.newRelation(friendRequest,currentUsername,friendUsername);
                         transfer();
                         if (data.getKeyword().equals("checkNewRelation") && (boolean) data.getPrimary()) {
                             inputHandler.printMsg("request sent");
@@ -256,7 +256,7 @@ public class Discord {
                         Relationship block = Relationship.Block;
                         block.setSender(currentUsername);
                         block.setReceiver(friend.getUsername());
-                        cmd = Command.newRelation(block);
+                        cmd = Command.newRelation(block,currentUsername,friend.getUsername());
                         transfer();
                         if (!data.getKeyword().equals("checkNewRelation") ||!(boolean) data.getPrimary()) {
                             inputHandler.printMsg("something went wrong, try again later");
@@ -315,7 +315,7 @@ public class Discord {
                     } else if (decision == 2) {
                         result = Relationship.Rejected;
                     }
-                    cmd = Command.newRelation(result);
+                    cmd = Command.newRelation(result,currentUsername,user.getUsername());
                     transfer();
                 }
             }

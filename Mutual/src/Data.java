@@ -86,9 +86,10 @@ public class Data  implements Serializable {
         return data;
     }
 
-    public static Data checkNewRelation(String user,Relationship relation, Boolean created){
+    public static Data checkNewRelation(String sender,String receiver,Relationship relation, Boolean created){
         Data data = new Data("checkNewRelation");
-        data.user = user;
+        data.user = sender;
+        data.server =receiver;
         data.primary = created;
         data.secondary = relation;
         return data;

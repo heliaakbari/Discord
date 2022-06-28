@@ -442,16 +442,18 @@ public class CmdManager {
     public void newRelation(Command cmd){
 
         Relationship rel = (Relationship) cmd.getPrimary();
-        if(rel.getReceiver().equals(rel.getSender())){
+        String sender = cmd.getUser();
+        String receiver = (String) cmd.getSecondary();
+        if(receiver.equals(sender)){
             return;
         }
         String statement = new String();
         try{
-            System.out.println("receiver: "+rel.getReceiver()+" sender: "+rel.getSender());
-            ResultSet r = stmt.executeQuery("SELECT count(*) as C1 from users where username='"+rel.getReceiver()+"'");
-            System.out.println((int)r.getInt("C1"));
+            System.out.println("receiver: "+receiver+" sender: "+sender);
+            ResultSet r = stmt.executeQuery("SELECT count(*) as C1 from users where username='"+receiver+"'");
             r.next();
-            System.out.println("receiver: "+rel.getReceiver()+" sender: "+rel.getSender());
+            System.out.println((int)r.getInt("C1"));
+            System.out.println("receiver: "+receiver+" sender: "+sender);
             if((int)r.getInt("C1")<=0){
                 throw new SQLException();
             }
@@ -462,29 +464,29 @@ public class CmdManager {
             return;
         }
         if (rel == Relationship.Block) {
-            String s1 = String.format("delete from relationships where (receiver='%s' and sender='%s') or (sender='%s' and receiver='%s');",rel.getReceiver(),rel.getSender(),rel.getReceiver(),rel.getSender());
-            String s2 = String.format("insert into relationships values('%s','%s','%s');",rel.getSender(),rel.getReceiver(),rel.toString());
+            String s1 = String.format("delete from relationships where (receiver='%s' and sender='%s') or (sender='%s' and receiver='%s');",receiver,sender,receiver,sender);
+            String s2 = String.format("insert into relationships values('%s','%s','%s');",sender,receiver,rel.toString());
             statement = s1 +"\n"+s2;
         }
         else if (rel == Relationship.Rejected) {
-            String s1 = String.format("delete from relationships where (receiver='%s' and sender='%s') or (sender='%s' and receiver='%s');",rel.getReceiver(),rel.getSender(),rel.getReceiver(),rel.getSender());
+            String s1 = String.format("delete from relationships where (receiver='%s' and sender='%s') or (sender='%s' and receiver='%s');",receiver,sender,receiver,sender);
             statement = s1;
         }
         else if(rel==Relationship.Friend){
-            String s1 = String.format("delete from relationships where (receiver='%s' and sender='%s') or (sender='%s' and receiver='%s');",rel.getReceiver(),rel.getSender(),rel.getReceiver(),rel.getSender());
-            String s2 = String.format("insert into relationships values('%s','%s','%s');",rel.getSender(),rel.getReceiver(),rel.toString());
+            String s1 = String.format("delete from relationships where (receiver='%s' and sender='%s') or (sender='%s' and receiver='%s');",receiver,sender,receiver,sender);
+            String s2 = String.format("insert into relationships values('%s','%s','%s');",sender,receiver,rel.toString());
             statement = s1 +"\n"+s2;
         }
         else if(rel==Relationship.Friend_pending){
             try {
-                ResultSet res = stmt.executeQuery(String.format("select count(*) as C1 from relationships where sender='%s' and receiver='%s' and status='Block';", rel.getReceiver(), rel.getSender()));
+                ResultSet res = stmt.executeQuery(String.format("select count(*) as C1 from relationships where sender='%s' and receiver='%s' and status='Block';", receiver, sender));
                 res.next();
                 int count = res.getInt("C1");
                 if (count > 0) {
                     throw new SQLException();
                 }
-                String s1 = String.format("delete from relationships where receiver='%s' and sender='%s';",rel.getReceiver(),rel.getSender());
-                String s2 = String.format("insert into relationships values('%s','%s','%s');",rel.getSender(),rel.getReceiver(),rel.toString());
+                String s1 = String.format("delete from relationships where receiver='%s' and sender='%s';",receiver,sender);
+                String s2 = String.format("insert into relationships values('%s','%s','%s');",sender,receiver,rel.toString());
                 statement = s1 + "\n" +s2;
             }
             catch (SQLException e){
@@ -675,7 +677,8 @@ public class CmdManager {
         catch (SQLException s){
             s.printStackTrace();
         }
-        return Data.friends(cmd.getUser(),friends);
+        Data dt = Data.friends(cmd.getUser(),friends);
+        return dt;
     }
 
     public Data getBlockList(Command cmd){
@@ -1027,7 +1030,6 @@ public class CmdManager {
         }
         catch (NoSuchFileException e){
             System.out.println("the file with path "+path+" doesnt exists");
-            e.printStackTrace();
         }
         catch (IOException e){
             e.printStackTrace();
