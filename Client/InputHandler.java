@@ -2,6 +2,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * handles users input and output and has two children : console and GUI
+ */
 public abstract class InputHandler  implements Serializable {
 
     public abstract int showMenu(String menu, int options);

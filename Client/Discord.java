@@ -1,16 +1,16 @@
-import javax.swing.*;
+
 import java.awt.*;
-import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.nio.file.Files;
 import static java.nio.file.Files.readAllBytes;
-
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
+/**
+ * holds user's current username
+ * is responsible for : direct messages, settings , relationships, servers list and creating servers in the application
+ */
 public class Discord {
 
     private String currentUsername;
@@ -27,6 +27,9 @@ public class Discord {
         this.in = in;
     }
 
+    /**
+     * shows the application's main menu to the user. including : setting, server list, relationships and direct messages.
+     */
     public void startDiscord() {
         getInbox();
         int choice;
@@ -48,6 +51,9 @@ public class Discord {
         } while (choice != 0);
     }
 
+    /**
+     * asks user whether to show new notifications  each time user enters application
+     */
     public void getInbox() {
         String choice = inputHandler.receiveData("would you like to receive new messages?\n1) yes    2) no");
         if (choice.equals("1")) {
@@ -68,6 +74,10 @@ public class Discord {
         }
     }
 
+    /**
+     * shows the list of user's servers.
+     * user can choose to enter an existing server or create a new one
+     */
     public void enterServersList() {
         int choice;
         do {
@@ -98,6 +108,10 @@ public class Discord {
 
     }
 
+    /**
+     * receives necessary info for creating a new server - including server name, list of channels and members and roles- from user
+     * and creates a command for creating new server and sends it to server side
+     */
     public void createServer() {
         // getting all necessary info for creating server
         ArrayList<ArrayList<String>> serverInfo = inputHandler.createServer();
@@ -133,6 +147,10 @@ public class Discord {
 
     }
 
+    /**
+     * enters direct messages
+     * user can choose a chat and start chatting with the other person or start a new chat with someone from their friend list
+     */
     public void enterDirectMessages() {
         cmd = Command.getDirectChats(currentUsername);
         transfer();
@@ -181,6 +199,10 @@ public class Discord {
         }
     }
 
+    /**
+     * creates a new thread for sending and receiving messages. also loads last 5 messages in the existing chats
+     * @param otherPerson the other person which user wants to chat with
+     */
     private void startPrivateChat(String otherPerson) {
         cmd = Command.tellPv(currentUsername, otherPerson);
         transfer();
@@ -208,6 +230,9 @@ public class Discord {
         }
     }
 
+    /**
+     * opens the menu of different relationships including : friends, blocks and friend requests and calls the appropriaye method for each option
+     */
     public void enterRelationshipsList() {
         int choice;
         do {
@@ -226,6 +251,10 @@ public class Discord {
         } while (choice != 0);
     }
 
+    /**
+     * opens the user's friends list
+     * user can choose each friend, see their profile and block them if he wants. or can send a  friend request to someone
+     */
     private void friendList() {
         cmd = Command.getFriends(currentUsername);
         transfer();
@@ -292,6 +321,9 @@ public class Discord {
         } while (choice != 0);
     }
 
+    /**
+     * shows user's block list and user can see each blocked person's profile
+     */
     private void blocklist() {
         inputHandler.printMsg("your block list :");
 //        inputHandler.printMsg("==========================================================");
@@ -309,6 +341,9 @@ public class Discord {
         inputHandler.showMenu(blocks);
     }
 
+    /**
+     * shows all friend's requests to user. and user can see each persons profile and accept or reject their request
+     */
     private void requestList() {
         while (true) {
             inputHandler.printMsg("new requests :");
@@ -343,6 +378,9 @@ public class Discord {
 
     }
 
+    /**
+     * shows the application setting to user. user can change username or profile photo here
+     */
     public void setting() {
         int choice;
         do {
@@ -352,21 +390,6 @@ public class Discord {
                     2) change username""", 2);
             switch (choice) {
                 case 1:
-//                    byte[] photo = null;
-//                    String fileType = null;
-//                    JFileChooser fileChooser = new JFileChooser();
-//                    fileChooser.setCurrentDirectory(new File(System.getProperty("c:\\")));
-//                    int result = fileChooser.showOpenDialog(null);
-//                    if (result == JFileChooser.APPROVE_OPTION) {
-//                        File selectedFile = fileChooser.getSelectedFile();
-//                        try {
-//                            photo = Files.readAllBytes(selectedFile.toPath());
-//                            fileType = fileChooser.getTypeDescription(selectedFile);
-//                        } catch (IOException e) {
-//                            e.printStackTrace();
-//                        }
-//                    }
-                    // create a command to set profile photo
                     FileDialog dialog = new FileDialog((Frame) null, "Select File to Open");
                     dialog.setMode(FileDialog.LOAD);
                     dialog.setVisible(true);
@@ -411,6 +434,9 @@ public class Discord {
         } while (choice != 0);
     }
 
+    /**
+     * transfers commands from client to server and datas from server to client
+     */
     private void transfer() {
         try {
             out.writeObject(cmd);

@@ -2,11 +2,15 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
 
+/**
+ * this class is a seperated thread for receiving messages in private chats or channels
+ */
 public class MessageReader extends Thread{
 
     private ObjectInputStream in;
     private Data data;
     private InputHandler inputHandler;
+    // holds and array of received messages
     private ArrayList<Message> messageNumbering;
     private String currentUsername;
 
@@ -27,7 +31,7 @@ public class MessageReader extends Thread{
 
     @Override
     public void run() {
-        Message message = null;
+        Message message;
         StringBuilder stringBuilder = new StringBuilder();
 
         while (true){
@@ -41,6 +45,7 @@ public class MessageReader extends Thread{
                 messageNumbering.add(message);
                 if (message.getText().equals("0"))
                     break;
+                // checks if the sender and receiver of the message aren't the same so that the message isn't duplicated in console
                 if (!data.getUser().equals(currentUsername)) {
                     stringBuilder.append(message.getSourceInfo().get(0)).append(" : ").append(message.getText()).append("\n");
                     inputHandler.printMsg(stringBuilder.toString());

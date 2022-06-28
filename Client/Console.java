@@ -3,11 +3,20 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Scanner;
 
+/**
+ * handles user's input and output on console
+ */
 public class Console extends InputHandler{
 
     private String input;
     private final Scanner scanner = new Scanner(System.in);
 
+    /**
+     * checks the validation of user's input in case they are choosing from a menu
+     * @param numberOfChoices number of options in the menu
+     * @return user's choice if it's valid and 0 if user wants to exit the menu
+     * @throws Exception if the input is invalid
+     */
     protected int checkInput(int numberOfChoices) throws Exception {
         int choice;
         choice = Integer.parseInt(scanner.nextLine());
@@ -18,6 +27,14 @@ public class Console extends InputHandler{
         return choice;
     }
 
+    /**
+     * checks the validaiotn of user's input in case they have to type a string as input
+     * @param regex the required input format
+     * @param minLength minimum length of the input
+     * @param maxLength maximum length of the input
+     * @return user's input if it's valid and 0 if user wants to exit
+     * @throws Exception if the input doesn't match the specified format or length
+     */
     protected String checkInput(String regex, int minLength, int maxLength) throws Exception {
         String input = scanner.nextLine();
         if (input.equals("0"))
@@ -32,10 +49,20 @@ public class Console extends InputHandler{
             return input;
     }
 
+    /**
+     * prints a message on the console
+     * @param msg the message to be printed
+     */
     public void printMsg(String msg){
         System.out.println(msg);
     }
 
+    /**
+     * prints a menu on cosole and asks for user's option
+     * @param menu the menu to be printed
+     * @param options number of menu's option
+     * @return user's choice
+     */
     public int showMenu(String menu, int options){
 
         System.out.println(menu);
