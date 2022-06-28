@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Data  implements Serializable {
+
+    private static final long serialVersionUID = 785328794689757L;
     private String keyword;
     private String user;
     private String server;
@@ -86,14 +88,14 @@ public class Data  implements Serializable {
         return data;
     }
 
-    public static Data checkNewRelation(String sender,String receiver,Relationship relation, Boolean created){
+   /* public static Data checkNewRelation(String sender,String receiver,Relationship relation, Boolean created){
         Data data = new Data("checkNewRelation");
         data.user = sender;
         data.server =receiver;
         data.primary = created;
         data.secondary = relation;
         return data;
-    }
+    }*/
 
     public static Data newMsgs(String user, ArrayList<Message> messages){
         Data data = new Data("newMsgs");

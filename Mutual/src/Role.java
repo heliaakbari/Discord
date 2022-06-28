@@ -3,7 +3,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class Role  implements Serializable {
+public class Role implements Serializable {
 
     private String roleName;
     private String values;

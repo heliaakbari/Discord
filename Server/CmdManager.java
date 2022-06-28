@@ -621,7 +621,7 @@ public class CmdManager {
         int number = (int) cmd.getSecondary();
         ArrayList<Message> messages = new ArrayList<>();
         try {
-            ResultSet rs = stmt.executeQuery(String.format("select * from pv_messages where (receiver='%s' and sender='%s') or (sender='%s' and receiver='%s') order by date DESC limit %d",cmd.getUser(),friend,cmd.getUser(),friend,number));
+            ResultSet rs = stmt.executeQuery(String.format("select * from pv_messages where ((receiver='%s' and sender='%s') or (sender='%s' and receiver='%s'))order by date DESC limit %d",cmd.getUser(),friend,cmd.getUser(),friend,number));
             while (rs.next()){
                 if(rs.getBoolean("isfile")){
                     byte[] bytes = fileToBytes(rs.getString("FILELINK"));
@@ -924,7 +924,7 @@ public class CmdManager {
         try{
             ResultSet rs = stmt.executeQuery(String.format("select * from channel_members where username='%s' and server='%s'",(String)cmd.getUser(),cmd.getServer()));
             while (rs.next()) {
-                dt = Data.role(cmd.getUser(),cmd.getServer(), new Role(rs.getString("ROLENAME"), rs.getString("ABILITIES")));
+                dt = Data.role(cmd.getUser(),cmd.getServer(), new Role(rs.getString("ABILITIES"),rs.getString("ROLENAME")));
             }
         }
         catch (SQLException e){
