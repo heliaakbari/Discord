@@ -942,7 +942,7 @@ public class CmdManager {
     public void changeRole(Command cmd){
         Role role = (Role) cmd.getPrimary();
         try{
-            stmt.executeUpdate(String.format("update server_members set rolename='%s' and abilities='%s' where username='%s' and server='%s'; ",role.getRoleName(),role.getValues(),(String)cmd.getSecondary(),cmd.getServer()));
+            stmt.executeUpdate(String.format("update server_members set rolename='%s' , abilities='%s' where username='%s' and server='%s'; ",role.getRoleName(),role.getValues(),(String)cmd.getSecondary(),cmd.getServer()));
         }
         catch (SQLException e){
             e.printStackTrace();
