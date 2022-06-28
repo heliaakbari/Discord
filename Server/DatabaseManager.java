@@ -39,7 +39,7 @@ public class DatabaseManager {
             } else {
                 newDatabase();
             }
-            cmdManager = new CmdManager(stmt, filespath);
+            cmdManager = new CmdManager(con,stmt, filespath);
         } catch (SQLException sqlException) {
             sqlException.printStackTrace();
         }

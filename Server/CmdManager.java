@@ -4,24 +4,26 @@ import java.io.IOException;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
+import java.sql.Date;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
+import static java.nio.file.Files.copy;
 import static java.nio.file.Files.readAllBytes;
 
 public class CmdManager {
 
     private static Statement stmt = null;
+    private Connection con = null;
     private static String filespath = null;
     private DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-mm-dd hh:mm:ss");
 
 
-    public CmdManager(Statement stmt,String filepath) {
+    public CmdManager(Connection con,Statement stmt,String filepath) {
         this.stmt = stmt;
+        this.con = con;
         this.filespath = filepath;
     }
 
@@ -558,7 +560,11 @@ public class CmdManager {
             for(HashMap.Entry<String, String> entry : channelsDates.entrySet()) {
                 String key = entry.getKey();
                 String value = entry.getValue();
-                rs = stmt.executeQuery(String.format("select * from channel_messages where channel='%s' and date > '%s' order by date desc",key,value));
+                String query = "select * from channel_messages where channel=? and date > ? order by date desc";
+                PreparedStatement preparedStatement = con.prepareStatement(query);
+                preparedStatement.setString(1,key);
+                preparedStatement.setTimestamp(2, Timestamp.valueOf(value));
+                rs = preparedStatement.executeQuery();
                 while (rs.next()){
                     if(rs.getBoolean("isfile")){
                         byte[] bytes = fileToBytes(rs.getString("FILELINK"));
@@ -927,7 +933,11 @@ public class CmdManager {
     public void lastseenAll(Command cmd){
         try{
             stmt. executeUpdate(String.format("update channel_members set lastseen='%s' where username='%s' ",LocalDateTime.now().format(dateTimeFormatter),cmd.getUser()));
-            stmt.executeUpdate(String.format("update pv_messages set seen=true where receiver='%s' and date<'%s';",cmd.getUser(),LocalDateTime.now().format(dateTimeFormatter)));
+            String query = "update pv_messages set seen=true where receiver=? and date<?;";
+            PreparedStatement preparedStatement = con.prepareStatement(query);
+            preparedStatement.setString(1,cmd.getUser());
+            preparedStatement.setTimestamp(2, Timestamp.valueOf(LocalDateTime.now().format(dateTimeFormatter)));
+            preparedStatement.executeUpdate();
         }
         catch (SQLException e){
             e.printStackTrace();
@@ -937,7 +947,12 @@ public class CmdManager {
 
     public void lastseenPv(Command cmd){
         try{
-            stmt.executeUpdate(String.format("update pv_messages set seen=true where receiver='%s' and sender='%s' and date<'%s';",cmd.getUser(),(String)cmd.getPrimary(),LocalDateTime.now().format(dateTimeFormatter)));
+            String query = "update pv_messages set seen=true where receiver=? and sender=? and date<?;";
+            PreparedStatement preparedStatement = con.prepareStatement(query);
+            preparedStatement.setString(1,cmd.getUser());
+            preparedStatement.setTimestamp(3, Timestamp.valueOf(LocalDateTime.now().format(dateTimeFormatter)));
+            preparedStatement.setString(2,(String)cmd.getPrimary());
+            preparedStatement.executeUpdate();
         }
         catch (SQLException e){
             e.printStackTrace();
