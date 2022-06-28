@@ -630,8 +630,14 @@ public class CmdManager {
         int number = (int) cmd.getSecondary();
         ArrayList<Message> messages = new ArrayList<>();
         try {
-
-            ResultSet rs = stmt.executeQuery(String.format("select * from pv_messages where ((receiver='%s' and sender='%s') or (sender='%s' and receiver='%s'))order by date DESC limit %d",cmd.getUser(),friend,cmd.getUser(),friend,number));
+            String query = "select * from pv_messages where (receiver=? and sender=?) or (sender=? and receiver=?) order by date DESC limit ?";
+            PreparedStatement preparedStatement = con.prepareStatement(query);
+            preparedStatement.setString(1,cmd.getUser());
+            preparedStatement.setString(2,friend);
+            preparedStatement.setString(3,cmd.getUser());
+            preparedStatement.setString(4,friend);
+            preparedStatement.setInt(5,number);
+            ResultSet rs=preparedStatement.executeQuery();
             while (rs.next()){
                 if(rs.getBoolean("isfile")){
                     byte[] bytes = fileToBytes(rs.getString("FILELINK"));
@@ -649,6 +655,7 @@ public class CmdManager {
         catch (IOException e){
             e.printStackTrace();
         }
+        System.out.println("1");
             return Data.PvMsgs(cmd.getUser(),friend,messages);
     }
 
