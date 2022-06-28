@@ -56,7 +56,12 @@ public class User  implements Serializable {
     }
 
     public void setStatus(String status) {
-        this.status = Status.valueOf(status);
+        if(status == null){
+            this.status = null;
+        }
+        else {
+            this.status = Status.valueOf(status);
+        }
     }
 
     public byte[] getProfilePhoto() {

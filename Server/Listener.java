@@ -17,7 +17,7 @@ public class Listener extends Thread{
             cmd = null;
             try {
                 cmd =(Command) in.readObject();
-                System.out.println("got a command");
+                System.out.println("got a command: "+cmd.getKeyword());
                 clientHandler.getCommandFromListener(cmd);
             } catch (IOException e) {
                 clientHandler.interrupt();

@@ -83,5 +83,16 @@ public abstract class Message implements Serializable {
         return stringBuilder.toString();
     }
 
+    public void setLikes(int numberOfLikes){
+        reactions.put("like",numberOfLikes);
+    }
+
+    public void setDislikes(int numberOfDislikes){
+        reactions.put("dislike",numberOfDislikes);
+    }
+
+    public void setLaughs(int numberOfLaughs){
+        reactions.put("laugh",numberOfLaughs);
+    }
     public abstract String getText();
 }
