@@ -91,21 +91,35 @@ public class Discord {
     }
 
     public void createServer() {
+        // getting all necessary info for creating server
         ArrayList<ArrayList<String>> serverInfo = inputHandler.createServer();
+
+        // creating server
         cmd = Command.newServer(currentUsername, serverInfo.get(0).get(0));
         transfer();
-
+        if (data.getKeyword().equals("checkNewServer") && !(boolean)data.getPrimary()){
+            inputHandler.printMsg("oops! couldn't create server. try again later");
+            return;
+        }
+        // adding channels
         for (String channelName : serverInfo.get(1)) {
             cmd = Command.newChannel(currentUsername, serverInfo.get(0).get(0), channelName);
             transfer();
+            if (data.getKeyword().equals("checkNewChannel") && !(boolean)data.getPrimary())
+                inputHandler.printMsg("couldn't create channel!");
         }
+        // adding people
         cmd = Command.addPeopleToServer(currentUsername, serverInfo.get(0).get(0), serverInfo.get(2));
         transfer();
 
-        HashMap<String, Role> roles = inputHandler.defineRoles();
-        for (Map.Entry<String, Role> role : roles.entrySet()) {
-            cmd = Command.changeRole(currentUsername, role.getKey(), serverInfo.get(0).get(0), role.getValue());
-            transfer();
+        // defining roles
+        String choice = inputHandler.receiveData("would you like to define any role for this server?\n1) yes    2) no");
+        if (choice.equals("1")) {
+            HashMap<String, Role> roles = inputHandler.defineRoles();
+            for (Map.Entry<String, Role> role : roles.entrySet()) {
+                cmd = Command.changeRole(currentUsername, role.getKey(), serverInfo.get(0).get(0), role.getValue());
+                transfer();
+            }
         }
 
     }

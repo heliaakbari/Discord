@@ -20,6 +20,8 @@ public class Console extends InputHandler{
 
     protected String checkInput(String regex, int minLength, int maxLength) throws Exception {
         String input = scanner.nextLine();
+        if (input.equals("0"))
+            return "0";
         if (!input.matches(regex))
             throw new Exception("input doesn't match the specified format");
         else if (input.length() < minLength)
@@ -41,12 +43,11 @@ public class Console extends InputHandler{
     }
 
     public int showMenu(ArrayList<String> menu){
-        int optionNumber = 1;
-        for (String option: menu) {
-            System.out.println(optionNumber + ") " + option);
-            optionNumber++;
+        for (int i = 0; i < menu.size() - 1; i++) {
+            System.out.println(i + 1 + ") " + menu.get(i));
         }
-        return getUserOption(optionNumber - 1);
+        System.out.println(menu.get(menu.size() - 1));
+        return getUserOption( menu.size() - 1);
     }
 
     private int getUserOption(int options) {
@@ -57,7 +58,7 @@ public class Console extends InputHandler{
                choice = checkInput(options);
                successful = true;
             } catch (Exception e){
-                System.err.println( e.getMessage() + "you must choose one of the numbers in the menu");
+                System.err.println("you must choose one of the numbers in the menu");
             }
         }
         return choice;

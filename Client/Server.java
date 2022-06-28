@@ -21,7 +21,6 @@ public class Server {
     }
 
     public void enterServer(String currentUsername) {
-        // دوتا اپشن لیست قابلیت ها و لیست کانال ها برای کاربر تو هر سرور نمایش داده میشه
         int choice;
         do {
             choice = inputHandler.showMenu("1) actions list\n2) channels list\npress 0 to exit ", 2);
@@ -144,6 +143,8 @@ public class Server {
                     String newChannel = inputHandler.receiveData("enter channel name");
                     cmd = Command.newChannel(currentUsername, currentServerName, newChannel);
                     transfer();
+                    if (data.getKeyword().equals("checkNewChannel") && !(boolean)data.getPrimary())
+                        inputHandler.printMsg("oops! couldn't create channel. try again later.");
                     break;
                 case "remove channel":
                     String removableChannel = inputHandler.receiveData("enter channel name to be deleted");

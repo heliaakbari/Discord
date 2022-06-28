@@ -20,7 +20,7 @@ public class ClientMain {
         inputHandler = new Console();
 
         try {
-            socket = new Socket("localhost", 8643);
+            socket = new Socket("192.168.77.72", 8643);
             System.out.println(socket.getInetAddress());
             out = new ObjectOutputStream(socket.getOutputStream());
             in = new ObjectInputStream(socket.getInputStream());
@@ -53,8 +53,10 @@ public class ClientMain {
                 // if found the condition is true
                 cmd = Command.login(info.get(0), info.get(1));
                 transfer();
-                if (data.getKeyword().equals("checkLogin") && (boolean) data.getPrimary())
+                if (data.getKeyword().equals("checkLogin") && (boolean) data.getPrimary()){
+                    currentUsername = (String) data.getUser();
                     return 1;
+                }
                 else
                     inputHandler.printMsg("incorrect username or password, try again!\npress 0 to exit");
             }

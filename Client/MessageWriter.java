@@ -51,8 +51,6 @@ public class MessageWriter extends Thread{
             else if (text.contains("react ")){
                 String[] splitted = text.split(" ");
                 message = messageNumbering.get(Integer.parseInt(splitted[1]));
-                message.changeReaction(splitted[2], 1);
-
                 cmd = Command.newReaction(senderInfo.get(0), message, splitted[2]);
             }
             else {

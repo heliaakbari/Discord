@@ -71,10 +71,6 @@ public abstract class Message implements Serializable {
         return sourceInfo;
     }
 
-    public void changeReaction(String key, int valueIncreament){
-        reactions.put(key, reactions.get(key) + valueIncreament);
-    }
-
     public String getReactions(){
         StringBuilder stringBuilder = new StringBuilder();
         for (Map.Entry<String, Integer> reaction: reactions.entrySet()) {
