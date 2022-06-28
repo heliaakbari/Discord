@@ -81,7 +81,7 @@ public class User  implements Serializable {
     public String toString() {
        StringBuilder stringBuilder = new StringBuilder("======================================\n");
        stringBuilder.append("username : ").append(username).append("\n");
-       if (!phoneNum.equals("NULL"))
+       if (phoneNum != null && !phoneNum.equalsIgnoreCase("NULL") )
            stringBuilder.append("phone number : ").append(phoneNum).append("\n");
        if (status != null)
            stringBuilder.append("status : ").append(status).append("\n");

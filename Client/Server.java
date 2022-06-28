@@ -36,19 +36,18 @@ public class Server {
 
     public void channelsList(String currentUsername) {
 
-        // create a command to get a list of channels in this server
-        cmd = Command.userChannels(currentUsername, currentServerName);
-        transfer();
-        if (!data.getKeyword().equals("userChannels")){
-            inputHandler.printMsg("unable to receive data from server");
-            return;
-        }
-        ArrayList<String> channelsList = (ArrayList<String>) data.getPrimary();
-        channelsList.add("press 0 to exit");
         int choice;
-        String channelName;
-
         do {
+            // create a command to get a list of channels in this server
+            cmd = Command.userChannels(currentUsername, currentServerName);
+            transfer();
+            if (!data.getKeyword().equals("userChannels")){
+                inputHandler.printMsg("unable to receive data from server");
+                return;
+            }
+            ArrayList<String> channelsList = (ArrayList<String>) data.getPrimary();
+            channelsList.add("press 0 to exit");
+            String channelName;
             if (channelsList.size() == 1)
                 inputHandler.printMsg("channel list is empty");
             choice = inputHandler.showMenu(channelsList);
@@ -137,6 +136,7 @@ public class Server {
                 inputHandler.printMsg("unable to receive data from server");
                 return 0;
             }
+
             Role role = (Role) data.getPrimary();
             ArrayList<String> actions = role.getAvailableAbilities();
             actions.add("press 0 to exit");

@@ -69,21 +69,19 @@ public class Discord {
     }
 
     public void enterServersList() {
-
-        // create a command to get a list of servers
-        cmd = Command.userServers(currentUsername);
-        transfer();
-        ArrayList<String> serversList = new ArrayList<>();
-        if (!data.getKeyword().equals("userServers")) {
-            inputHandler.printMsg("unable to receive data from server");
-        } else {
-            serversList = (ArrayList<String>) data.getPrimary();
-            serversList.add("create new server");
-            serversList.add("press 0 to exit");
-        }
-
         int choice;
         do {
+            // create a command to get a list of servers
+            cmd = Command.userServers(currentUsername);
+            transfer();
+            ArrayList<String> serversList = new ArrayList<>();
+            if (!data.getKeyword().equals("userServers")) {
+                inputHandler.printMsg("unable to receive data from server");
+            } else {
+                serversList = (ArrayList<String>) data.getPrimary();
+                serversList.add("create new server");
+                serversList.add("press 0 to exit");
+            }
             choice = inputHandler.showMenu(serversList);
             // user can choose to create a new server
             if (choice == serversList.size() - 1) {
@@ -311,18 +309,17 @@ public class Discord {
     }
 
     private void requestList() {
-        inputHandler.printMsg("new requests :");
-        cmd = Command.getRequests(currentUsername);
-        transfer();
-        if (!data.getKeyword().equals("allFriendRequests")){
-            inputHandler.printMsg("unable to receive data from server");
-            return;
-        }
-        ArrayList<String> requests = (ArrayList<String>) data.getPrimary();
-        requests.add("press 0 to exit");
-        int choice;
         while (true) {
-            choice = inputHandler.showMenu(requests);
+            inputHandler.printMsg("new requests :");
+            cmd = Command.getRequests(currentUsername);
+            transfer();
+            if (!data.getKeyword().equals("allFriendRequests")){
+                inputHandler.printMsg("unable to receive data from server");
+                return;
+            }
+            ArrayList<String> requests = (ArrayList<String>) data.getPrimary();
+            requests.add("press 0 to exit");
+            int choice = inputHandler.showMenu(requests);
             if (choice == 0)
                 break;
             cmd = Command.getUser(requests.get(choice - 1));
@@ -382,7 +379,7 @@ public class Discord {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    String[] splitName = fileNameAndType.split(".");
+                    String[] splitName = fileNameAndType.split("\\.");
 
                     cmd = Command.changeProfilePhoto(currentUsername, photo, splitName[splitName.length - 1] );
                     try {
