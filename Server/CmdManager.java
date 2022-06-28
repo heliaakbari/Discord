@@ -204,7 +204,7 @@ public class CmdManager {
                 }
 
                 for(String ch : channels){
-                    stmt.executeUpdate(String.format("insert into channel_members values ('%s','%s','%s',%s');",p, cmd.getServer(), ch, LocalDateTime.now().format(dateTimeFormatter)));
+                    stmt.executeUpdate(String.format("insert into channel_members values ('%s','%s','%s','%s');",p, cmd.getServer(), ch, LocalDateTime.now().format(dateTimeFormatter)));
                 }
 
             }
@@ -226,7 +226,7 @@ public class CmdManager {
             if(rs.getInt("C1")<=0){
                 return;
             }
-            stmt.executeUpdate(String.format("insert into channel_members values ('%s,'%s','%s',%s');",(String)cmd.getPrimary(), cmd.getServer(), cmd.getChannel(), LocalDateTime.now().format(dateTimeFormatter)));
+            stmt.executeUpdate(String.format("insert into channel_members values ('%s','%s','%s','%s');",(String)cmd.getPrimary(), cmd.getServer(), cmd.getChannel(), LocalDateTime.now().format(dateTimeFormatter)));
             stmt.executeUpdate(String.format("insert into server_members values ('%s','%s','member','000000000')",(String)cmd.getPrimary(),cmd.getServer()));
         }
         catch (SQLException e){
@@ -238,11 +238,11 @@ public class CmdManager {
         HashSet<String> chats = new HashSet<>();
         ArrayList<String> chatsArray = new ArrayList<>();
         try{
-            ResultSet rs = stmt.executeQuery(String.format("select distinct sender as S from pv_messages where receiver='%s'"));
+            ResultSet rs = stmt.executeQuery(String.format("select distinct sender as S from pv_messages where receiver='%s'",cmd.getUser()));
             while(rs.next()){
                 chats.add(rs.getString("S"));
             }
-            rs = stmt.executeQuery(String.format("select distinct receiver as S from pv_messages where sender='%s'"));
+            rs = stmt.executeQuery(String.format("select distinct receiver as S from pv_messages where sender='%s'",cmd.getUser()));
             while(rs.next()){
                 chats.add(rs.getString("S"));
             }
@@ -558,7 +558,7 @@ public class CmdManager {
             for(HashMap.Entry<String, String> entry : channelsDates.entrySet()) {
                 String key = entry.getKey();
                 String value = entry.getValue();
-                rs = stmt.executeQuery(String.format("select * from channel_messages where channel='%s' and date>'%s'order by date desc",key,value));
+                rs = stmt.executeQuery(String.format("select * from channel_messages where channel='%s' and date > '%s' order by date desc",key,value));
                 while (rs.next()){
                     if(rs.getBoolean("isfile")){
                         byte[] bytes = fileToBytes(rs.getString("FILELINK"));
@@ -913,7 +913,7 @@ public class CmdManager {
     public Data getRole(Command cmd){
         Data dt = Data.role(cmd.getUser(),cmd.getServer(),null);
         try{
-            ResultSet rs = stmt.executeQuery(String.format("select rolename,abilities from channel_members where username='%s' and server='%s'",(String)cmd.getUser(),cmd.getServer()));
+            ResultSet rs = stmt.executeQuery(String.format("select * from channel_members where username='%s' and server='%s'",(String)cmd.getUser(),cmd.getServer()));
             while (rs.next()) {
                 dt = Data.role(cmd.getUser(),cmd.getServer(), new Role(rs.getString("ROLENAME"), rs.getString("ABILITIES")));
             }
@@ -926,7 +926,7 @@ public class CmdManager {
 
     public void lastseenAll(Command cmd){
         try{
-            stmt.executeUpdate(String.format("update channel_members set lastseen='%s' where username='%s'",LocalDateTime.now().format(dateTimeFormatter),cmd.getUser()));
+            stmt. executeUpdate(String.format("update channel_members set lastseen='%s' where username='%s' ",LocalDateTime.now().format(dateTimeFormatter),cmd.getUser()));
             stmt.executeUpdate(String.format("update pv_messages set seen=true where receiver='%s' and date<'%s';",cmd.getUser(),LocalDateTime.now().format(dateTimeFormatter)));
         }
         catch (SQLException e){

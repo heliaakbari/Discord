@@ -86,8 +86,8 @@ public class DatabaseManager {
                                             CREATE TABLE IF NOT EXISTS channel_members
                                             (username VARCHAR(20) not null,
                                              server varchar(20) not null,
-                                             channel varchar(20),
-                                             lastseen TIMESTAMP);""");
+                                             channel varchar(20) not null,
+                                             lastseen TIMESTAMP not null);""");
         stmt.executeUpdate("""
                 ALTER TABLE channel_members
                 ADD CONSTRAINT  IF NOT EXISTS uniquePersonInchannel UNIQUE(username,server,channel);
