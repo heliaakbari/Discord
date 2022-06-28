@@ -847,14 +847,14 @@ public class CmdManager {
                user = new User(username, rs.getString("PASSWORD"), rs.getString("EMAIL"));
                user.setPhoneNum(rs.getString("PHONE"));
                if((!rs.getString("STATUS").equals("NULL"))) {
-                   user.setStatus(rs.getString("STATUS").toLowerCase());
+                  user.setStatus(rs.getString("STATUS").toLowerCase());
                }
                user.setProfilePhoto(fileToBytes(rs.getString("PICTURELINK")), rs.getString("PICTUREFORMAT"));
 
            }
 
         }catch (SQLException s){
-
+            s.printStackTrace();
         }
         return Data.userInfo(username,user);
     }
@@ -932,11 +932,16 @@ public class CmdManager {
 
     public void lastseenAll(Command cmd){
         try{
-            stmt. executeUpdate(String.format("update channel_members set lastseen='%s' where username='%s' ",LocalDateTime.now().format(dateTimeFormatter),cmd.getUser()));
-            String query = "update pv_messages set seen=true where receiver=? and date<?;";
+            String query = "update channel_members set lastseen=? where username=?";
             PreparedStatement preparedStatement = con.prepareStatement(query);
+            preparedStatement.setString(2,cmd.getUser());
+            preparedStatement.setTimestamp(1, Timestamp.valueOf(LocalDateTime.now()));
+
+
+            query = "update pv_messages set seen=true where receiver=? and date<?;";
+            preparedStatement = con.prepareStatement(query);
             preparedStatement.setString(1,cmd.getUser());
-            preparedStatement.setTimestamp(2, Timestamp.valueOf(LocalDateTime.now().format(dateTimeFormatter)));
+            preparedStatement.setTimestamp(2, Timestamp.valueOf(LocalDateTime.now()));
             preparedStatement.executeUpdate();
         }
         catch (SQLException e){
@@ -950,7 +955,7 @@ public class CmdManager {
             String query = "update pv_messages set seen=true where receiver=? and sender=? and date<?;";
             PreparedStatement preparedStatement = con.prepareStatement(query);
             preparedStatement.setString(1,cmd.getUser());
-            preparedStatement.setTimestamp(3, Timestamp.valueOf(LocalDateTime.now().format(dateTimeFormatter)));
+            preparedStatement.setTimestamp(3, Timestamp.valueOf(LocalDateTime.now()));
             preparedStatement.setString(2,(String)cmd.getPrimary());
             preparedStatement.executeUpdate();
         }
@@ -1022,6 +1027,7 @@ public class CmdManager {
         }
         catch (NoSuchFileException e){
             System.out.println("the file with path "+path+" doesnt exists");
+            e.printStackTrace();
         }
         catch (IOException e){
             e.printStackTrace();

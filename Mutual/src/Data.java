@@ -204,7 +204,7 @@ public class Data  implements Serializable {
     }
 
     public static Data userInfo(String username,User user){
-        Data data = new Data ("userInfoS");
+        Data data = new Data ("userInfo");
         data.user= username;
         data.primary = user;
         return data;
