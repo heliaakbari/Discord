@@ -141,7 +141,7 @@ public class Discord {
 
 
         while (true) {
-            if (directChats.size() == 0){
+            if (directChats.size() == 1){
                 inputHandler.printMsg("you're miserable and have no one to talk to. sorry :(");
             }
             int choice = inputHandler.showMenu(directChats);
@@ -204,12 +204,13 @@ public class Discord {
         else
             friends = (ArrayList<String>) data.getPrimary();
         friends.add("send friend request");
+        friends.add("press 0 to exit");
         int choice;
 
         // showing the list of friends
         do {
             inputHandler.printMsg("your friends :");
-            inputHandler.printMsg("==========================================================");
+            inputHandler.printMsg("=============================================================================");
             if (friends.size() == 1)
                 inputHandler.printMsg("you're lonely and depressed. send a friend request for the love of god!");
             choice = inputHandler.showMenu(friends);
@@ -273,7 +274,7 @@ public class Discord {
         cmd = Command.getBlockList(currentUsername);
         transfer();
         ArrayList<String> blocks = new ArrayList<>();
-        if (!data.getKeyword().equals("userServers"))
+        if (!data.getKeyword().equals("blockList"))
             inputHandler.printMsg("unable to receive data from server");
         else
             blocks = (ArrayList<String>) data.getPrimary();
