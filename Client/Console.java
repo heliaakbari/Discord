@@ -286,7 +286,7 @@ public class Console extends InputHandler{
     public void showMessages(ArrayList<Message> messages){
 
         for (int i = 0; i < messages.size(); i++) {
-            System.out.println(i + ") " + messages.get(i -1));
+            System.out.println(i + 1 +  ") " + messages.get(i));
         }
     }
 }

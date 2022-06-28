@@ -219,15 +219,18 @@ public class Discord {
         inputHandler.showMessages(recentMessages);
 
         MessageReader messageReader = new MessageReader(in, inputHandler);
-        messageReader.start();
-
         MessageWriter messageWriter = new MessageWriter(out, currentUsername, otherPerson);
+        messageReader.start();
         messageWriter.start();
 
-        if (!messageReader.isAlive() && !messageWriter.isAlive()) {
-            cmd = Command.lastseenPv(currentUsername, otherPerson);
-            transfer();
+        while (true){
+            if (!messageReader.isAlive() && !messageWriter.isAlive()) {
+                cmd = Command.lastseenPv(currentUsername, otherPerson);
+                transfer();
+                break;
+            }
         }
+
     }
 
     /**

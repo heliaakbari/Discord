@@ -35,6 +35,7 @@ public class MessageReader extends Thread{
         StringBuilder stringBuilder = new StringBuilder();
 
         while (true){
+            System.out.println("waiting to get a message");
             try {
                 data = (Data) in.readObject();
             } catch (IOException | ClassNotFoundException e) {
