@@ -126,7 +126,7 @@ public class Server {
             // create a command to get user abilities in this server
             cmd = Command.getRole(currentUsername, currentServerName);
             transfer();
-            if (!data.getKeyword().equals("userServers")) {
+            if (!data.getKeyword().equals("role")) {
                 inputHandler.printMsg("unable to receive data from server");
                 return 0;
             }
