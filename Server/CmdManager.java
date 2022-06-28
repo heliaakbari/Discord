@@ -206,7 +206,13 @@ public class CmdManager {
                 }
 
                 for(String ch : channels){
-                    stmt.executeUpdate(String.format("insert into channel_members values ('%s','%s','%s','%s');",p, cmd.getServer(), ch, LocalDateTime.now().format(dateTimeFormatter)));
+                    String query = "insert into channel_members values (?,?,?,?);";
+                    PreparedStatement preparedStatement = con.prepareStatement(query);
+                    preparedStatement.setString(1,p);
+                    preparedStatement.setString(2,cmd.getServer());
+                    preparedStatement.setString(3,ch);
+                    preparedStatement.setTimestamp(4, Timestamp.valueOf(LocalDateTime.now()));
+                    preparedStatement.executeUpdate();
                 }
 
             }
@@ -423,18 +429,21 @@ public class CmdManager {
                 return Data.checkNewChannel(cmd.getUser(), cmd.getServer(), cmd.getChannel(), false);
 
             }
-            ResultSet rs = stmt.executeQuery(String.format("select count(*) as C1 from users where username='%s'",cmd.getUser()));
-            rs.next();
-            if(rs.getInt("C1")<=0){
-                return Data.checkNewChannel(cmd.getUser(), cmd.getServer(), cmd.getChannel(), false);
-            }
             else {
-                stmt.executeUpdate(String.format("insert into channel_members values ('%s','%s','%s','%s');", cmd.getUser(), cmd.getServer(), cmd.getChannel(), LocalDateTime.now().format(dateTimeFormatter)));
+                String query = "insert into channel_members values (?,?,?,?);";
+                PreparedStatement preparedStatement = con.prepareStatement(query);
+                preparedStatement.setString(1,cmd.getUser());
+                preparedStatement.setString(2,cmd.getServer());
+                preparedStatement.setString(3,cmd.getChannel());
+                preparedStatement.setTimestamp(4, Timestamp.valueOf(LocalDateTime.now()));
+                preparedStatement.executeUpdate();
                 FeedBack.say("channel " + cmd.getChannel() + " created successfully");
                 return Data.checkNewChannel(cmd.getUser(), cmd.getServer(), cmd.getChannel(), true);
             }
         } catch (SQLException e) {
+            System.out.println("4");
             FeedBack.say("could not create channel " + cmd.getChannel());
+            e.printStackTrace();
             return Data.checkNewChannel(cmd.getUser(), cmd.getServer(), cmd.getChannel(), false);
         }
     }
