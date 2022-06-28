@@ -67,7 +67,13 @@ public class Server {
 
                     // transfer messages with server
 
-                    ArrayList<Message> messageNumbering = new ArrayList<>();
+                    cmd = Command.getChannelMsgs(currentUsername, currentServerName, channelName, 5);
+                    transfer();
+                    if (!data.getKeyword().equals("channelMsgs")){
+                        inputHandler.printMsg("unable to receive data from server");
+                        return;
+                    }
+                    ArrayList<Message> messageNumbering = (ArrayList<Message>) data.getPrimary();
                     MessageReader messageReader = new MessageReader(in, inputHandler, messageNumbering, currentUsername);
                     messageReader.start();
 

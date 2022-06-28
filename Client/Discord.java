@@ -53,9 +53,12 @@ public class Discord {
             } else {
                 ArrayList<Message> messages = (ArrayList<Message>) data.getPrimary();
                 inputHandler.printMsg("INBOX");
+                inputHandler.printMsg("====================================================================");
                 inputHandler.showMessages(messages);
                 if (messages.size() == 0)
                     inputHandler.printMsg("no new message yet.");
+                inputHandler.printMsg("====================================================================");
+
             }
             cmd = Command.lastseenAll(currentUsername);
             transfer();
@@ -137,44 +140,68 @@ public class Discord {
             inputHandler.printMsg("unable to receive data from server");
         else
             directChats = (ArrayList<String>) data.getPrimary();
+        directChats.add("start a new chat");
         directChats.add("press 0 to exit");
 
-
         while (true) {
-            if (directChats.size() == 1){
+            if (directChats.size() == 2){
                 inputHandler.printMsg("you're miserable and have no one to talk to. sorry :(");
             }
             int choice = inputHandler.showMenu(directChats);
             if (choice == 0)
                 break;
+            // friends list is shown and user chooses a friend to start chat with
+            if (choice == directChats.size() - 2){
 
-            cmd = Command.tellPv(currentUsername, directChats.get(choice - 1));
-            transfer();
-            cmd = Command.getPvMsgs(currentUsername, directChats.get(choice - 1), 10);
-            transfer();
-
-            ArrayList<Message> recentMessages = new ArrayList<>();
-            if (!data.getKeyword().equals("PvMsgs"))
-                inputHandler.printMsg("unable to receive data from server");
-            else
-                recentMessages = (ArrayList<Message>) data.getPrimary();
-
-            inputHandler.printMsg("Recent Messages :");
-            inputHandler.showMessages(recentMessages);
-
-            MessageReader messageReader = new MessageReader(in, inputHandler);
-            messageReader.start();
-
-            MessageWriter messageWriter = new MessageWriter(out, currentUsername, directChats.get(choice - 1));
-            messageWriter.start();
-
-            if (!messageReader.isAlive() && !messageWriter.isAlive()) {
-                cmd = Command.lastseenPv(currentUsername, directChats.get(choice - 1));
+                cmd  = Command.getFriends(currentUsername);
                 transfer();
+                ArrayList<String> friends = new ArrayList<>();
+                if (!data.getKeyword().equals("friends"))
+                    inputHandler.printMsg("unable to receive data from server");
+                else
+                    friends = (ArrayList<String>) data.getPrimary();
+                friends.add("press 0 to exit");
+                int chosenFriend;
+                while (true){
+                    chosenFriend = inputHandler.showMenu(friends);
+                    if (chosenFriend == 0)
+                        break;
+                    String otherPerson = friends.get(chosenFriend - 1);
+                    startPrivateChat(otherPerson);
+                }
+            }
+            // user selects a direct chat and starts chatting
+            else {
+                startPrivateChat(directChats.get(choice - 1));
             }
         }
+    }
 
+    private void startPrivateChat(String otherPerson) {
+        cmd = Command.tellPv(currentUsername, otherPerson);
+        transfer();
+        cmd = Command.getPvMsgs(currentUsername, otherPerson, 5);
+        transfer();
 
+        ArrayList<Message> recentMessages = new ArrayList<>();
+        if (!data.getKeyword().equals("PvMsgs"))
+            inputHandler.printMsg("unable to receive data from server");
+        else
+            recentMessages = (ArrayList<Message>) data.getPrimary();
+
+        inputHandler.printMsg("Recent Messages :");
+        inputHandler.showMessages(recentMessages);
+
+        MessageReader messageReader = new MessageReader(in, inputHandler);
+        messageReader.start();
+
+        MessageWriter messageWriter = new MessageWriter(out, currentUsername, otherPerson);
+        messageWriter.start();
+
+        if (!messageReader.isAlive() && !messageWriter.isAlive()) {
+            cmd = Command.lastseenPv(currentUsername, otherPerson);
+            transfer();
+        }
     }
 
     public void enterRelationshipsList() {
@@ -211,12 +238,12 @@ public class Discord {
         do {
             inputHandler.printMsg("your friends :");
             inputHandler.printMsg("=============================================================================");
-            if (friends.size() == 1)
+            if (friends.size() == 2)
                 inputHandler.printMsg("you're lonely and depressed. send a friend request for the love of god!");
             choice = inputHandler.showMenu(friends);
 
             // sending friend request
-            if (choice == friends.size()) {
+            if (choice == friends.size() - 2) {
                 String friendUsername;
 
                 while (true) {
@@ -264,7 +291,6 @@ public class Discord {
                     }
                 }
             }
-
         } while (choice != 0);
     }
 
