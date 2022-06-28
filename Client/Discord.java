@@ -316,7 +316,7 @@ public class Discord {
         inputHandler.printMsg("==========================================================");
         cmd = Command.getRequests(currentUsername);
         transfer();
-        if (data.getKeyword().equals("allFriendRequests")){
+        if (!data.getKeyword().equals("allFriendRequests")){
             inputHandler.printMsg("unable to receive data from server");
             return;
         }
@@ -386,15 +386,15 @@ public class Discord {
                         if (newUsername.equals("0"))
                             break;
                         // create a command to check if it exists
-                        cmd = Command.getUser(newUsername);
+                        cmd = Command.changeUsername(currentUsername, newUsername);
                         transfer();
-                        if (data.getKeyword().equals("userInfo") && data.getPrimary() == null) {
-                            // create a command to set the new username
-                            cmd = Command.changeUsername(currentUsername, newUsername);
-                            transfer();
+                        if (data.getKeyword().equals("checkChangeUsername") && (boolean)data.getPrimary()){
+                            inputHandler.printMsg("username changed successfully");
                             currentUsername = newUsername;
                             break;
                         }
+                        else
+                            inputHandler.printMsg("this username already exists, please try another one");
                     }
                     break;
             }

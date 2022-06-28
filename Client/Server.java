@@ -32,7 +32,6 @@ public class Server {
                     channelsList(currentUsername);
 
         } while (choice != 0);
-
     }
 
     public void channelsList(String currentUsername) {
