@@ -22,6 +22,7 @@ public class MessageReader extends Thread{
     public MessageReader(ObjectInputStream in, InputHandler inputHandler){
         this.in = in;
         this.inputHandler = inputHandler;
+        this.messageNumbering = new ArrayList<>();
     }
 
     @Override

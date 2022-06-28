@@ -49,6 +49,8 @@ public class Server {
         String channelName;
 
         do {
+            if (channelsList.size() == 1)
+                inputHandler.printMsg("channel list is empty");
             choice = inputHandler.showMenu(channelsList);
             if (choice == 0)
                 break;

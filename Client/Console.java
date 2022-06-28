@@ -43,10 +43,12 @@ public class Console extends InputHandler{
     }
 
     public int showMenu(ArrayList<String> menu){
+        System.out.println("=======================================================================");
         for (int i = 0; i < menu.size() - 1; i++) {
             System.out.println(i + 1 + ") " + menu.get(i));
         }
         System.out.println(menu.get(menu.size() - 1));
+        System.out.println("=======================================================================");
         return getUserOption( menu.size() - 1);
     }
 

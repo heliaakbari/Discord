@@ -25,6 +25,7 @@ public class MessageWriter extends Thread{
         this.out = out;
         this.senderInfo = new ArrayList<>(List.of(senderInfo));
         this.receiverInfo = receiverInfo;
+        this.messageNumbering = new ArrayList<>();
     }
 
     @Override

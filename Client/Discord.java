@@ -53,11 +53,9 @@ public class Discord {
             } else {
                 ArrayList<Message> messages = (ArrayList<Message>) data.getPrimary();
                 inputHandler.printMsg("INBOX");
-                inputHandler.printMsg("====================================================================");
                 inputHandler.showMessages(messages);
                 if (messages.size() == 0)
                     inputHandler.printMsg("no new message yet.");
-                inputHandler.printMsg("====================================================================");
 
             }
             cmd = Command.lastseenAll(currentUsername);
@@ -151,7 +149,7 @@ public class Discord {
             if (choice == 0)
                 break;
             // friends list is shown and user chooses a friend to start chat with
-            if (choice == directChats.size() - 2){
+            if (choice == directChats.size() - 1){
 
                 cmd  = Command.getFriends(currentUsername);
                 transfer();
@@ -163,6 +161,8 @@ public class Discord {
                 friends.add("press 0 to exit");
                 int chosenFriend;
                 while (true){
+                    if (friends.size() == 1)
+                        inputHandler.printMsg("friend list is empty, you can first send friend request to someone and then start chatting");
                     chosenFriend = inputHandler.showMenu(friends);
                     if (chosenFriend == 0)
                         break;
@@ -237,13 +237,12 @@ public class Discord {
         // showing the list of friends
         do {
             inputHandler.printMsg("your friends :");
-            inputHandler.printMsg("=============================================================================");
             if (friends.size() == 2)
                 inputHandler.printMsg("you're lonely and depressed. send a friend request for the love of god!");
             choice = inputHandler.showMenu(friends);
 
             // sending friend request
-            if (choice == friends.size() - 2) {
+            if (choice == friends.size() - 1) {
                 String friendUsername;
 
                 while (true) {
@@ -260,11 +259,6 @@ public class Discord {
                         friendRequest.setReceiver(friendUsername);
                         cmd = Command.newRelation(friendRequest,currentUsername,friendUsername);
                         transfer();
-                        if (data.getKeyword().equals("checkNewRelation") && (boolean) data.getPrimary()) {
-                            inputHandler.printMsg("request sent");
-                        } else {
-                            inputHandler.printMsg("something went wrong, try again later");
-                        }
                         break;
                     }
                 }
@@ -296,7 +290,7 @@ public class Discord {
 
     private void blocklist() {
         inputHandler.printMsg("your block list :");
-        inputHandler.printMsg("==========================================================");
+//        inputHandler.printMsg("==========================================================");
         cmd = Command.getBlockList(currentUsername);
         transfer();
         ArrayList<String> blocks = new ArrayList<>();
@@ -313,7 +307,6 @@ public class Discord {
 
     private void requestList() {
         inputHandler.printMsg("new requests :");
-        inputHandler.printMsg("==========================================================");
         cmd = Command.getRequests(currentUsername);
         transfer();
         if (!data.getKeyword().equals("allFriendRequests")){
@@ -321,12 +314,9 @@ public class Discord {
             return;
         }
         ArrayList<String> requests = (ArrayList<String>) data.getPrimary();
+        requests.add("press 0 to exit");
         int choice;
         while (true) {
-            if (requests.size() == 0){
-                inputHandler.printMsg("list is empty");
-                break;
-            }
             choice = inputHandler.showMenu(requests);
             if (choice == 0)
                 break;
