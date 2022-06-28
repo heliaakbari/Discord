@@ -1,9 +1,14 @@
 import javax.swing.*;
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.nio.file.Files;
+import static java.nio.file.Files.readAllBytes;
+
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 public class Discord {
@@ -349,22 +354,37 @@ public class Discord {
                     2) change username""", 2);
             switch (choice) {
                 case 1:
-                    byte[] photo = null;
-                    String fileType = null;
-                    JFileChooser fileChooser = new JFileChooser();
-                    fileChooser.setCurrentDirectory(new File(System.getProperty("c:\\")));
-                    int result = fileChooser.showOpenDialog(null);
-                    if (result == JFileChooser.APPROVE_OPTION) {
-                        File selectedFile = fileChooser.getSelectedFile();
-                        try {
-                            photo = Files.readAllBytes(selectedFile.toPath());
-                            fileType = fileChooser.getTypeDescription(selectedFile);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
+//                    byte[] photo = null;
+//                    String fileType = null;
+//                    JFileChooser fileChooser = new JFileChooser();
+//                    fileChooser.setCurrentDirectory(new File(System.getProperty("c:\\")));
+//                    int result = fileChooser.showOpenDialog(null);
+//                    if (result == JFileChooser.APPROVE_OPTION) {
+//                        File selectedFile = fileChooser.getSelectedFile();
+//                        try {
+//                            photo = Files.readAllBytes(selectedFile.toPath());
+//                            fileType = fileChooser.getTypeDescription(selectedFile);
+//                        } catch (IOException e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
                     // create a command to set profile photo
-                    cmd = Command.changeProfilePhoto(currentUsername, photo, fileType);
+                    FileDialog dialog = new FileDialog((Frame) null, "Select File to Open");
+                    dialog.setMode(FileDialog.LOAD);
+                    dialog.setVisible(true);
+
+                    String fileNameAndType = dialog.getFile();
+                    String path = dialog.getDirectory()+"//"+dialog.getFile();
+
+                    byte[] photo = new byte[0];
+                    try {
+                        photo = readAllBytes(Paths.get(path));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    String[] splitName = fileNameAndType.split(".");
+
+                    cmd = Command.changeProfilePhoto(currentUsername, photo, splitName[splitName.length - 1] );
                     try {
                         out.writeObject(cmd);
                     } catch (IOException e) {

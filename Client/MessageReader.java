@@ -34,7 +34,7 @@ public class MessageReader extends Thread{
             try {
                 data = (Data) in.readObject();
             } catch (IOException | ClassNotFoundException e) {
-                e.printStackTrace();
+                break;
             }
             if (data.getKeyword().equals("newPvMsg") || data.getKeyword().equals("newChannelMsg")){
                 message = (Message) data.getPrimary();
