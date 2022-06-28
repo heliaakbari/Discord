@@ -325,6 +325,7 @@ public class Discord {
         while (true) {
             if (requests.size() == 0){
                 inputHandler.printMsg("list is empty");
+                break;
             }
             choice = inputHandler.showMenu(requests);
             if (choice == 0)
