@@ -291,10 +291,19 @@ public class CmdManager {
             TextMessage message = (TextMessage)message1;
             String body = ((TextMessage) message).getText();
             try {
-                stmt.executeUpdate(String.format("insert into pv_messages(sender,receiver,date,body,isfile,seen) values ('%s','%s','%s','%s',false,false);", sender, receiver, date, body));
+                String query = "insert into pv_messages(sender,receiver,date,body,isfile,seen) values (?,?,?,?,?,?);";
+                PreparedStatement preparedStatement = con.prepareStatement(query);
+                preparedStatement.setString(1,sender);
+                preparedStatement.setString(2,receiver);
+                preparedStatement.setTimestamp(3,Timestamp.valueOf(message.getDateTime()));
+                preparedStatement.setString(4,body);
+                preparedStatement.setBoolean(5,false);
+                preparedStatement.setBoolean(6,false);
+                preparedStatement.executeUpdate();
                 FeedBack.say(sender+"'s text message sent to "+receiver);
             }
             catch (SQLException e){
+                e.printStackTrace();
                 FeedBack.say("sender+\"'s text message was not sent to \"+receiver");
             }
         }
