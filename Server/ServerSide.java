@@ -159,6 +159,7 @@ public class ServerSide {
 
     public void instantPvMsg(Command cmd){
         if(cmd.getKeyword().equals("newPvMsg")){
+            printClientHandlers();
             String receiver = (String) cmd.getSecondary();
             if(activePvs.containsKey(receiver)){
                String sender = activePvs.get(receiver);
@@ -172,6 +173,7 @@ public class ServerSide {
 
     public void instantChannelMsg(Command cmd){
         if(cmd.getKeyword().equals("newChannelMsg")) {
+            printClientHandlers();
            String place = cmd.getServer()+"/"+cmd.getChannel();
            ArrayList<String> onlinePeople = new ArrayList<>();
             for (HashMap.Entry<String, ArrayList<String>> set :
@@ -185,5 +187,16 @@ public class ServerSide {
                 clientHandlers.get(person).sendInstantMessage(dt);
             }
         }
+    }
+
+    public void printClientHandlers(){
+        System.out.println("!!!!!!!!!!!!!!!!!!!");
+        for (HashMap.Entry<String, ClientHandler> set :
+                clientHandlers.entrySet()) {
+
+            // Printing all elements of a Map
+            System.out.println(set.getKey());
+        }
+        System.out.println("!!!!!!!!!!!!!!!!!!");
     }
 }
