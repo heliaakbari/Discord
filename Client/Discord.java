@@ -44,18 +44,22 @@ public class Discord {
     }
 
     public void getInbox() {
-        cmd = Command.getNewMsgs(currentUsername);
-        transfer();
-        if (!data.getKeyword().equals("newMsgs")) {
-            inputHandler.printMsg("unable to receive data from server");
-        } else {
-            ArrayList<Message> messages = (ArrayList<Message>) data.getPrimary();
-            inputHandler.printMsg("INBOX");
-            inputHandler.showMessages(messages);
+        String choice = inputHandler.receiveData("would you like to receive new messages?\n1) yes    2) no");
+        if (choice.equals("1")) {
+            cmd = Command.getNewMsgs(currentUsername);
+            transfer();
+            if (!data.getKeyword().equals("newMsgs")) {
+                inputHandler.printMsg("unable to receive data from server");
+            } else {
+                ArrayList<Message> messages = (ArrayList<Message>) data.getPrimary();
+                inputHandler.printMsg("INBOX");
+                inputHandler.showMessages(messages);
+                if (messages.size() == 0)
+                    inputHandler.printMsg("no new message yet.");
+            }
+            cmd = Command.lastseenAll(currentUsername);
+            transfer();
         }
-        cmd = Command.lastseenAll(currentUsername);
-        transfer();
-
     }
 
     public void enterServersList() {
@@ -137,6 +141,9 @@ public class Discord {
 
 
         while (true) {
+            if (directChats.size() == 0){
+                inputHandler.printMsg("you're miserable and have no one to talk to. sorry :(");
+            }
             int choice = inputHandler.showMenu(directChats);
             if (choice == 0)
                 break;
@@ -201,6 +208,10 @@ public class Discord {
 
         // showing the list of friends
         do {
+            inputHandler.printMsg("your friends :");
+            inputHandler.printMsg("==========================================================");
+            if (friends.size() == 1)
+                inputHandler.printMsg("you're lonely and depressed. send a friend request for the love of god!");
             choice = inputHandler.showMenu(friends);
 
             // sending friend request
@@ -257,6 +268,8 @@ public class Discord {
     }
 
     private void blocklist() {
+        inputHandler.printMsg("your block list :");
+        inputHandler.printMsg("==========================================================");
         cmd = Command.getBlockList(currentUsername);
         transfer();
         ArrayList<String> blocks = new ArrayList<>();
@@ -266,10 +279,14 @@ public class Discord {
             blocks = (ArrayList<String>) data.getPrimary();
 
         blocks.add("press 0 to exit");
+        if (blocks.size() == 1)
+            inputHandler.printMsg("list is empty");
         inputHandler.showMenu(blocks);
     }
 
     private void requestList() {
+        inputHandler.printMsg("new requests :");
+        inputHandler.printMsg("==========================================================");
         cmd = Command.getRequests(currentUsername);
         transfer();
         if (data.getKeyword().equals("allFriendRequests")){
@@ -279,6 +296,9 @@ public class Discord {
         ArrayList<String> requests = (ArrayList<String>) data.getPrimary();
         int choice;
         while (true) {
+            if (requests.size() == 0){
+                inputHandler.printMsg("list is empty");
+            }
             choice = inputHandler.showMenu(requests);
             if (choice == 0)
                 break;
