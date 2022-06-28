@@ -442,16 +442,18 @@ public class CmdManager {
     public void newRelation(Command cmd){
 
         Relationship rel = (Relationship) cmd.getPrimary();
-        if(rel.getReceiver().equals(rel.getSender())){
+        String sender = cmd.getUser();
+        String receiver = (String) cmd.getSecondary();
+        if(receiver.equals(sender)){
             return;
         }
         String statement = new String();
         try{
-            System.out.println("receiver: "+rel.getReceiver()+" sender: "+rel.getSender());
-            ResultSet r = stmt.executeQuery("SELECT count(*) as C1 from users where username='"+rel.getReceiver()+"'");
-            System.out.println((int)r.getInt("C1"));
+            System.out.println("receiver: "+receiver+" sender: "+sender);
+            ResultSet r = stmt.executeQuery("SELECT count(*) as C1 from users where username='"+receiver+"'");
             r.next();
-            System.out.println("receiver: "+rel.getReceiver()+" sender: "+rel.getSender());
+            System.out.println((int)r.getInt("C1"));
+            System.out.println("receiver: "+receiver+" sender: "+sender);
             if((int)r.getInt("C1")<=0){
                 throw new SQLException();
             }
@@ -462,29 +464,29 @@ public class CmdManager {
             return;
         }
         if (rel == Relationship.Block) {
-            String s1 = String.format("delete from relationships where (receiver='%s' and sender='%s') or (sender='%s' and receiver='%s');",rel.getReceiver(),rel.getSender(),rel.getReceiver(),rel.getSender());
-            String s2 = String.format("insert into relationships values('%s','%s','%s');",rel.getSender(),rel.getReceiver(),rel.toString());
+            String s1 = String.format("delete from relationships where (receiver='%s' and sender='%s') or (sender='%s' and receiver='%s');",receiver,sender,receiver,sender);
+            String s2 = String.format("insert into relationships values('%s','%s','%s');",sender,receiver,rel.toString());
             statement = s1 +"\n"+s2;
         }
         else if (rel == Relationship.Rejected) {
-            String s1 = String.format("delete from relationships where (receiver='%s' and sender='%s') or (sender='%s' and receiver='%s');",rel.getReceiver(),rel.getSender(),rel.getReceiver(),rel.getSender());
+            String s1 = String.format("delete from relationships where (receiver='%s' and sender='%s') or (sender='%s' and receiver='%s');",receiver,sender,receiver,sender);
             statement = s1;
         }
         else if(rel==Relationship.Friend){
-            String s1 = String.format("delete from relationships where (receiver='%s' and sender='%s') or (sender='%s' and receiver='%s');",rel.getReceiver(),rel.getSender(),rel.getReceiver(),rel.getSender());
-            String s2 = String.format("insert into relationships values('%s','%s','%s');",rel.getSender(),rel.getReceiver(),rel.toString());
+            String s1 = String.format("delete from relationships where (receiver='%s' and sender='%s') or (sender='%s' and receiver='%s');",receiver,sender,receiver,sender);
+            String s2 = String.format("insert into relationships values('%s','%s','%s');",sender,receiver,rel.toString());
             statement = s1 +"\n"+s2;
         }
         else if(rel==Relationship.Friend_pending){
             try {
-                ResultSet res = stmt.executeQuery(String.format("select count(*) as C1 from relationships where sender='%s' and receiver='%s' and status='Block';", rel.getReceiver(), rel.getSender()));
+                ResultSet res = stmt.executeQuery(String.format("select count(*) as C1 from relationships where sender='%s' and receiver='%s' and status='Block';", receiver, sender));
                 res.next();
                 int count = res.getInt("C1");
                 if (count > 0) {
                     throw new SQLException();
                 }
-                String s1 = String.format("delete from relationships where receiver='%s' and sender='%s';",rel.getReceiver(),rel.getSender());
-                String s2 = String.format("insert into relationships values('%s','%s','%s');",rel.getSender(),rel.getReceiver(),rel.toString());
+                String s1 = String.format("delete from relationships where receiver='%s' and sender='%s';",receiver,sender);
+                String s2 = String.format("insert into relationships values('%s','%s','%s');",sender,receiver,rel.toString());
                 statement = s1 + "\n" +s2;
             }
             catch (SQLException e){
@@ -675,7 +677,8 @@ public class CmdManager {
         catch (SQLException s){
             s.printStackTrace();
         }
-        return Data.friends(cmd.getUser(),friends);
+        Data dt = Data.friends(cmd.getUser(),friends);
+        return dt;
     }
 
     public Data getBlockList(Command cmd){
@@ -847,14 +850,14 @@ public class CmdManager {
                user = new User(username, rs.getString("PASSWORD"), rs.getString("EMAIL"));
                user.setPhoneNum(rs.getString("PHONE"));
                if((!rs.getString("STATUS").equals("NULL"))) {
-                   user.setStatus(rs.getString("STATUS").toLowerCase());
+                  user.setStatus(rs.getString("STATUS").toLowerCase());
                }
                user.setProfilePhoto(fileToBytes(rs.getString("PICTURELINK")), rs.getString("PICTUREFORMAT"));
 
            }
 
         }catch (SQLException s){
-
+            s.printStackTrace();
         }
         return Data.userInfo(username,user);
     }
@@ -932,11 +935,16 @@ public class CmdManager {
 
     public void lastseenAll(Command cmd){
         try{
-            stmt. executeUpdate(String.format("update channel_members set lastseen='%s' where username='%s' ",LocalDateTime.now().format(dateTimeFormatter),cmd.getUser()));
-            String query = "update pv_messages set seen=true where receiver=? and date<?;";
+            String query = "update channel_members set lastseen=? where username=?";
             PreparedStatement preparedStatement = con.prepareStatement(query);
+            preparedStatement.setString(2,cmd.getUser());
+            preparedStatement.setTimestamp(1, Timestamp.valueOf(LocalDateTime.now()));
+
+
+            query = "update pv_messages set seen=true where receiver=? and date<?;";
+            preparedStatement = con.prepareStatement(query);
             preparedStatement.setString(1,cmd.getUser());
-            preparedStatement.setTimestamp(2, Timestamp.valueOf(LocalDateTime.now().format(dateTimeFormatter)));
+            preparedStatement.setTimestamp(2, Timestamp.valueOf(LocalDateTime.now()));
             preparedStatement.executeUpdate();
         }
         catch (SQLException e){
@@ -950,7 +958,7 @@ public class CmdManager {
             String query = "update pv_messages set seen=true where receiver=? and sender=? and date<?;";
             PreparedStatement preparedStatement = con.prepareStatement(query);
             preparedStatement.setString(1,cmd.getUser());
-            preparedStatement.setTimestamp(3, Timestamp.valueOf(LocalDateTime.now().format(dateTimeFormatter)));
+            preparedStatement.setTimestamp(3, Timestamp.valueOf(LocalDateTime.now()));
             preparedStatement.setString(2,(String)cmd.getPrimary());
             preparedStatement.executeUpdate();
         }
