@@ -4,6 +4,10 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
 
+/**
+ * contains main method of client side and is responsible for user login and signup
+ * creates a socket connection with server side
+ */
 public class ClientMain {
 
     private static Socket socket;
@@ -43,6 +47,10 @@ public class ClientMain {
         //here you must exit the program for client, close the connection
     }
 
+    /**
+     * logs in the user
+     * @return 1 if the login was successful and 0 if the user decides to quit
+     */
     public static int login() {
         while (true) {
             ArrayList<String> info = inputHandler.login();
@@ -63,6 +71,10 @@ public class ClientMain {
         }
     }
 
+    /**
+     * signs up a new user
+     * @return 1 if the signup was successful and 0 if the user decides to quit
+     */
     public static int signup() {
 
         while (true) {
@@ -98,6 +110,10 @@ public class ClientMain {
         }
     }
 
+    /**
+     * sends commands to server via objectOutputStream
+     * receives datas from server via objectInputStream
+     */
     public static void transfer() {
         try {
             out.writeObject(cmd);

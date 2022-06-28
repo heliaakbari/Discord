@@ -125,6 +125,7 @@ public class Discord {
         if (choice.equals("1")) {
             HashMap<String, Role> roles = inputHandler.defineRoles();
             for (Map.Entry<String, Role> role : roles.entrySet()) {
+                System.out.println(role.getValue().getValues());
                 cmd = Command.changeRole(currentUsername, role.getKey(), serverInfo.get(0).get(0), role.getValue());
                 transfer();
             }
