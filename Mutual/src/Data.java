@@ -115,6 +115,7 @@ public class Data  implements Serializable {
     public static Data newPvMsg(String receiver, Message msg){
         Data data = new Data("newPvMsg");
         data.user = receiver;
+        data.primary = msg;
         return data;
     }
 
