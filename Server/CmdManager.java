@@ -621,6 +621,7 @@ public class CmdManager {
         int number = (int) cmd.getSecondary();
         ArrayList<Message> messages = new ArrayList<>();
         try {
+
             ResultSet rs = stmt.executeQuery(String.format("select * from pv_messages where ((receiver='%s' and sender='%s') or (sender='%s' and receiver='%s'))order by date DESC limit %d",cmd.getUser(),friend,cmd.getUser(),friend,number));
             while (rs.next()){
                 if(rs.getBoolean("isfile")){
@@ -922,7 +923,11 @@ public class CmdManager {
     public Data getRole(Command cmd){
         Data dt = Data.role(cmd.getUser(),cmd.getServer(),null);
         try{
-            ResultSet rs = stmt.executeQuery(String.format("select * from channel_members where username='%s' and server='%s'",(String)cmd.getUser(),cmd.getServer()));
+            String query =" select * from server_members where username=? and server=? ";
+            PreparedStatement preparedStatement = con.prepareStatement(query);
+            preparedStatement.setString(1,cmd.getUser());
+            preparedStatement.setString(2, cmd.getServer());
+            ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()) {
                 dt = Data.role(cmd.getUser(),cmd.getServer(), new Role(rs.getString("ABILITIES"),rs.getString("ROLENAME")));
             }
