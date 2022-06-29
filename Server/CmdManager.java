@@ -560,7 +560,7 @@ public class CmdManager {
     public Data getNewMsgs(Command cmd){
         ArrayList<Message> messages = new ArrayList<>();
         try {
-            ResultSet rs = stmt.executeQuery(String.format("select * from pv_messages where seen=false and receiver='%s' order by date DESC,sender",cmd.getUser()));
+            ResultSet rs = stmt.executeQuery(String.format("select * from pv_messages where seen=false and receiver='%s' order by date,sender",cmd.getUser()));
             while (rs.next()){
                 if(rs.getBoolean("isfile")){
                     byte[] bytes = fileToBytes(rs.getString("FILELINK"));
@@ -580,7 +580,7 @@ public class CmdManager {
             for(HashMap.Entry<String, String> entry : channelsDates.entrySet()) {
                 String key = entry.getKey();
                 String value = entry.getValue();
-                String query = "select * from channel_messages where channel=? and date > ? order by date desc";
+                String query = "select * from channel_messages where channel=? and date > ? order by date";
                 PreparedStatement preparedStatement = con.prepareStatement(query);
                 preparedStatement.setString(1,key);
                 preparedStatement.setTimestamp(2, Timestamp.valueOf(value));
@@ -612,7 +612,7 @@ public class CmdManager {
         int number = (int) cmd.getPrimary();
         ArrayList<Message> messages = new ArrayList<>();
         try {
-            ResultSet rs = stmt.executeQuery(String.format("select * from channel_messages where channel='%s' and server='%s' order by date DESC limit %d",cmd.getChannel(),cmd.getServer(),number));
+            ResultSet rs = stmt.executeQuery(String.format("select * from channel_messages where channel='%s' and server='%s' order by date limit %d",cmd.getChannel(),cmd.getServer(),number));
             while (rs.next()){
                 if(rs.getBoolean("isfile")){
                     byte[] bytes = fileToBytes(rs.getString("FILELINK"));
@@ -639,7 +639,7 @@ public class CmdManager {
         int number = (int) cmd.getSecondary();
         ArrayList<Message> messages = new ArrayList<>();
         try {
-            String query = "select * from pv_messages where (receiver=? and sender=?) or (sender=? and receiver=?) order by date DESC limit ?";
+            String query = "select * from pv_messages where (receiver=? and sender=?) or (sender=? and receiver=?) order by date limit ?";
             PreparedStatement preparedStatement = con.prepareStatement(query);
             preparedStatement.setString(1,cmd.getUser());
             preparedStatement.setString(2,friend);
@@ -904,7 +904,7 @@ public class CmdManager {
     public Data getPinnedMsgs(Command cmd){
         ArrayList<Message> messages = new ArrayList<>();
         try {
-            ResultSet rs = stmt.executeQuery(String.format("select * from channel_messages where channel='%s' and server='%s' and ispinned=true order by date DESC",cmd.getChannel(),cmd.getServer()));
+            ResultSet rs = stmt.executeQuery(String.format("select * from channel_messages where channel='%s' and server='%s' and ispinned=true order by date",cmd.getChannel(),cmd.getServer()));
             while (rs.next()){
                 if(rs.getBoolean("isfile")){
                     byte[] bytes = fileToBytes(rs.getString("FILELINK"));

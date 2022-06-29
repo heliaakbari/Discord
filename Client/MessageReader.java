@@ -35,6 +35,7 @@ public class MessageReader extends Thread{
         StringBuilder stringBuilder = new StringBuilder();
 
         while (true){
+            System.out.print(" ");
             try {
                 data = (Data) in.readObject();
             } catch (IOException | ClassNotFoundException e) {
@@ -46,9 +47,11 @@ public class MessageReader extends Thread{
                 messageNumbering.add(message);
                 if (message.getText().equals("0"))
                     break;
+                // checks if the sender and receiver of the message aren't the same so that the message isn't duplicated in console
                 if (!data.getUser().equals(currentUsername)) {
-                    stringBuilder.append(message.getSourceInfo().get(0)).append(" : ").append(message.getText()).append("\n");
+                    stringBuilder.append(message.getSourceInfo().get(0)).append(" : ").append(message.getText());
                     inputHandler.printMsg(stringBuilder.toString());
+                    stringBuilder= new StringBuilder("");
                 }
             }
 
