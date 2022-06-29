@@ -286,13 +286,21 @@ public class Console extends InputHandler{
         return roles;
     }
 
-    public void showMessages(ArrayList<Message> messages){
+    public void showMessages(ArrayList<Message> messages, boolean shortForm){
 
+        String text;
         System.out.println("=======================================================================");
         for (int i = 0; i < messages.size(); i++) {
-            System.out.println(i + 1 +  ") " + messages.get(i));
+            text = i + 1 + ") ";
+            if (shortForm)
+                text = text + messages.get(i).shortFormToString();
+            else
+                text = text + messages.get(i);
+            System.out.println(text);
         }
         System.out.println("=======================================================================");
 
     }
+
+
 }

@@ -67,6 +67,10 @@ public abstract class Message implements Serializable {
         return stringBuilder.toString();
     }
 
+    public String getWriterOnly(){
+        return sourceInfo.get(0) + "-> ";
+    }
+
     public ArrayList<String> getSourceInfo() {
         return sourceInfo;
     }
@@ -90,5 +94,8 @@ public abstract class Message implements Serializable {
     public void setLaughs(int numberOfLaughs){
         reactions.put("laugh",numberOfLaughs);
     }
+
     public abstract String getText();
+
+    public abstract String shortFormToString();
 }
