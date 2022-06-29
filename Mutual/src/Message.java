@@ -72,7 +72,7 @@ public abstract class Message implements Serializable {
     }
 
     public String getReactions(){
-        StringBuilder stringBuilder = new StringBuilder();
+        StringBuilder stringBuilder = new StringBuilder("   ");
         for (Map.Entry<String, Integer> reaction: reactions.entrySet()) {
             stringBuilder.append(reaction.getValue()).append(" ").append(reaction.getKey()).append("    ");
         }
