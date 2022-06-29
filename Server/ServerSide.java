@@ -131,15 +131,21 @@ public class ServerSide {
 
         switch (cmd.getKeyword()){
             case "exit":
-                if(activeChannels.containsKey(cmd.getUser())){
-                    dbm.cmdManager.process(Command.lastseenChannel(cmd.getUser(),activeChannels.get(cmd.getUser()).get(0),activeChannels.get(cmd.getUser()).get(1)));
-                    activeChannels.remove(cmd.getUser());
+                System.out.println("got exit command");
+                String person = null;
+                for (HashMap.Entry<String, ClientHandler> pair: clientHandlers.entrySet()) {
+                    if(pair.getValue().equals(clientHandler)){
+                        person = pair.getKey();
+                        break;
+                    }
                 }
-                else if(activePvs.containsKey(cmd.getUser())){
-                    dbm.cmdManager.process(Command.lastseenPv(cmd.getUser(),activePvs.get(cmd.getUser())));
-                    activePvs.remove(cmd.getUser());
+                if(activePvs.containsKey(person)){
+                    dbm.cmdManager.process(Command.lastseenPv(person,activePvs.get(person)));
                 }
-                clientHandlers.remove(cmd.getUser());
+                if(activeChannels.containsKey(person)){
+                    dbm.cmdManager.process(Command.lastseenChannel(person,activeChannels.get(person).get(0),activeChannels.get(person).get(1)));
+                }
+                clientHandlers.remove(person);
             break;
             case "lastseenPv":
                 activePvs.remove(cmd.getUser());
@@ -209,5 +215,9 @@ public class ServerSide {
             System.out.println(set.getKey());
         }
         System.out.println("!!!!!!!!!!!!!!!!!!");
+    }
+
+    public void offline(ClientHandler clientHandler){
+
     }
 }

@@ -19,12 +19,12 @@ public class Listener extends Thread{
                 cmd =(Command) in.readObject();
                 System.out.println("got a command: "+cmd.getKeyword());
                 clientHandler.getCommandFromListener(cmd);
-
                 if(cmd.getKeyword().equals("exit")) {
-                    Thread.currentThread().interrupt();
+                    return;
                 }
 
             } catch (IOException e) {
+                clientHandler.getCommandFromListener(Command.exit());
                 clientHandler.interrupt();
                 break;
             } catch (ClassNotFoundException e) {

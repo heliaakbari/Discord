@@ -269,9 +269,8 @@ public class Command implements Serializable {
         return cmd;
      }
 
-    public static Command exit(String user){
+    public static Command exit(){
         Command cmd = new Command("exit");
-        cmd.user = user;
         return cmd;
     }
     public static Command addPeopleToServer(String user, String server, ArrayList<String> peopleToAdd){

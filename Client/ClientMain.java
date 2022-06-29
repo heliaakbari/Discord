@@ -31,7 +31,7 @@ public class ClientMain {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+        
         do {
             choice = inputHandler.showMenu("""
                     1) signup

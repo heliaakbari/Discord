@@ -21,12 +21,17 @@ public class ClientHandler extends Thread{
     public void run() {
         Listener listener = new Listener(this,in);
         listener.start();
+        try {
+            listener.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
-    public Data getCommandFromListener(Command cmd){
+    public void getCommandFromListener(Command cmd){
         Data dt = serverSide.moveCmd(cmd,this);
         if(cmd.getKeyword().equals("exit")){
-            Thread.currentThread().interrupt();
+            return;
         }
         if(!cmd.getKeyword().equals("newPvMsg") && !cmd.getKeyword().equals("newChannelMsg")) {
             try {
@@ -35,7 +40,7 @@ public class ClientHandler extends Thread{
                 e.printStackTrace();
             }
         }
-        return dt;
+        return ;
     }
 
     public void sendInstantMessage(Data dt){
