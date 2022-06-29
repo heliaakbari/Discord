@@ -42,11 +42,12 @@ public class MessageReader extends Thread{
                 e.printStackTrace();
                 break;
             }
-            if (data.getKeyword().equals("newPvMsg") || data.getKeyword().equals("newChannelMsg")){
+            if (data.getKeyword().equals("exitChat")){
+                return;
+            }
+            else if (data.getKeyword().equals("newPvMsg") || data.getKeyword().equals("newChannelMsg")){
                 message = (Message) data.getPrimary();
                 messageNumbering.add(message);
-                if (message.getText().equals("0"))
-                    break;
                 // checks if the sender and receiver of the message aren't the same so that the message isn't duplicated in console
                 if (!data.getUser().equals(currentUsername)) {
                     stringBuilder.append(message.getSourceInfo().get(0)).append(" : ").append(message.getText());

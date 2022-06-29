@@ -63,6 +63,11 @@ public class Data  implements Serializable {
     /**
      * returns if the new channel was successfully created
      */
+    public static @NotNull Data exitChat(String user){
+        Data data = new Data("exitChat");
+        data.user = user;
+        return data;
+    }
     public static @NotNull Data checkNewChannel(String creator, String server, String channel, Boolean isCreated){
         Data data = new Data("checkNewChannel");
         data.user = creator;
@@ -108,8 +113,9 @@ public class Data  implements Serializable {
         return data;
     }
 
-    public static @NotNull Data newChannelMsg(String server, String channel, Message msg){
+    public static @NotNull Data newChannelMsg(String sender,String server, String channel, Message msg){
         Data data = new Data("newChannelMsg");
+        data.user = sender;
         data.server = server;
         data.channel = channel;
         data.primary = msg;

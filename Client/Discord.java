@@ -188,6 +188,7 @@ public class Discord {
                     chosenFriend = inputHandler.showMenu(friends);
                     if (chosenFriend == 0)
                         break;
+
                     String otherPerson = friends.get(chosenFriend - 1);
                     startPrivateChat(otherPerson);
                 }
@@ -221,19 +222,23 @@ public class Discord {
 
         MessageReader messageReader = new MessageReader(in, inputHandler);
         MessageWriter messageWriter = new MessageWriter(out, currentUsername, otherPerson);
+
+
         messageReader.start();
         messageWriter.start();
 
-        while (true){
-            if ( messageWriter.isInterrupted()) {
-                messageReader.interrupt();
-                cmd = Command.lastseenPv(currentUsername, otherPerson);
-                transfer();
-                break;
-            }
-
+        try {
+            messageWriter.join();
+            System.out.println("writer joined");
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
-
+        try {
+            messageReader.join();
+            System.out.println("reader joined");
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     /**

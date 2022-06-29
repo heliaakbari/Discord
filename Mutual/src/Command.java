@@ -7,7 +7,7 @@ public class Command implements Serializable {
      * getNewMsgs, getRequests, getChannelMsg, getPvMsgs, getChannelMembers, getServerMembers
      * getFriends, deleteServer , deleteChannel, changeUsername,changeServerName
      */
-    private static final long serialVersionUID = 265786288349584L;
+    private static final long serialVersionUID = 265786288349585L;
 
     private String keyword;
     private String server;
@@ -61,9 +61,11 @@ public class Command implements Serializable {
     }
 
 
-    public static Command newChannelMsg(String sender,Message message){
+    public static Command newChannelMsg(String sender,String server,String channel,Message message){
         Command cmd = new Command("newChannelMsg");
         cmd.user = sender;
+        cmd.server= server;
+        cmd.channel = channel;
         cmd.primary= message;
         return cmd;
     }

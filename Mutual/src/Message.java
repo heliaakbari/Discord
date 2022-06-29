@@ -3,11 +3,11 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 public abstract class Message implements Serializable {
-    private static final long serialVersionUID = 232222247967288L;
+    private static final long serialVersionUID = 232222247967289L;
     private LocalDateTime dateTime;
     // holds sender username, channel and server respectively
     private ArrayList<String> sourceInfo;
-    private transient HashMap<String, Integer> reactions = new HashMap<>();
+    private HashMap<String, Integer> reactions = new HashMap<>();
 
 
     public Message(String sender) {

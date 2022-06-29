@@ -74,16 +74,26 @@ public class Server {
                         return;
                     }
                     ArrayList<Message> messageNumbering = (ArrayList<Message>) data.getPrimary();
+                    inputHandler.showMessages(messageNumbering);
                     MessageReader messageReader = new MessageReader(in, inputHandler, messageNumbering, currentUsername);
-                    messageReader.start();
 
                     MessageWriter messageWriter = new MessageWriter(out, new ArrayList<>(Arrays.asList(currentUsername, channelName, currentServerName)), messageNumbering);
+                    messageReader.start();
                     messageWriter.start();
 
-                    if (!messageReader.isAlive() && !messageWriter.isAlive()){
-                        cmd = Command.lastseenChannel(currentUsername,currentServerName, channelName);
-                        transfer();
+                    try {
+                        messageWriter.join();
+                        System.out.println("writer joined");
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
                     }
+                    try {
+                        messageReader.join();
+                        System.out.println("reader joined");
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
                 }
                 else if (action == 2) {
                     // creat a command to get the members

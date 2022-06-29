@@ -44,8 +44,15 @@ public class MessageWriter extends Thread{
 
         while (true){
             text = scanner.nextLine();
-            if (text.equals("0"))
+            if (text.equals("0")) {
+                Command cmd = Command.lastseenChannel(senderInfo.get(0),senderInfo.get(2),senderInfo.get(1));
+                try {
+                    out.writeObject(cmd);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 break;
+            }
             else if (text.contains("react ")){
                 String[] splitted = text.split(" ");
                 message = messageNumbering.get(Integer.parseInt(splitted[1]));
@@ -53,7 +60,7 @@ public class MessageWriter extends Thread{
             }
             else {
                 message = new TextMessage(senderInfo, text);
-                cmd = Command.newChannelMsg(senderInfo.get(0), message);
+                cmd = Command.newChannelMsg(senderInfo.get(0),senderInfo.get(2),senderInfo.get(1), message);
             }
             try {
                 out.writeObject(cmd);
@@ -71,6 +78,13 @@ public class MessageWriter extends Thread{
         while(true){
             text = scanner.nextLine();
             if (text.equals("0")) {
+                Command cmd = Command.lastseenPv(senderInfo.get(0),receiverInfo);
+
+                try {
+                    out.writeObject(cmd);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 break;
             }
             message = new TextMessage(senderInfo, text);
