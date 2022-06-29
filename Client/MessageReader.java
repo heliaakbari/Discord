@@ -37,9 +37,9 @@ public class MessageReader extends Thread{
         while (true){
             System.out.print(" ");
             try {
-                data = (Data) in.readObject();
-                System.out.println();
+               data =(Data) in.readObject();
             } catch (IOException | ClassNotFoundException e) {
+                e.printStackTrace();
                 break;
             }
             if (data.getKeyword().equals("newPvMsg") || data.getKeyword().equals("newChannelMsg")){

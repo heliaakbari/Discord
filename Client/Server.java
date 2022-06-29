@@ -57,7 +57,7 @@ public class Server {
 
             int action;
             do {
-                action = inputHandler.showMenu("1) start chatting\n2) see the channel members\n3) see pin bar\npress 0 to exit", 3);
+                action = inputHandler.showMenu("1) start chatting\n2) see the channel members\n3) see pin bar\n4) leave channel\npress 0 to exit", 4);
 
                 if (action == 1) {
                     inputHandler.printMsg("you can type your messages now, to react to a message type 'react <message number> <reaction> '.\n" +
@@ -120,6 +120,11 @@ public class Server {
                     }
 
                 }
+                else if (action == 4){
+                    cmd = Command.banFromChannel(currentUsername, currentServerName,channelName);
+                    transfer();
+                    action = 0;
+                }
 
             } while (action != 0);
 
@@ -139,6 +144,7 @@ public class Server {
 
             Role role = (Role) data.getPrimary();
             ArrayList<String> actions = role.getAvailableAbilities();
+            actions.add("leave server");
             actions.add("press 0 to exit");
 
             action = inputHandler.showMenu(actions);
@@ -146,105 +152,117 @@ public class Server {
                 break;
             // create the command, for the keyword use the value in the abilities arrayList, to get the value use action - 1 index
             String chosenAction = actions.get(action - 1);
-            if (chosenAction.equals("create channel")){
-                String newChannel = inputHandler.receiveData("enter channel name");
-                cmd = Command.newChannel(currentUsername, currentServerName, newChannel);
-                transfer();
-                if (data.getKeyword().equals("checkNewChannel") && !(boolean)data.getPrimary())
-                    inputHandler.printMsg("oops! couldn't create channel. try again later.");
-            }
-            else if (chosenAction.equals("remove channel")){
-                String removableChannel = inputHandler.receiveData("enter channel name to be deleted");
-                cmd = Command.deleteChannel(currentUsername, currentServerName, removableChannel);
-                transfer();
-            }
-            else if (chosenAction.equals("remove member")){
-                String person = inputHandler.receiveData("who do you want  to remove?");
-                cmd = Command.banFromServer(person, currentServerName);
-                transfer();
-            }
-            else if (chosenAction.equals("restrict member")){
-                String person = inputHandler.receiveData("type the username you want to ban");
-                String channel = inputHandler.receiveData("type the channel you want to ban this person from");
-                cmd = Command.banFromChannel(person, currentServerName, channel);
-                transfer();
-            }
-            else if (chosenAction.equals("ban member")){
-                String person = inputHandler.receiveData("type the username you want to ban from server");
-                cmd = Command.banFromServer(person, currentServerName);
-                transfer();
-            }
-            else if (chosenAction.equals("change server name")){
-                String newName = inputHandler.receiveData("type the new name for the server");
-                cmd = Command.changeServerName(currentUsername, currentServerName, newName);
-                transfer();
-                currentServerName = newName;
-            }
-            else if (chosenAction.equals("see chat history")){
-                chatHistory(currentUsername);
-            }
-            else if (chosenAction.equals("pin message")){
-                Message message = chatHistory(currentUsername);
-                if (message != null) {
-                    cmd = Command.pinMsg(currentUsername, message);
-                    transfer();
-                }
-            }
-            else if (chosenAction.equals("delete server")){
-                cmd = Command.deleteServer(currentUsername, currentServerName);
-                transfer();
-                return -1;
-            }
-//            switch (chosenAction) {
-//                case "create channel":
-//                    String newChannel = inputHandler.receiveData("enter channel name");
-//                    cmd = Command.newChannel(currentUsername, currentServerName, newChannel);
-//                    transfer();
-//                    if (data.getKeyword().equals("checkNewChannel") && !(boolean)data.getPrimary())
-//                        inputHandler.printMsg("oops! couldn't create channel. try again later.");
-//                    break;
-//                case "remove channel":
-//                    String removableChannel = inputHandler.receiveData("enter channel name to be deleted");
-//                    cmd = Command.deleteChannel(currentUsername, currentServerName, removableChannel);
-//                    transfer();
-//                    break;
-//                case "remove member":
-//                    String person = inputHandler.receiveData("who do you want  to remove?");
-//                    cmd = Command.banFromServer(person, currentServerName);
-//                    transfer();
-//                    break;
-//                case "restrict member":
-//                    person = inputHandler.receiveData("type the username you want to ban");
-//                    String channel = inputHandler.receiveData("type the channel you want to ban this person from");
-//                    cmd = Command.banFromChannel(person, currentServerName, channel);
-//                    transfer();
-//                    break;
-//                case "ban member":
-//                    person = inputHandler.receiveData("type the username you want to ban from server");
-//                    cmd = Command.banFromServer(person, currentServerName);
-//                    transfer();
-//                    break;
-//                case "change sever name":
-//                    String newName = inputHandler.receiveData("type the new name for the server");
-//                    cmd = Command.changeServerName(currentUsername, currentServerName, newName);
-//                    transfer();
-//                    currentServerName = newName;
-//                    break;
-//                case "see chat history":
-//                    chatHistory(currentUsername);
-//                    break;
-//                case "pin message":
-//                    Message message = chatHistory(currentUsername);
-//                    if (message != null) {
-//                        cmd = Command.pinMsg(currentUsername, message);
-//                        transfer();
-//                    }
-//                    break;
-//                case "delete server":
-//                    cmd = Command.deleteServer(currentUsername, currentServerName);
-//                    transfer();
-//                    return -1;
+//            if (chosenAction.equals("create channel")){
+//                String newChannel = inputHandler.receiveData("enter channel name");
+//                cmd = Command.newChannel(currentUsername, currentServerName, newChannel);
+//                transfer();
+//                if (data.getKeyword().equals("checkNewChannel") && !(boolean)data.getPrimary())
+//                    inputHandler.printMsg("oops! couldn't create channel. try again later.");
 //            }
+//            else if (chosenAction.equals("remove channel")){
+//                String removableChannel = inputHandler.receiveData("enter channel name to be deleted");
+//                cmd = Command.deleteChannel(currentUsername, currentServerName, removableChannel);
+//                transfer();
+//            }
+//            else if (chosenAction.equals("remove member")){
+//                String person = inputHandler.receiveData("who do you want  to remove?");
+//                cmd = Command.banFromServer(person, currentServerName);
+//                transfer();
+//            }
+//            else if (chosenAction.equals("restrict member")){
+//                String person = inputHandler.receiveData("type the username you want to ban");
+//                String channel = inputHandler.receiveData("type the channel you want to ban this person from");
+//                cmd = Command.banFromChannel(person, currentServerName, channel);
+//                transfer();
+//            }
+//            else if (chosenAction.equals("ban member")){
+//                String person = inputHandler.receiveData("type the username you want to ban from server");
+//                cmd = Command.banFromServer(person, currentServerName);
+//                transfer();
+//            }
+//            else if (chosenAction.equals("change server name")){
+//                String newName = inputHandler.receiveData("type the new name for the server");
+//                cmd = Command.changeServerName(currentUsername, currentServerName, newName);
+//                transfer();
+//                currentServerName = newName;
+//            }
+//            else if (chosenAction.equals("see chat history")){
+//                chatHistory(currentUsername);
+//            }
+//            else if (chosenAction.equals("pin message")){
+//                Message message = chatHistory(currentUsername);
+//                if (message != null) {
+//                    cmd = Command.pinMsg(currentUsername, message);
+//                    transfer();
+//                }
+//            }
+//            else if (chosenAction.equals("delete server")){
+//                cmd = Command.deleteServer(currentUsername, currentServerName);
+//                transfer();
+//                return -1;
+//            }
+            switch (chosenAction) {
+                case "create channel":
+                    String newChannel = inputHandler.receiveData("enter channel name");
+                    cmd = Command.newChannel(currentUsername, currentServerName, newChannel);
+                    transfer();
+                    if (data.getKeyword().equals("checkNewChannel") && !(boolean)data.getPrimary())
+                        inputHandler.printMsg("oops! couldn't create channel. try again later.");
+                    String newMember;
+                    while (true){
+                        newMember = inputHandler.receiveData("enter the usernames you want to add to the channel. ad as always, press 0 when finished");
+                        if (newMember.equals("0"))
+                            break;
+                        cmd = Command.addOneMemberToChannel(currentUsername, newMember, currentServerName, newChannel);
+                        transfer();
+                    }
+                    break;
+                case "remove channel":
+                    String removableChannel = inputHandler.receiveData("enter channel name to be deleted");
+                    cmd = Command.deleteChannel(currentUsername, currentServerName, removableChannel);
+                    transfer();
+                    break;
+                case "remove member":
+                    String person = inputHandler.receiveData("who do you want  to remove?");
+                    cmd = Command.banFromServer(person, currentServerName);
+                    transfer();
+                    break;
+                case "restrict member":
+                    person = inputHandler.receiveData("type the username you want to ban");
+                    String channel = inputHandler.receiveData("type the channel you want to ban this person from");
+                    cmd = Command.banFromChannel(person, currentServerName, channel);
+                    transfer();
+                    break;
+                case "ban member":
+                    person = inputHandler.receiveData("type the username you want to ban from server");
+                    cmd = Command.banFromServer(person, currentServerName);
+                    transfer();
+                    break;
+                case "change sever name":
+                    String newName = inputHandler.receiveData("type the new name for the server");
+                    cmd = Command.changeServerName(currentUsername, currentServerName, newName);
+                    transfer();
+                    currentServerName = newName;
+                    break;
+                case "see chat history":
+                    chatHistory(currentUsername);
+                    break;
+                case "pin message":
+                    Message message = chatHistory(currentUsername);
+                    if (message != null) {
+                        cmd = Command.pinMsg(currentUsername, message);
+                        transfer();
+                    }
+                    break;
+                case "delete server":
+                    cmd = Command.deleteServer(currentUsername, currentServerName);
+                    transfer();
+                    return -1;
+                case "leave server" :
+                    cmd = Command.banFromServer(currentUsername, currentServerName);
+                    transfer();
+                    return -1;
+            }
 
         } while (action != 0);
 
