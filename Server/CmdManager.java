@@ -206,12 +206,11 @@ public class CmdManager {
                 }
 
                 for(String ch : channels){
-                    String query = "insert into channel_members values (?,?,?,?);";
+                    String query = "insert into channel_members values (?,?,?,CURRENT_TIMESTAMP);";
                     PreparedStatement preparedStatement = con.prepareStatement(query);
                     preparedStatement.setString(1,p);
                     preparedStatement.setString(2,cmd.getServer());
                     preparedStatement.setString(3,ch);
-                    preparedStatement.setTimestamp(4, Timestamp.valueOf(LocalDateTime.now()));
                     preparedStatement.executeUpdate();
                 }
 
@@ -234,7 +233,11 @@ public class CmdManager {
             if(rs.getInt("C1")<=0){
                 return;
             }
-            stmt.executeUpdate(String.format("insert into channel_members values ('%s','%s','%s','%s');",(String)cmd.getPrimary(), cmd.getServer(), cmd.getChannel(), LocalDateTime.now().format(dateTimeFormatter)));
+            String query = "insert into channel_members values (?,?,?,CURRENT_TIMESTAMP)";
+            PreparedStatement preparedStatement = con.prepareStatement(query);
+            preparedStatement.setString(1,(String)cmd.getPrimary());
+            preparedStatement.setString(2,cmd.getServer());
+            preparedStatement.setString(3,cmd.getChannel());
             stmt.executeUpdate(String.format("insert into server_members values ('%s','%s','member','000000000')",(String)cmd.getPrimary(),cmd.getServer()));
         }
         catch (SQLException e){
@@ -439,12 +442,11 @@ public class CmdManager {
 
             }
             else {
-                String query = "insert into channel_members values (?,?,?,?);";
+                String query = "insert into channel_members values (?,?,?,CURRENT_TIMESTAMP);";
                 PreparedStatement preparedStatement = con.prepareStatement(query);
                 preparedStatement.setString(1,cmd.getUser());
                 preparedStatement.setString(2,cmd.getServer());
                 preparedStatement.setString(3,cmd.getChannel());
-                preparedStatement.setTimestamp(4, Timestamp.valueOf(LocalDateTime.now()));
                 preparedStatement.executeUpdate();
                 FeedBack.say("channel " + cmd.getChannel() + " created successfully");
                 return Data.checkNewChannel(cmd.getUser(), cmd.getServer(), cmd.getChannel(), true);
@@ -612,7 +614,12 @@ public class CmdManager {
         int number = (int) cmd.getPrimary();
         ArrayList<Message> messages = new ArrayList<>();
         try {
-            ResultSet rs = stmt.executeQuery(String.format("select * from channel_messages where channel='%s' and server='%s' order by date limit %d",cmd.getChannel(),cmd.getServer(),number));
+            String query = "select * from channel_messages where channel=? and server=? order by date limit ?";
+            PreparedStatement preparedStatement = con.prepareStatement(query);
+            preparedStatement.setString(1,cmd.getChannel());
+            preparedStatement.setString(2,cmd.getServer());
+            preparedStatement.setInt(3,number);
+           ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()){
                 if(rs.getBoolean("isfile")){
                     byte[] bytes = fileToBytes(rs.getString("FILELINK"));
@@ -965,16 +972,14 @@ public class CmdManager {
 
     public void lastseenAll(Command cmd){
         try{
-            String query = "update channel_members set lastseen=? where username=?";
+            String query = "update channel_members set lastseen=CURRENT_TIMESTAMP where username=?";
             PreparedStatement preparedStatement = con.prepareStatement(query);
-            preparedStatement.setString(2,cmd.getUser());
-            preparedStatement.setTimestamp(1, Timestamp.valueOf(LocalDateTime.now()));
+            preparedStatement.setString(1,cmd.getUser());
+            preparedStatement.executeUpdate();
 
-
-            query = "update pv_messages set seen=true where receiver=? and date<?;";
+            query = "update pv_messages set seen=true where receiver=? and date<CURRENT_TIMESTAMP;";
             preparedStatement = con.prepareStatement(query);
             preparedStatement.setString(1,cmd.getUser());
-            preparedStatement.setTimestamp(2, Timestamp.valueOf(LocalDateTime.now()));
             preparedStatement.executeUpdate();
         }
         catch (SQLException e){
@@ -985,10 +990,9 @@ public class CmdManager {
 
     public void lastseenPv(Command cmd){
         try{
-            String query = "update pv_messages set seen=true where receiver=? and sender=? and date<?;";
+            String query = "update pv_messages set seen=true where receiver=? and sender=? and date<CURRENT_TIMESTAMP;";
             PreparedStatement preparedStatement = con.prepareStatement(query);
             preparedStatement.setString(1,cmd.getUser());
-            preparedStatement.setTimestamp(3, Timestamp.valueOf(LocalDateTime.now()));
             preparedStatement.setString(2,(String)cmd.getPrimary());
             preparedStatement.executeUpdate();
         }

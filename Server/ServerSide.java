@@ -59,6 +59,8 @@ public class ServerSide {
 
     public void addClientHandler (String username,ClientHandler clientHandler ){
         clientHandlers.put(username,clientHandler);
+        System.out.println(username+ " was added to handlers");
+        printClientHandlers();
     }
 
     public Data moveCmd(Command cmd,ClientHandler clientHandler){
@@ -127,6 +129,17 @@ public class ServerSide {
         }
 
         switch (cmd.getKeyword()){
+            case "exit":
+                if(activeChannels.containsKey(cmd.getUser())){
+                    dbm.cmdManager.process(Command.lastseenChannel(cmd.getUser(),activeChannels.get(cmd.getUser()).get(0),activeChannels.get(cmd.getUser()).get(1)));
+                    activeChannels.remove(cmd.getUser());
+                }
+                else if(activePvs.containsKey(cmd.getUser())){
+                    dbm.cmdManager.process(Command.lastseenPv(cmd.getUser(),activePvs.get(cmd.getUser())));
+                    activePvs.remove(cmd.getUser());
+                }
+                clientHandlers.remove(cmd.getUser());
+            break;
             case "lastseenPv":
                 activePvs.remove(cmd.getUser());
             break;

@@ -25,6 +25,9 @@ public class ClientHandler extends Thread{
 
     public Data getCommandFromListener(Command cmd){
         Data dt = serverSide.moveCmd(cmd,this);
+        if(cmd.getKeyword().equals("exit")){
+            Thread.currentThread().interrupt();
+        }
         try {
             out.writeObject(dt);
         } catch (IOException e) {
@@ -40,5 +43,6 @@ public class ClientHandler extends Thread{
             e.printStackTrace();
         }
     }
+
 
 }
