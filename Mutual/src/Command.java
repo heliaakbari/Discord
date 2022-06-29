@@ -253,7 +253,7 @@ public class Command implements Serializable {
     public static Command changeRole (String user, String userToChange,String server,Role role){
         Command cmd = new Command("changeRole");
         cmd.user = user;
-        cmd.user = server;
+        cmd.server = server;
         cmd.primary = role;
         cmd.secondary = userToChange;
         return cmd;

@@ -65,7 +65,6 @@ public class MessageWriter extends Thread{
 
     private void pvChat(){
         Message message;
-        System.out.println("waiting for you to type");
         Scanner scanner = new Scanner(System.in);
         String text;
 
@@ -77,7 +76,6 @@ public class MessageWriter extends Thread{
             cmd = Command.newPvMsg(senderInfo.get(0), receiverInfo, message);
             try {
                 out.writeObject(cmd);
-                System.out.println("message sent successfully to server");
             } catch (IOException e) {
                 e.printStackTrace();
             }
