@@ -946,7 +946,11 @@ public class CmdManager {
         Message message = (Message)cmd.getPrimary();
         try {
             if (message.getSourceInfo().size() == 3) {
-                stmt.executeUpdate(String.format("update channel_messages set ispinned=true where date='%s' and sender='%s'",message.getDateTime().format(dateTimeFormatter),message.getSourceInfo().get(0)));
+                String query = "update channel_messages set ispinned=true where date=? and sender=?";
+                PreparedStatement preparedStatement = con.prepareStatement(query);
+                preparedStatement.setTimestamp(1,Timestamp.valueOf(message.getDateTime()));
+                preparedStatement.setString(2,message.getSourceInfo().get(0));
+                preparedStatement.executeUpdate();
             }
         }
         catch (SQLException e){
