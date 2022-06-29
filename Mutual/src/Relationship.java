@@ -5,7 +5,7 @@ public enum  Relationship  implements Serializable {
     Block,
     Friend_pending,
     Rejected;
-
+    private static final long serialVersionUID = 524225788387725L;
     private String sender;
     private String receiver;
 

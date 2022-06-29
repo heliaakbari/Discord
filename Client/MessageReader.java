@@ -38,10 +38,10 @@ public class MessageReader extends Thread{
             System.out.print(" ");
             try {
                 data = (Data) in.readObject();
+                System.out.println();
             } catch (IOException | ClassNotFoundException e) {
                 break;
             }
-
             if (data.getKeyword().equals("newPvMsg") || data.getKeyword().equals("newChannelMsg")){
                 message = (Message) data.getPrimary();
                 messageNumbering.add(message);

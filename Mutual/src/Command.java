@@ -7,7 +7,7 @@ public class Command implements Serializable {
      * getNewMsgs, getRequests, getChannelMsg, getPvMsgs, getChannelMembers, getServerMembers
      * getFriends, deleteServer , deleteChannel, changeUsername,changeServerName
      */
-    private static final long serialVersionUID = 783888263452796L;
+    private static final long serialVersionUID = 265786288349584L;
 
     private String keyword;
     private String server;

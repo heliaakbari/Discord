@@ -614,7 +614,7 @@ public class CmdManager {
         int number = (int) cmd.getPrimary();
         ArrayList<Message> messages = new ArrayList<>();
         try {
-            String query = "select * from channel_messages where channel=? and server=? order by date limit ?";
+            String query = "select * from ( select * from channel_messages where channel=? and server=? order by date desc limit ? ) order by date";
             PreparedStatement preparedStatement = con.prepareStatement(query);
             preparedStatement.setString(1,cmd.getChannel());
             preparedStatement.setString(2,cmd.getServer());
@@ -646,7 +646,7 @@ public class CmdManager {
         int number = (int) cmd.getSecondary();
         ArrayList<Message> messages = new ArrayList<>();
         try {
-            String query = "select * from pv_messages where (receiver=? and sender=?) or (sender=? and receiver=?) order by date limit ?";
+            String query = "select * from(select * from pv_messages where (receiver=? and sender=?) or (sender=? and receiver=?) order by date desc limit ? )order by date ";
             PreparedStatement preparedStatement = con.prepareStatement(query);
             preparedStatement.setString(1,cmd.getUser());
             preparedStatement.setString(2,friend);
@@ -839,7 +839,7 @@ public class CmdManager {
         String newName = (String) cmd.getPrimary();
 
         try {
-            ResultSet r = stmt.executeQuery(String.format("select count(*) as C1 from server_members where server='%s'",old));
+            ResultSet r = stmt.executeQuery(String.format("select count(*) as C1 from server_members where server='%s'",newName));
             r.next();
             int count = r.getInt("C1");
             if (count > 0) {

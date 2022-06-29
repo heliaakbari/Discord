@@ -6,7 +6,7 @@ import java.nio.file.Files;
 import java.time.LocalDateTime;
 
 public class FileMessage extends Message implements Serializable {
-    private static final long serialVersionUID = 336722984553344L;
+    private static final long serialVersionUID = 535296473722284L;
     private String fileName;
     private String format;
     private byte[] fileBytes;

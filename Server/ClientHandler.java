@@ -28,10 +28,12 @@ public class ClientHandler extends Thread{
         if(cmd.getKeyword().equals("exit")){
             Thread.currentThread().interrupt();
         }
-        try {
-            out.writeObject(dt);
-        } catch (IOException e) {
-            e.printStackTrace();
+        if(!cmd.getKeyword().equals("newPvMsg") && !cmd.getKeyword().equals("newChannelMsg")) {
+            try {
+                out.writeObject(dt);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         return dt;
     }
