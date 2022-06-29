@@ -64,7 +64,7 @@ public class Discord {
             } else {
                 ArrayList<Message> messages = (ArrayList<Message>) data.getPrimary();
                 inputHandler.printMsg("INBOX");
-                inputHandler.showMessages(messages);
+                inputHandler.showMessages(messages, false);
                 if (messages.size() == 0)
                     inputHandler.printMsg("no one cares about you, move on.");
 
@@ -216,7 +216,7 @@ public class Discord {
         else {
             recentMessages = (ArrayList<Message>) data.getPrimary();
             inputHandler.printMsg("Recent Messages :");
-            inputHandler.showMessages(recentMessages);
+            inputHandler.showMessages(recentMessages, true);
         }
 
 

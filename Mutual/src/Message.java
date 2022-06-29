@@ -67,12 +67,16 @@ public abstract class Message implements Serializable {
         return stringBuilder.toString();
     }
 
+    public String getWriterOnly(){
+        return sourceInfo.get(0) + "-> ";
+    }
+
     public ArrayList<String> getSourceInfo() {
         return sourceInfo;
     }
 
     public String getReactions(){
-        StringBuilder stringBuilder = new StringBuilder();
+        StringBuilder stringBuilder = new StringBuilder("   ");
         for (Map.Entry<String, Integer> reaction: reactions.entrySet()) {
             stringBuilder.append(reaction.getValue()).append(" ").append(reaction.getKey()).append("    ");
         }
@@ -90,5 +94,8 @@ public abstract class Message implements Serializable {
     public void setLaughs(int numberOfLaughs){
         reactions.put("laugh",numberOfLaughs);
     }
+
     public abstract String getText();
+
+    public abstract String shortFormToString();
 }

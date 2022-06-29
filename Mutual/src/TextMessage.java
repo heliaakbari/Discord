@@ -39,4 +39,11 @@ public class TextMessage extends Message  implements Serializable {
         else
             return super.getSourceInfoAsString() + text;
     }
+
+    public String shortFormToString(){
+        if (super.getSourceInfo().size() > 1)
+            return super.getWriterOnly() + text + "\n" + super.getReactions();
+        else
+            return super.getWriterOnly() + text;
+    }
 }

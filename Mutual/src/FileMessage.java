@@ -65,4 +65,9 @@ public class FileMessage extends Message implements Serializable {
     public String getText() {
         return fileName;
     }
+
+    @Override
+    public String shortFormToString() {
+        return null;
+    }
 }

@@ -45,16 +45,19 @@ public class MessageReader extends Thread{
             if (data.getKeyword().equals("exitChat")){
                 return;
             }
-            else if (data.getKeyword().equals("newPvMsg") || data.getKeyword().equals("newChannelMsg")){
-                message = (Message) data.getPrimary();
-                messageNumbering.add(message);
-                // checks if the sender and receiver of the message aren't the same so that the message isn't duplicated in console
-                if (!data.getUser().equals(currentUsername)) {
-                    stringBuilder.append(message.getSourceInfo().get(0)).append(" : ").append(message.getText());
-                    inputHandler.printMsg(stringBuilder.toString());
-                    stringBuilder= new StringBuilder("");
-                }
+
+            message = (Message) data.getPrimary();
+            messageNumbering.add(message);
+
+            if (data.getKeyword().equals("newPvMsg")){
+                stringBuilder.append(message.getSourceInfo().get(0)).append(" : ").append(message.getText());
             }
+            else if (data.getKeyword().equals("newChannelMsg") && !data.getUser().equals(currentUsername)){
+                stringBuilder.append(messageNumbering.size()).append(") ").append(message.getSourceInfo().get(0)).append(" : ").append(message.getText());
+            }
+
+            inputHandler.printMsg(stringBuilder.toString());
+            stringBuilder= new StringBuilder("");
 
         }
     }

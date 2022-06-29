@@ -9,7 +9,7 @@ public abstract class InputHandler  implements Serializable {
 
     public abstract int showMenu(String menu, int options);
     public abstract int showMenu(ArrayList<String> menu);
-    public abstract void showMessages(ArrayList<Message> messages);
+    public abstract void showMessages(ArrayList<Message> messages, boolean shortForm);
 
     protected abstract int checkInput(int numberOfChoices) throws Exception;
     protected abstract String checkInput(String regex, int minLength, int maxLength) throws Exception;
