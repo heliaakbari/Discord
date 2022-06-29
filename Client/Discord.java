@@ -66,7 +66,7 @@ public class Discord {
                 inputHandler.printMsg("INBOX");
                 inputHandler.showMessages(messages);
                 if (messages.size() == 0)
-                    inputHandler.printMsg("no new message yet.");
+                    inputHandler.printMsg("no one cares about you, move on.");
 
             }
             cmd = Command.lastseenAll(currentUsername);
@@ -87,6 +87,7 @@ public class Discord {
             ArrayList<String> serversList = new ArrayList<>();
             if (!data.getKeyword().equals("userServers")) {
                 inputHandler.printMsg("unable to receive data from server");
+                break;
             } else {
                 serversList = (ArrayList<String>) data.getPrimary();
                 serversList.add("create new server");
@@ -416,6 +417,7 @@ public class Discord {
                     } catch (IOException e) {
                         inputHandler.printError(e);
                     }
+                    inputHandler.printMsg("photo saved successfully");
                     break;
                 case 2:
                     while (true) {

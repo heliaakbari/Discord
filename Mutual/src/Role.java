@@ -7,7 +7,7 @@ public class Role implements Serializable {
 
     private String roleName;
     private String values;
-    public static final ArrayList<String> abilities = new ArrayList<>(Arrays.asList("creat channel", "remove channel", "remove member",
+    public static final ArrayList<String> abilities = new ArrayList<>(Arrays.asList("create channel", "remove channel", "remove member",
             "restrict member", "ban member", "change server name", "see chat history", "pin message", "delete server"));
 
     public Role(String values, String name) {
@@ -19,7 +19,7 @@ public class Role implements Serializable {
     public ArrayList<String> getAvailableAbilities() {
         ArrayList<String> availableAbilities = new ArrayList<>();
         for (int i = 0; i < 9; i++){
-            if (values.charAt(i) == 1){
+            if (values.charAt(i) == '1'){
                 availableAbilities.add(abilities.get(i));
             }
         }

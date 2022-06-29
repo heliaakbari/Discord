@@ -65,7 +65,10 @@ public class Console extends InputHandler{
      */
     public int showMenu(String menu, int options){
 
+        System.out.println("=======================================================================");
         System.out.println(menu);
+        System.out.println("=======================================================================");
+
         return getUserOption(options);
     }
 
@@ -285,8 +288,11 @@ public class Console extends InputHandler{
 
     public void showMessages(ArrayList<Message> messages){
 
+        System.out.println("=======================================================================");
         for (int i = 0; i < messages.size(); i++) {
             System.out.println(i + 1 +  ") " + messages.get(i));
         }
+        System.out.println("=======================================================================");
+
     }
 }

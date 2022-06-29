@@ -572,18 +572,18 @@ public class CmdManager {
                     messages.add(m);
                 }
             }
-            HashMap<String,String> channelsDates = new HashMap<>();
+            HashMap<String,Timestamp> channelsDates = new HashMap<>();
             rs = stmt.executeQuery(String.format("select channel,lastseen from channel_members where username='%s'",cmd.getUser()));
             while (rs.next()){
-                channelsDates.put(rs.getString("CHANNEL"),rs.getString("LASTSEEN"));
+                channelsDates.put(rs.getString("CHANNEL"),rs.getTimestamp("LASTSEEN"));
             }
-            for(HashMap.Entry<String, String> entry : channelsDates.entrySet()) {
+            for(HashMap.Entry<String, Timestamp> entry : channelsDates.entrySet()) {
                 String key = entry.getKey();
-                String value = entry.getValue();
+                Timestamp value = entry.getValue();
                 String query = "select * from channel_messages where channel=? and date > ? order by date";
                 PreparedStatement preparedStatement = con.prepareStatement(query);
                 preparedStatement.setString(1,key);
-                preparedStatement.setTimestamp(2, Timestamp.valueOf(value));
+                preparedStatement.setTimestamp(2,value);
                 rs = preparedStatement.executeQuery();
                 while (rs.next()){
                     if(rs.getBoolean("isfile")){
