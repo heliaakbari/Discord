@@ -577,9 +577,9 @@ public class CmdManager {
             preparedStatement.setString(3,message.getSourceInfo().get(1));
             preparedStatement.setTimestamp(4,Timestamp.valueOf(date));
             preparedStatement.setString(5,message.getSourceInfo().get(0));
-            preparedStatement.setString(6,(String)cmd.getServer());
+            preparedStatement.setString(6,(String) cmd.getSecondary());
             preparedStatement.executeUpdate();
-            
+
         }catch (SQLException s){
             s.printStackTrace();
         }
