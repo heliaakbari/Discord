@@ -28,7 +28,7 @@ public class Console extends InputHandler{
     }
 
     /**
-     * checks the validaiotn of user's input in case they have to type a string as input
+     * checks the validation of user's input in case they have to type a string as input
      * @param regex the required input format
      * @param minLength minimum length of the input
      * @param maxLength maximum length of the input
@@ -58,7 +58,7 @@ public class Console extends InputHandler{
     }
 
     /**
-     * prints a menu on cosole and asks for user's option
+     * prints a menu on console and asks for user's option
      * @param menu the menu to be printed
      * @param options number of menu's option
      * @return user's choice

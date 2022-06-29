@@ -30,11 +30,11 @@ public class MessageWriter extends Thread{
 
     @Override
     public void run() {
-
         if (senderInfo.size() == 1)
             pvChat();
         else
             channelChat();
+        Thread.currentThread().interrupt();
     }
 
     private void channelChat(){
@@ -65,19 +65,18 @@ public class MessageWriter extends Thread{
 
     private void pvChat(){
         Message message;
-        System.out.println("waiting for you to type");
         Scanner scanner = new Scanner(System.in);
         String text;
 
         while(true){
             text = scanner.nextLine();
-            if (text.equals("0"))
+            if (text.equals("0")) {
                 break;
+            }
             message = new TextMessage(senderInfo, text);
             cmd = Command.newPvMsg(senderInfo.get(0), receiverInfo, message);
             try {
                 out.writeObject(cmd);
-                System.out.println("message sent successfully to server");
             } catch (IOException e) {
                 e.printStackTrace();
             }

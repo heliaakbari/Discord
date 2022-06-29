@@ -224,11 +224,13 @@ public class Discord {
         messageWriter.start();
 
         while (true){
-            if (!messageReader.isAlive() && !messageWriter.isAlive()) {
+            if ( messageWriter.isInterrupted()) {
+                messageReader.interrupt();
                 cmd = Command.lastseenPv(currentUsername, otherPerson);
                 transfer();
                 break;
             }
+
         }
 
     }
