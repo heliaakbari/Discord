@@ -157,7 +157,7 @@ public class DatabaseManager {
                                              channel varchar(20) not null,
                                              messageDate TIMESTAMP not null,
                                              messageSender varchar(20) not null,
-                                             type int not null);""");
+                                             type varchar(10) not null);""");
         stmt.executeUpdate("""
                 ALTER TABLE reactions
                 ADD CONSTRAINT  IF NOT EXISTS uniqueReaction UNIQUE(reactionSender,messageSender,messageDate);

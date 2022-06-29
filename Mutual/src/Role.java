@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Role implements Serializable {
-
+    private static final long serialVersionUID =338245675849926L;
     private String roleName;
     private String values;
     public static final ArrayList<String> abilities = new ArrayList<>(Arrays.asList("create channel", "remove channel", "remove member",

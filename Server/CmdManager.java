@@ -1,3 +1,5 @@
+import oracle.jdbc.proxy.annotation.Pre;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -144,9 +146,11 @@ public class CmdManager {
                 break;
             case "lastseenPv":
                 lastseenPv(cmd);
+                dt = Data.exitChat(cmd.getUser());
                 break;
             case "lastseenChannel":
                 lastseenChannel(cmd);
+                dt = Data.exitChat(cmd.getUser());
                 break;
         }
 
@@ -156,13 +160,26 @@ public class CmdManager {
         for(Message message : messages){
             if(message.getSourceInfo().size()==3) {
                 try {
-                    ResultSet rs = stmt.executeQuery(String.format("select count(*) as C1 from reactions where messageSender='%s' and messageDate='%s' and type='like'", message.getSourceInfo().get(0), message.getDateTime().format(dateTimeFormatter)));
+                    String query = "select count(*) as C1 from reactions where messageSender=? and messageDate=? and type='like'";
+                    PreparedStatement preparedStatement = con.prepareStatement(query);
+                    preparedStatement.setString(1,message.getSourceInfo().get(0));
+                    preparedStatement.setTimestamp(2,Timestamp.valueOf(message.getDateTime()));
+                    ResultSet rs = preparedStatement.executeQuery();
                     rs.next();
                     message.setLikes(rs.getInt("C1"));
-                    rs = stmt.executeQuery(String.format("select count(*) as C1 from reactions where messageSender='%s' and messageDate='%s' and type='dislike'", message.getSourceInfo().get(0), message.getDateTime().format(dateTimeFormatter)));
+
+                     query = "select count(*) as C1 from reactions where messageSender=? and messageDate=? and type='dislike'";
+                     preparedStatement = con.prepareStatement(query);
+                    preparedStatement.setString(1,message.getSourceInfo().get(0));
+                    preparedStatement.setTimestamp(2,Timestamp.valueOf(message.getDateTime()));
+                     rs = preparedStatement.executeQuery();
                     rs.next();
                     message.setDislikes(rs.getInt("C1"));
-                    rs = stmt.executeQuery(String.format("select count(*) as C1 from reactions where messageSender='%s' and messageDate='%s' and type='laugh'", message.getSourceInfo().get(0), message.getDateTime().format(dateTimeFormatter)));
+                    query = "select count(*) as C1 from reactions where messageSender=? and messageDate=? and type='laugh'";
+                    preparedStatement = con.prepareStatement(query);
+                    preparedStatement.setString(1,message.getSourceInfo().get(0));
+                    preparedStatement.setTimestamp(2,Timestamp.valueOf(message.getDateTime()));
+                    rs = preparedStatement.executeQuery();
                     rs.next();
                     message.setLaughs(rs.getInt("C1"));
                 } catch (SQLException e) {
@@ -238,6 +255,14 @@ public class CmdManager {
             preparedStatement.setString(1,(String)cmd.getPrimary());
             preparedStatement.setString(2,cmd.getServer());
             preparedStatement.setString(3,cmd.getChannel());
+            preparedStatement.executeUpdate();
+
+            rs = stmt.executeQuery(String.format("select count(*) as C1 from server_members where username='%s' and server='%s'",cmd.getPrimary(),cmd.getServer()));
+            rs.next();
+            if(rs.getInt("C1")>0){
+                stmt.executeUpdate(String.format("delete from server_members where server_members where username='%s' and server='%s'",cmd.getPrimary(),cmd.getServer()));
+                return;
+            }
             stmt.executeUpdate(String.format("insert into server_members values ('%s','%s','member','000000000')",(String)cmd.getPrimary(),cmd.getServer()));
         }
         catch (SQLException e){
@@ -358,14 +383,21 @@ public class CmdManager {
     public void newChannelMsg(Command cmd){
         String sender = cmd.getUser();
         Message message1 = (Message) cmd.getPrimary();
-        String server=message1.getSourceInfo().get(1);
-        String channel = message1.getSourceInfo().get(2);
-        String date = message1.getDateTime().format(dateTimeFormatter);
+        String server=message1.getSourceInfo().get(2);
+        String channel = message1.getSourceInfo().get(1);
+        LocalDateTime date = message1.getDateTime();
         if(message1 instanceof TextMessage){
             TextMessage message = (TextMessage)message1;
-            String body = ((TextMessage) message).getText();
+            String body = message.getText();
             try {
-                stmt.executeUpdate(String.format("insert into channel_messages(sender,server,channel,date,body,isfile) values ('%s','%s','%s','%s',false);", sender, server,channel, date, body));
+                String query = "insert into channel_messages(sender,server,channel,date,body,ispinned,isfile) values (?,?,?,?,?,false,false);";
+                PreparedStatement preparedStatement = con.prepareStatement(query);
+                preparedStatement.setString(1,sender);
+                preparedStatement.setString(2,server);
+                preparedStatement.setString(3,channel);
+                preparedStatement.setTimestamp(4,Timestamp.valueOf(date));
+                preparedStatement.setString(5,body);
+                preparedStatement.executeUpdate();
                 FeedBack.say(sender+"'s text message sent to "+server+"/"+channel);
             }
             catch (SQLException e){
@@ -400,12 +432,12 @@ public class CmdManager {
             r.next();
             int count = r.getInt("C1");
             if (count > 0) {
-                return Data.checkSignUp(cmd.getUser(),false);
+                return Data.checkSignUp(((User)cmd.getPrimary()).getUsername(),false);
             }
         }
         catch (SQLException e){
             FeedBack.say("a member with username: "+user.getUsername()+ "already exists");
-            return Data.checkSignUp(cmd.getUser(),false);
+            return Data.checkSignUp(((User)cmd.getPrimary()).getUsername(),false);
         }
         try{
             if(user.getProfilePhoto()!=null) {
@@ -415,11 +447,11 @@ public class CmdManager {
         }
         catch (IOException e){
             FeedBack.say("could not save profile photo of "+user.getUsername());
-            return Data.checkSignUp(cmd.getUser(),false);
+            return Data.checkSignUp(((User)cmd.getPrimary()).getUsername(),false);
         }
         catch (Exception e){
             e.printStackTrace();
-            return Data.checkSignUp(cmd.getUser(),false);
+            return Data.checkSignUp(((User)cmd.getPrimary()).getUsername(),false);
         }
 
         try {
@@ -427,9 +459,9 @@ public class CmdManager {
         }
         catch (SQLException e){
             FeedBack.say("could not add new User with username : "+user.getUsername());
-            return Data.checkSignUp(cmd.getUser(),false);
+            return Data.checkSignUp(((User)cmd.getPrimary()).getUsername(),false);
         }
-        return Data.checkSignUp(cmd.getUser(),true);
+        return Data.checkSignUp(((User)cmd.getPrimary()).getUsername(),true);
     }
 
     public Data newChannel(Command cmd) {
@@ -529,10 +561,25 @@ public class CmdManager {
 
     public void newReaction(Command cmd){
         Message message = (Message) cmd.getPrimary();
-        String date = message.getDateTime().format(dateTimeFormatter);
+        LocalDateTime date = message.getDateTime();
         try{
-            stmt.executeUpdate(String.format("delete from reactions where reactionSender='%s' and messageSender='%s' and messageDate='%s'",cmd.getUser(),message.getSourceInfo().get(0),date));
-            stmt.executeUpdate(String.format("insert into reactions values ('%s','%s','%s','%s','%s','%s');",cmd.getUser(),message.getSourceInfo().get(1),message.getSourceInfo().get(2),date,message.getSourceInfo().get(0),(String)cmd.getServer()));
+            String query = "delete from reactions where reactionSender=? and messageSender=? and messageDate=?";
+            PreparedStatement preparedStatement = con.prepareStatement(query);
+            preparedStatement.setString(1,cmd.getUser());
+            preparedStatement.setString(2,message.getSourceInfo().get(0));
+            preparedStatement.setTimestamp(3,Timestamp.valueOf(date));
+            preparedStatement.executeUpdate();
+
+            String query1 = "insert into reactions values (?,?,?,?,?,?)";
+            preparedStatement = con.prepareStatement(query1);
+            preparedStatement.setString(1,cmd.getUser());
+            preparedStatement.setString(2,message.getSourceInfo().get(2));
+            preparedStatement.setString(3,message.getSourceInfo().get(1));
+            preparedStatement.setTimestamp(4,Timestamp.valueOf(date));
+            preparedStatement.setString(5,message.getSourceInfo().get(0));
+            preparedStatement.setString(6,(String)cmd.getServer());
+            preparedStatement.executeUpdate();
+            
         }catch (SQLException s){
             s.printStackTrace();
         }
@@ -614,7 +661,7 @@ public class CmdManager {
         int number = (int) cmd.getPrimary();
         ArrayList<Message> messages = new ArrayList<>();
         try {
-            String query = "select * from channel_messages where channel=? and server=? order by date limit ?";
+            String query = "select * from ( select * from channel_messages where channel=? and server=? order by date desc limit ? ) order by date";
             PreparedStatement preparedStatement = con.prepareStatement(query);
             preparedStatement.setString(1,cmd.getChannel());
             preparedStatement.setString(2,cmd.getServer());
@@ -646,7 +693,7 @@ public class CmdManager {
         int number = (int) cmd.getSecondary();
         ArrayList<Message> messages = new ArrayList<>();
         try {
-            String query = "select * from pv_messages where (receiver=? and sender=?) or (sender=? and receiver=?) order by date limit ?";
+            String query = "select * from(select * from pv_messages where (receiver=? and sender=?) or (sender=? and receiver=?) order by date desc limit ? )order by date ";
             PreparedStatement preparedStatement = con.prepareStatement(query);
             preparedStatement.setString(1,cmd.getUser());
             preparedStatement.setString(2,friend);
@@ -990,7 +1037,7 @@ public class CmdManager {
 
     public void lastseenPv(Command cmd){
         try{
-            String query = "update pv_messages set seen=true where receiver=? and sender=? and date<CURRENT_TIMESTAMP;";
+            String query = "update pv_messages set seen=true where receiver=? and sender=? and DATE<CURRENT_TIMESTAMP;";
             PreparedStatement preparedStatement = con.prepareStatement(query);
             preparedStatement.setString(1,cmd.getUser());
             preparedStatement.setString(2,(String)cmd.getPrimary());
@@ -1004,7 +1051,11 @@ public class CmdManager {
 
     public void lastseenChannel(Command cmd){
         try{
-            stmt.executeUpdate(String.format("update channel_members set lastseen='%s' where username='%s' and channel='%s'",LocalDateTime.now().format(dateTimeFormatter),cmd.getUser(),cmd.getChannel()));
+            String query = "update channel_members set lastseen = CURRENT_TIMESTAMP where username=? and channel=?";
+            PreparedStatement preparedStatement = con.prepareStatement(query);
+            preparedStatement.setString(1,cmd.getUser());
+            preparedStatement.setString(2,cmd.getChannel());
+            preparedStatement.executeUpdate();
         }
         catch (SQLException e){
             e.printStackTrace();

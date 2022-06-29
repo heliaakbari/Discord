@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 public class TextMessage extends Message  implements Serializable {
     private String text;
-
+    private static final long serialVersionUID = 738549465835985L;
     public TextMessage(String sender, String text) {
         super(sender);
         this.text = text;

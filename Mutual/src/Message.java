@@ -3,7 +3,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 public abstract class Message implements Serializable {
-    private static final long serialVersionUID = 629667263267685L;
+    private static final long serialVersionUID = 232222247967289L;
     private LocalDateTime dateTime;
     // holds sender username, channel and server respectively
     private ArrayList<String> sourceInfo;

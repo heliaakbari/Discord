@@ -5,6 +5,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 public class ServerSide {
@@ -153,9 +154,7 @@ public class ServerSide {
             break;
 
             case "tellChannel":
-                ArrayList<String> place = new ArrayList<>();
-                place.add(cmd.getServer());
-                place.add(cmd.getChannel());
+                ArrayList<String> place = new ArrayList<>(Arrays.asList(cmd.getServer(),cmd.getChannel()));
                 activeChannels.put(cmd.getUser(),place);
             break;
 
@@ -187,7 +186,6 @@ public class ServerSide {
     public void instantChannelMsg(Command cmd){
         if(cmd.getKeyword().equals("newChannelMsg")) {
             printClientHandlers();
-           String place = cmd.getServer()+"/"+cmd.getChannel();
            ArrayList<String> onlinePeople = new ArrayList<>();
             for (HashMap.Entry<String, ArrayList<String>> set :
                     activeChannels.entrySet()) {
@@ -195,7 +193,7 @@ public class ServerSide {
                     onlinePeople.add(set.getKey());
                 }
             }
-            Data dt = Data.newChannelMsg(cmd.getServer(),cmd.getChannel(),(Message)cmd.getPrimary());
+            Data dt = Data.newChannelMsg(cmd.getUser(),cmd.getServer(),cmd.getChannel(),(Message)cmd.getPrimary());
             for(String person : onlinePeople){
                 clientHandlers.get(person).sendInstantMessage(dt);
             }

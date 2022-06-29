@@ -34,7 +34,7 @@ public class MessageWriter extends Thread{
             pvChat();
         else
             channelChat();
-//        Thread.currentThread().interrupt();
+        Thread.currentThread().interrupt();
     }
 
     private void channelChat(){
@@ -44,18 +44,23 @@ public class MessageWriter extends Thread{
 
         while (true){
             text = scanner.nextLine();
-            if (text.equals("0"))
+            if (text.equals("0")) {
+                Command cmd = Command.lastseenChannel(senderInfo.get(0),senderInfo.get(2),senderInfo.get(1));
+                try {
+                    out.writeObject(cmd);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 break;
-            // for reaction
+            }
             else if (text.contains("react ")){
                 String[] splitted = text.split(" ");
                 message = messageNumbering.get(Integer.parseInt(splitted[1]));
                 cmd = Command.newReaction(senderInfo.get(0), message, splitted[2]);
             }
-            // for text messages
             else {
                 message = new TextMessage(senderInfo, text);
-                cmd = Command.newChannelMsg(senderInfo.get(0), message);
+                cmd = Command.newChannelMsg(senderInfo.get(0),senderInfo.get(2),senderInfo.get(1), message);
             }
             try {
                 out.writeObject(cmd);
@@ -69,10 +74,17 @@ public class MessageWriter extends Thread{
         Message message;
         Scanner scanner = new Scanner(System.in);
         String text;
-        System.out.println("type your message now");
+
         while(true){
             text = scanner.nextLine();
             if (text.equals("0")) {
+                Command cmd = Command.lastseenPv(senderInfo.get(0),receiverInfo);
+
+                try {
+                    out.writeObject(cmd);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 break;
             }
             message = new TextMessage(senderInfo, text);

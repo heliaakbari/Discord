@@ -3,6 +3,7 @@
 import java.io.Serializable;
 
 public class User  implements Serializable {
+    private static final long serialVersionUID = 944266325658983L;
     private String username;
     private String password;
     private String phoneNum;

@@ -35,20 +35,19 @@ public class MessageReader extends Thread{
         StringBuilder stringBuilder = new StringBuilder();
 
         while (true){
-            System.out.print(" waiting for message");
+            System.out.print(" ");
             try {
-                data = (Data) in.readObject();
-            } catch (IOException | ClassNotFoundException  e) {
+               data =(Data) in.readObject();
+            } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();
                 break;
             }
-            System.out.println(((Message)data.getPrimary()).getText());
-
-            if (data.getKeyword().equals("newPvMsg") || data.getKeyword().equals("newChannelMsg")){
+            if (data.getKeyword().equals("exitChat")){
+                return;
+            }
+            else if (data.getKeyword().equals("newPvMsg") || data.getKeyword().equals("newChannelMsg")){
                 message = (Message) data.getPrimary();
                 messageNumbering.add(message);
-                if (message.getText().equals("0"))
-                    break;
                 // checks if the sender and receiver of the message aren't the same so that the message isn't duplicated in console
                 if (!data.getUser().equals(currentUsername)) {
                     stringBuilder.append(message.getSourceInfo().get(0)).append(" : ").append(message.getText());
