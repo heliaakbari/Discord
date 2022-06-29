@@ -260,7 +260,7 @@ public class CmdManager {
             rs = stmt.executeQuery(String.format("select count(*) as C1 from server_members where username='%s' and server='%s'",cmd.getPrimary(),cmd.getServer()));
             rs.next();
             if(rs.getInt("C1")>0){
-                stmt.executeUpdate(String.format("delete from server_members where server_members where username='%s' and server='%s'",cmd.getPrimary(),cmd.getServer()));
+                stmt.executeUpdate(String.format("delete from server_members where username='%s' and server='%s'",cmd.getPrimary(),cmd.getServer()));
                 return;
             }
             stmt.executeUpdate(String.format("insert into server_members values ('%s','%s','member','000000000')",(String)cmd.getPrimary(),cmd.getServer()));
