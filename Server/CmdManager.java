@@ -839,7 +839,7 @@ public class CmdManager {
         String newName = (String) cmd.getPrimary();
 
         try {
-            ResultSet r = stmt.executeQuery(String.format("select count(*) as C1 from server_members where server='%s'",old));
+            ResultSet r = stmt.executeQuery(String.format("select count(*) as C1 from server_members where server='%s'",newName));
             r.next();
             int count = r.getInt("C1");
             if (count > 0) {

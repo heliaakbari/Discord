@@ -38,7 +38,7 @@ public class MessageReader extends Thread{
             System.out.print(" ");
             try {
                 data = (Data) in.readObject();
-            } catch (IOException | ClassNotFoundException e) {
+            } catch (IOException | ClassNotFoundException  e) {
                 break;
             }
 

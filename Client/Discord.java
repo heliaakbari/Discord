@@ -87,12 +87,11 @@ public class Discord {
             ArrayList<String> serversList = new ArrayList<>();
             if (!data.getKeyword().equals("userServers")) {
                 inputHandler.printMsg("unable to receive data from server");
-                break;
             } else {
                 serversList = (ArrayList<String>) data.getPrimary();
-                serversList.add("create new server");
-                serversList.add("press 0 to exit");
             }
+            serversList.add("create new server");
+            serversList.add("press 0 to exit");
             choice = inputHandler.showMenu(serversList);
             // user can choose to create a new server
             if (choice == serversList.size() - 1) {
@@ -213,11 +212,12 @@ public class Discord {
         ArrayList<Message> recentMessages = new ArrayList<>();
         if (!data.getKeyword().equals("PvMsgs"))
             inputHandler.printMsg("unable to receive data from server");
-        else
+        else {
             recentMessages = (ArrayList<Message>) data.getPrimary();
+            inputHandler.printMsg("Recent Messages :");
+            inputHandler.showMessages(recentMessages);
+        }
 
-        inputHandler.printMsg("Recent Messages :");
-        inputHandler.showMessages(recentMessages);
 
         MessageReader messageReader = new MessageReader(in, inputHandler);
         MessageWriter messageWriter = new MessageWriter(out, currentUsername, otherPerson);
@@ -262,19 +262,23 @@ public class Discord {
      * user can choose each friend, see their profile and block them if he wants. or can send a  friend request to someone
      */
     private void friendList() {
-        cmd = Command.getFriends(currentUsername);
-        transfer();
-        ArrayList<String> friends = new ArrayList<>();
-        if (!data.getKeyword().equals("friends"))
-            inputHandler.printMsg("unable to receive data from server");
-        else
-            friends = (ArrayList<String>) data.getPrimary();
-        friends.add("send friend request");
-        friends.add("press 0 to exit");
         int choice;
-
         // showing the list of friends
         do {
+            // getting frind list from server
+            cmd = Command.getFriends(currentUsername);
+            transfer();
+
+            // creating the list
+            ArrayList<String> friends = new ArrayList<>();
+            if (!data.getKeyword().equals("friends"))
+                inputHandler.printMsg("unable to receive data from server");
+            else
+                friends = (ArrayList<String>) data.getPrimary();
+            friends.add("send friend request");
+            friends.add("press 0 to exit");
+
+            // printing the list
             inputHandler.printMsg("your friends :");
             if (friends.size() == 2)
                 inputHandler.printMsg("you're lonely and depressed. send a friend request for the love of god!");
@@ -318,9 +322,6 @@ public class Discord {
                         block.setReceiver(friend.getUsername());
                         cmd = Command.newRelation(block,currentUsername,friend.getUsername());
                         transfer();
-                        if (!data.getKeyword().equals("checkNewRelation") ||!(boolean) data.getPrimary()) {
-                            inputHandler.printMsg("something went wrong, try again later");
-                        }
                     }
                 }
             }
@@ -331,20 +332,41 @@ public class Discord {
      * shows user's block list and user can see each blocked person's profile
      */
     private void blocklist() {
-        inputHandler.printMsg("your block list :");
-//        inputHandler.printMsg("==========================================================");
-        cmd = Command.getBlockList(currentUsername);
-        transfer();
-        ArrayList<String> blocks = new ArrayList<>();
-        if (!data.getKeyword().equals("blockList"))
-            inputHandler.printMsg("unable to receive data from server");
-        else
-            blocks = (ArrayList<String>) data.getPrimary();
 
-        blocks.add("press 0 to exit");
-        if (blocks.size() == 1)
-            inputHandler.printMsg("list is empty");
-        inputHandler.showMenu(blocks);
+        while (true){
+            // getting the block list from server
+            cmd = Command.getBlockList(currentUsername);
+            transfer();
+
+            // creating the list
+            ArrayList<String> blocks = new ArrayList<>();
+            if (!data.getKeyword().equals("blockList"))
+                inputHandler.printMsg("unable to receive data from server");
+            else
+                blocks = (ArrayList<String>) data.getPrimary();
+            blocks.add("press 0 to exit");
+
+            // printing the list
+            inputHandler.printMsg("your block list :");
+            if (blocks.size() == 1){
+                inputHandler.printMsg("block list is empty");
+                return;
+            }
+            int choice = inputHandler.showMenu(blocks);
+            if (choice == 0)
+                break;
+            cmd = Command.getUser(blocks.get(choice - 1));
+            transfer();
+            if (!data.getKeyword().equals("userInfo"))
+                inputHandler.printMsg("something went worng");
+            else {
+                inputHandler.printMsg(data.getPrimary().toString());
+                if (inputHandler.receiveData("1) unblock\npress 0 to exit").equals("1")){
+                    cmd = Command.newRelation(Relationship.Rejected, currentUsername,blocks.get(choice - 1));
+                    transfer();
+                }
+            }
+        }
     }
 
     /**
