@@ -35,12 +35,14 @@ public class MessageReader extends Thread{
         StringBuilder stringBuilder = new StringBuilder();
 
         while (true){
-            System.out.print(" ");
+            System.out.print(" waiting for message");
             try {
                 data = (Data) in.readObject();
             } catch (IOException | ClassNotFoundException  e) {
+                e.printStackTrace();
                 break;
             }
+            System.out.println(((Message)data.getPrimary()).getText());
 
             if (data.getKeyword().equals("newPvMsg") || data.getKeyword().equals("newChannelMsg")){
                 message = (Message) data.getPrimary();
