@@ -11,10 +11,13 @@ import java.util.HashMap;
 public class ServerSide {
 
     private ServerSocket serverSocket;
+    private ServerSocket fileSocket;
     private HashMap<String,ClientHandler> clientHandlers;
     private Socket client;
     private ObjectOutputStream out;
     private ObjectInputStream in;
+    private ObjectOutputStream fout;
+    private ObjectInputStream fin;
     private DatabaseManager dbm = new DatabaseManager();
     //first one is the person and the other is their friend
     private HashMap<String,String> activePvs= new HashMap<>();
@@ -24,6 +27,7 @@ public class ServerSide {
     public ServerSide() {
         try {
             serverSocket = new ServerSocket(8643);
+            fileSocket = new ServerSocket(8999);
             clientHandlers = new HashMap<>();
         } catch (IOException e) {
             e.printStackTrace();
@@ -41,6 +45,10 @@ public class ServerSide {
                 client = serverSocket.accept();
                 out = new ObjectOutputStream(client.getOutputStream());
                 in = new ObjectInputStream(client.getInputStream());
+                client = fileSocket.accept();
+                fout = new ObjectOutputStream(client.getOutputStream());
+                fin = new ObjectInputStream(client.getInputStream());
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -49,7 +57,7 @@ public class ServerSide {
             // creating new thread for handling new connection
             ClientHandler clientHandler;
             try {
-                clientHandler = new ClientHandler(client, in, out, this);
+                clientHandler = new ClientHandler(client, in, out,fin,fout, this);
                 Thread thread = new Thread(clientHandler);
                 thread.start();
             } catch (SocketException e) {

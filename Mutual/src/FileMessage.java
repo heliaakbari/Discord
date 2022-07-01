@@ -8,48 +8,29 @@ import java.time.LocalDateTime;
 public class FileMessage extends Message implements Serializable {
     private static final long serialVersionUID = 535296473722284L;
     private String fileName;
-    private String format;
-    private byte[] fileBytes;
 
-    public FileMessage(String sender, File file, String fileName, String format) throws IOException {
+    public FileMessage(String sender,String fileName) throws IOException {
         super(sender);
-        fileBytes = Files.readAllBytes(file.toPath());
         this.fileName = fileName;
-        this.format = format;
     }
 
-    public FileMessage(String sender, String server, String channel, File file, String fileName, String format) throws IOException {
-        super(sender,channel,server);
-        fileBytes = Files.readAllBytes(file.toPath());
+    public FileMessage(String sender,String server,String channel,String fileName) throws IOException {
+        super(sender,server,channel);
         this.fileName = fileName;
-        this.format = format;
     }
 
-        //from database to message
-    public FileMessage(String sender,  LocalDateTime date, String fileName, byte[] fileBytes, String format) throws IOException {
+    public FileMessage(String sender,String server,String channel,LocalDateTime date,String fileName) throws IOException {
+        super(sender,server,channel,date);
+        this.fileName = fileName;
+    }
+
+    public FileMessage(String sender,LocalDateTime date,String fileName) throws IOException {
         super(sender,date);
-        this.fileBytes = fileBytes;
         this.fileName = fileName;
-        this.format = format;
-    }
-
-    public FileMessage(String sender,String server,String channel,LocalDateTime date, String fileName,byte[] fileBytes, String format) throws IOException {
-        super(sender,channel,server,date);
-        this.fileBytes = fileBytes;
-        this.fileName = fileName;
-        this.format = format;
     }
 
     public String getFileName() {
         return fileName;
-    }
-
-    public String getFormat() {
-        return format;
-    }
-
-    public byte[] getFileBytes() {
-        return fileBytes;
     }
 
 

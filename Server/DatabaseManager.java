@@ -123,8 +123,7 @@ public class DatabaseManager {
                                              body varchar(1000),
                                              isPinned boolean not null,
                                              isFile boolean not null,
-                                             filename varchar(20),
-                                             fileformat varchar(10),
+                                             filename varchar(50),
                                              filelink varchar(200));""");
 
         //pv messages
@@ -136,7 +135,7 @@ public class DatabaseManager {
                                              body varchar(1000),
                                              seen boolean not null,
                                              isFile boolean not null,
-                                             filename varchar(20),
+                                             filename varchar(50),
                                              filelink varchar(200));""");
         //roles
         stmt.executeUpdate("""

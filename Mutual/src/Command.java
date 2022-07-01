@@ -1,4 +1,5 @@
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 public class Command implements Serializable {
@@ -110,6 +111,16 @@ public class Command implements Serializable {
         return cmd;
     }
 
+    public static Command download(FileMessage fileMessage ){
+        Command cmd = new Command("download");
+        cmd.primary = fileMessage;
+        return cmd;
+    }
+
+    public static Command upload(){
+        Command cmd = new Command("upload");
+        return cmd;
+    }
     //for new reaction: newReaction, user=reaction sender, primary= message, secondary = type of reaction(enum)
     public static Command newReaction(String user,Message message, String type){
         Command cmd = new Command("newReaction");

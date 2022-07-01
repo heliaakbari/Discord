@@ -337,10 +337,16 @@ public class CmdManager {
         }
         if(message1 instanceof FileMessage){
             FileMessage message = (FileMessage)message1;
-            String address = filespath+"\\"+message.getDateTime().format(dateTimeFormatter)+message.getFileBytes().length+"."+message.getFormat();
+            String address = filespath+"\\"+message.getSourceInfo().get(0)+message.getDateTime().format(dateTimeFormatter)+message.getFileName();
             try {
-                stmt.executeUpdate(String.format("insert into pv_messages(sender,receiver,date,isfile,seen,filename,filelink,fileformat) values ('%s','%s','%s','%s',true,false,'%s','%s');", sender, receiver, date, message.getFileName(), address,message.getFormat()));
-                bytesToFile(message.getFileBytes(),address);
+                String query = "insert into pv_messages(sender,receiver,date,isfile,seen,filename,filelink) values (?,?,?,true,false,?,?);";
+                PreparedStatement preparedStatement = con.prepareStatement(query);
+                preparedStatement.setString(1,sender);
+                preparedStatement.setString(2,receiver);
+                preparedStatement.setTimestamp(3,Timestamp.valueOf(message.getDateTime()));
+                preparedStatement.setString(4,message.getFileName());
+                preparedStatement.setString(5,address);
+                preparedStatement.executeUpdate();
             }
             catch (SQLException e){
                 e.printStackTrace();
@@ -406,10 +412,17 @@ public class CmdManager {
         }
         if(message1 instanceof FileMessage){
             FileMessage message = (FileMessage)message1;
-            String address = filespath+"\\"+message.getDateTime().format(dateTimeFormatter)+message.getFileBytes().length+"."+message.getFormat();
+            String address = filespath+"\\"+message.getSourceInfo().get(0)+message.getDateTime().format(dateTimeFormatter)+message.getFileName();
             try {
-                stmt.executeUpdate(String.format("insert into pv_messages(sender,server,channel,date,isfile,seen,filename,filelink,fileformat) values ('%s','%s','%s','%s',true,false,'%s','%s');", sender, server,channel, date, message.getFileName(), address,message.getFormat()));
-                bytesToFile(message.getFileBytes(),address);
+                String query = "insert into channel_messages (sender,date,ispinned,isfile,filename,filelink,server,channel) values (?,?,false,true,?,?,?,?);";
+                PreparedStatement preparedStatement = con.prepareStatement(query);
+                preparedStatement.setString(1,sender);
+                preparedStatement.setTimestamp(2,Timestamp.valueOf(message.getDateTime()));
+                preparedStatement.setString(3,message.getFileName());
+                preparedStatement.setString(4,address);
+                preparedStatement.setString(5,cmd.getServer());
+                preparedStatement.setString(6,cmd.getChannel());
+                preparedStatement.executeUpdate();
             }
             catch (SQLException e){
                 e.printStackTrace();
@@ -612,8 +625,8 @@ public class CmdManager {
             ResultSet rs = stmt.executeQuery(String.format("select * from pv_messages where seen=false and receiver='%s' order by date,sender",cmd.getUser()));
             while (rs.next()){
                 if(rs.getBoolean("isfile")){
-                    byte[] bytes = fileToBytes(rs.getString("FILELINK"));
-                    FileMessage m = new FileMessage(rs.getString("SENDER"),rs.getTimestamp("DATE").toLocalDateTime(),rs.getString("FILENAME"),bytes,rs.getString("FILEFORMAT"));
+
+                    FileMessage m = new FileMessage(rs.getString("SENDER"), rs.getTimestamp("DATE").toLocalDateTime(),rs.getString("FILENAME"));
                     messages.add(m);
                 }
                 else{
@@ -637,7 +650,7 @@ public class CmdManager {
                 while (rs.next()){
                     if(rs.getBoolean("isfile")){
                         byte[] bytes = fileToBytes(rs.getString("FILELINK"));
-                        FileMessage m = new FileMessage(rs.getString("SENDER"),rs.getString("SERVER"),rs.getString("CHANNEL"),rs.getTimestamp("DATE").toLocalDateTime(),rs.getString("FILENAME"),bytes,rs.getString("FILEFORMAT"));
+                        FileMessage m = new FileMessage(rs.getString("SENDER"),rs.getString("SERVER"),rs.getString("CHANNEL"),rs.getTimestamp("DATE").toLocalDateTime(),rs.getString("FILENAME"));
                         messages.add(m);
                     }
                     else{
@@ -670,7 +683,7 @@ public class CmdManager {
             while (rs.next()){
                 if(rs.getBoolean("isfile")){
                     byte[] bytes = fileToBytes(rs.getString("FILELINK"));
-                    FileMessage m = new FileMessage(rs.getString("SENDER"),rs.getString("SERVER"),rs.getString("CHANNEL"),rs.getTimestamp("DATE").toLocalDateTime(),rs.getString("FILENAME"),bytes,rs.getString("FILEFORMAT"));
+                    FileMessage m = new FileMessage(rs.getString("SENDER"),rs.getString("SERVER"),rs.getString("CHANNEL"),rs.getTimestamp("DATE").toLocalDateTime(),rs.getString("FILENAME"));
                     messages.add(m);
                 }
                 else{
@@ -704,7 +717,7 @@ public class CmdManager {
             while (rs.next()){
                 if(rs.getBoolean("isfile")){
                     byte[] bytes = fileToBytes(rs.getString("FILELINK"));
-                    FileMessage m = new FileMessage(rs.getString("SENDER"),rs.getTimestamp("DATE").toLocalDateTime(),rs.getString("FILENAME"),bytes,rs.getString("FILEFORMAT"));
+                    FileMessage m = new FileMessage(rs.getString("SENDER"),rs.getTimestamp("DATE").toLocalDateTime(),rs.getString("FILENAME"));
                     messages.add(m);
                 }
                 else{
@@ -966,7 +979,7 @@ public class CmdManager {
             while (rs.next()){
                 if(rs.getBoolean("isfile")){
                     byte[] bytes = fileToBytes(rs.getString("FILELINK"));
-                    FileMessage m = new FileMessage(rs.getString("SENDER"),rs.getString("SERVER"),rs.getString("CHANNEL"),rs.getTimestamp("DATE").toLocalDateTime(),rs.getString("FILENAME"),bytes,rs.getString("FILEFORMAT"));
+                    FileMessage m = new FileMessage(rs.getString("SENDER"),rs.getString("SERVER"),rs.getString("CHANNEL"),rs.getTimestamp("DATE").toLocalDateTime(),rs.getString("FILENAME"));
                     messages.add(m);
                 }
                 else{
