@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +12,8 @@ import java.util.Scanner;
 public class MessageWriter extends Thread{
 
     private ObjectOutputStream out;
+    private ObjectOutputStream fout;
+    private ObjectInputStream fin;
     private Command cmd;
     private ArrayList<String> senderInfo;
     private String receiverInfo;
@@ -19,26 +22,32 @@ public class MessageWriter extends Thread{
     /**
      * used to instantiate for channels messages
      * @param out object output stream of the socket
+     * @param fout  object output stream of the socket on the second port only used to transfer files
      * @param senderInfo an array list of sender's info including their username and name of the channel and server where they're sending the message
      * @param messageNumbering an arraylist of already existing messages in the chat
      */
-    public MessageWriter(ObjectOutputStream out, ArrayList<String > senderInfo, ArrayList<Message> messageNumbering){
+    public MessageWriter(ObjectOutputStream out, ObjectOutputStream fout, ObjectInputStream fin, ArrayList<String > senderInfo, ArrayList<Message> messageNumbering){
         this.out = out;
         this.senderInfo = senderInfo;
         this.messageNumbering = messageNumbering;
+        this.fout = fout;
+        this.fin = fin;
     }
 
     /**
      * used to instantiate for pv messages
      * @param out object output stream of the socket
+     * @param fout  object output stream of the socket on the second port only used to transfer files
      * @param senderInfo an array list of sender info with only one element : sender's username
      * @param receiverInfo receiver's username
      */
-    public MessageWriter(ObjectOutputStream out, String senderInfo, String receiverInfo){
+    public MessageWriter(ObjectOutputStream out, ObjectOutputStream fout,ObjectInputStream fin,  String senderInfo, String receiverInfo){
         this.out = out;
         this.senderInfo = new ArrayList<>(List.of(senderInfo));
         this.receiverInfo = receiverInfo;
         this.messageNumbering = new ArrayList<>();
+        this.fout = fout;
+        this.fin = fin;
     }
 
     @Override
@@ -69,6 +78,14 @@ public class MessageWriter extends Thread{
                     e.printStackTrace();
                 }
                 break;
+            }
+            // for sending files
+            else if (text.equals("send file")){
+                sendFile();
+            }
+            else if (text.contains("download file")){
+                downloadFile(text);
+
             }
             // for reaction
             else if (text.contains("react ")){
@@ -110,14 +127,61 @@ public class MessageWriter extends Thread{
                 }
                 break;
             }
-            message = new TextMessage(senderInfo, text);
-            cmd = Command.newPvMsg(senderInfo.get(0), receiverInfo, message);
-            try {
-                out.writeObject(cmd);
-            } catch (IOException e) {
-                e.printStackTrace();
+            else if (text.equals("send file")){
+                sendFile();
+            }
+            else if (text.contains("download file")){
+                downloadFile(text);
+
+            }
+            else {
+                message = new TextMessage(senderInfo, text);
+                cmd = Command.newPvMsg(senderInfo.get(0), receiverInfo, message);
+                try {
+                    out.writeObject(cmd);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
+    }
+
+    /**
+     * sends a download command to server then starts another thread to receive the file on another port
+     * @param text
+     */
+    private void downloadFile(String text) {
+        String[] splitted = text.split(" ");
+        try{
+            FileMessage fileMessage;
+            if (senderInfo.size() == 1){
+                fileMessage = new FileMessage(receiverInfo, splitted[1]);
+            }
+            else {
+                fileMessage = new FileMessage(null, senderInfo.get(2), senderInfo.get(1), splitted[1]);
+            }
+            cmd = Command.download(fileMessage);
+            out.writeObject(cmd);
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+
+        FileDownloader fileDownloader =new FileDownloader(fin);
+        fileDownloader.start();
+    }
+
+    /**
+     * sends an upload command to server then starts a new thread for uploading it on another port
+     */
+    private void sendFile() {
+        cmd = Command.upload();
+        try {
+            out.writeObject(cmd);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        FileUploader fileUploader = new FileUploader(fout, senderInfo);
+        fileUploader.start();
     }
 
 

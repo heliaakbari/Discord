@@ -11,7 +11,10 @@ import java.util.ArrayList;
 public class ClientMain {
 
     private static Socket socket;
+    private static Socket fileSocket;
     private static ObjectOutputStream out;
+    private static ObjectOutputStream fout;
+    private static ObjectInputStream fin;
     private static ObjectInputStream in;
     private static InputHandler inputHandler;
     private static String currentUsername;
@@ -28,6 +31,12 @@ public class ClientMain {
             System.out.println(socket.getInetAddress());
             out = new ObjectOutputStream(socket.getOutputStream());
             in = new ObjectInputStream(socket.getInputStream());
+
+            fileSocket = new Socket("localhost", 8999);
+            System.out.println(socket.getInetAddress());
+            fout = new ObjectOutputStream(fileSocket.getOutputStream());
+            fin = new ObjectInputStream(fileSocket.getInputStream());
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -39,7 +48,7 @@ public class ClientMain {
                     press 0 to exit""", 2);
 
             if (choice == 1 && signup() == 1 || choice == 2 && login() == 1) {
-                Discord discord = new Discord(currentUsername, out, in);
+                Discord discord = new Discord(currentUsername, out,fout, in, fin);
                 discord.startDiscord();
             }
         } while (choice != 0);

@@ -16,15 +16,19 @@ public class Discord {
     private String currentUsername;
     private InputHandler inputHandler;
     private ObjectOutputStream out;
+    private ObjectOutputStream fout;
     private ObjectInputStream in;
+    private ObjectInputStream fin;
     private Command cmd;
     private Data data;
 
-    public Discord(String username, ObjectOutputStream out, ObjectInputStream in) {
+    public Discord(String username, ObjectOutputStream out,ObjectOutputStream fout, ObjectInputStream in, ObjectInputStream fin ) {
         currentUsername = username;
         inputHandler = new Console();
         this.out = out;
         this.in = in;
+        this.fout = fout;
+        this.fin = fin;
     }
 
     /**
@@ -100,7 +104,7 @@ public class Discord {
             // or enter an existing server and do some actions there
             else if (choice != 0){
                 String currentServer = serversList.get(choice - 1);
-                Server server = new Server(currentServer, out, in);
+                Server server = new Server(currentServer, out, fout, in, fin);
                 server.enterServer(currentUsername);
             }
 
@@ -221,7 +225,7 @@ public class Discord {
 
 
         MessageReader messageReader = new MessageReader(in, inputHandler);
-        MessageWriter messageWriter = new MessageWriter(out, currentUsername, otherPerson);
+        MessageWriter messageWriter = new MessageWriter(out,fout,fin, currentUsername, otherPerson);
 
 
         messageReader.start();

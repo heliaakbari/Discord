@@ -1,32 +1,46 @@
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+
+import javax.swing.*;
+import java.awt.*;
+import java.io.*;
 
 public class FileDownloader extends Thread{
 
-    private String fileName;
-    private ObjectOutputStream out;
-    private ObjectInputStream in;
+    private ObjectInputStream fin;
 
-    public FileDownloader(String fileName, ObjectOutputStream out, ObjectInputStream in){
-        this.fileName = fileName;
-        this.out = out;
-        this.in = in;
+    public FileDownloader( ObjectInputStream fin){
+        this.fin = fin;
     }
 
     @Override
     public void run() {
-        // create a command to ask for the file with given name
-        Command cmd = null;
-        Data data = null;
-
+        FileBytes fileBytes = null;
         try {
-            out.writeObject(cmd);
+            fileBytes = (FileBytes) fin.readObject();
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
         }
-        byte[] file = (byte[]) data.getPrimary();
 
+        StringBuilder path = new StringBuilder();
+
+        JFileChooser jFileChooser = new JFileChooser();
+        jFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        if (jFileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION){
+
+            File file = jFileChooser.getSelectedFile();
+            path.append(file.getAbsolutePath()).append(fileBytes.getFileName());
+//            String filePath = "C:\\Users\\user\\Downloads\\discord";
+            file = new File(path.toString());
+
+            try {
+                FileOutputStream fileOutputStream = new FileOutputStream(file);
+                fileOutputStream.write(fileBytes.getBytes());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
 
     }
 }

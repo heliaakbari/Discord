@@ -15,15 +15,19 @@ public class Server {
     private String currentServerName;
     private InputHandler inputHandler;
     private ObjectOutputStream out;
+    private ObjectOutputStream fout;
     private ObjectInputStream in;
+    private ObjectInputStream fin;
     private Command cmd;
     private Data data;
 
-    public Server(String name, ObjectOutputStream out, ObjectInputStream in) {
+    public Server(String name, ObjectOutputStream out,ObjectOutputStream fout, ObjectInputStream in, ObjectInputStream fin) {
         currentServerName = name;
         inputHandler = new Console();
         this.out = out;
         this.in = in;
+        this.fout = fout;
+        this.fin = fin;
     }
 
     /**
@@ -95,7 +99,7 @@ public class Server {
                     inputHandler.showMessages(messageNumbering, true);
                     MessageReader messageReader = new MessageReader(in, inputHandler, messageNumbering, currentUsername);
 
-                    MessageWriter messageWriter = new MessageWriter(out, new ArrayList<>(Arrays.asList(currentUsername, channelName, currentServerName)), messageNumbering);
+                    MessageWriter messageWriter = new MessageWriter(out,fout,fin, new ArrayList<>(Arrays.asList(currentUsername, channelName, currentServerName)), messageNumbering);
                     messageReader.start();
                     messageWriter.start();
 

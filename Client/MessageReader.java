@@ -29,9 +29,9 @@ public class MessageReader extends Thread{
     }
 
     /**
-     * used to instantiate for pv messages
+     *
      * @param in object input stream of the socket
-     * @param inputHandler an object of InputHandler class
+     * @param inputHandler object input stream of the socket
      */
     public MessageReader(ObjectInputStream in, InputHandler inputHandler){
         this.in = in;
@@ -64,7 +64,7 @@ public class MessageReader extends Thread{
                 stringBuilder.append(message.getSourceInfo().get(0)).append(" : ").append(message.getText());
             }
             // channel messages are shown with sender's username, channel and server
-            // sender and receu=iver's username are checked not tobe the same so that messages aren't duplicated
+            // sender and receiver's username are checked not tobe the same so that messages aren't duplicated
             else if (data.getKeyword().equals("newChannelMsg") && !data.getUser().equals(currentUsername)){
                 stringBuilder.append(messageNumbering.size()).append(") ").append(message.getSourceInfo().get(0)).append(" : ").append(message.getText());
             }
