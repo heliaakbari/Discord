@@ -38,6 +38,7 @@ public class FileUploader extends Thread {
                 fileMessage = new FileMessage(senderInfo.get(0), senderInfo.get(2), senderInfo.get(1), fileNameAndType);
 
             FileBytes fileBytes = FileBytes.toServer(fileMessage, bytes);
+            System.out.println(bytes.length);
             fout.writeObject(fileBytes);
         } catch (IOException e){
             e.printStackTrace();

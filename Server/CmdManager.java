@@ -21,7 +21,7 @@ public class CmdManager {
     private Connection con = null;
     private static String filespath = null;
     private DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-mm-dd hh:mm:ss");
-
+    private DateTimeFormatter fileFormatter = DateTimeFormatter.ofPattern("yyyy-mm-dd hh-mm-ss");
 
     public CmdManager(Connection con,Statement stmt,String filepath) {
         this.stmt = stmt;
@@ -378,7 +378,7 @@ public class CmdManager {
         }
         if(message1 instanceof FileMessage){
             FileMessage message = (FileMessage)message1;
-            String address = filespath+"\\"+message.getSourceInfo().get(0)+message.getDateTime().format(dateTimeFormatter)+message.getFileName();
+            String address = filespath+"\\"+message.getSourceInfo().get(0)+message.getDateTime().format(fileFormatter)+message.getFileName();
             try {
                 String query = "insert into pv_messages(sender,receiver,date,isfile,seen,filename,filelink) values (?,?,?,true,false,?,?);";
                 PreparedStatement preparedStatement = con.prepareStatement(query);
@@ -453,7 +453,7 @@ public class CmdManager {
         }
         if(message1 instanceof FileMessage){
             FileMessage message = (FileMessage)message1;
-            String address = filespath+"\\"+message.getSourceInfo().get(0)+message.getDateTime().format(dateTimeFormatter)+message.getFileName();
+            String address = filespath+"\\"+message.getSourceInfo().get(0)+message.getDateTime().format(fileFormatter)+message.getFileName();
             try {
                 String query = "insert into channel_messages (sender,date,ispinned,isfile,filename,filelink,server,channel) values (?,?,false,true,?,?,?,?);";
                 PreparedStatement preparedStatement = con.prepareStatement(query);

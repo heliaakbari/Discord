@@ -1,7 +1,9 @@
 import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
+import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.format.DateTimeFormatter;
 
@@ -14,7 +16,7 @@ public class ClientHandler extends Thread{
     private ObjectInputStream in;
     private ObjectInputStream fin;
     private ObjectOutputStream fout;
-    private DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-mm-dd hh:mm:ss");
+    private DateTimeFormatter fileFormatter = DateTimeFormatter.ofPattern("yyyy-mm-dd hh-mm-ss");
 
     public ClientHandler(Socket client, ObjectInputStream in, ObjectOutputStream out, ObjectInputStream fin,ObjectOutputStream fout,ServerSide serverSide) throws SocketException {
         this.client = client;
@@ -56,22 +58,18 @@ public class ClientHandler extends Thread{
                     fb = (FileBytes) fin.readObject();
                 } catch (ClassNotFoundException e) {
                     e.printStackTrace();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            String address ="C:\\DiscordFiles\\"+fb.getFileMessage().getSourceInfo().get(0)+fb.getFileMessage().getDateTime().format(fileFormatter)+fb.getFileMessage().getFileName();
+            try (FileOutputStream fos = new FileOutputStream(address)) {
+                System.out.println(fb.getBytes().length);
+                fos.write(fb.getBytes());
+                //fos.close // no need, try-with-resources auto close
+            } catch (IOException e) {
+                    e.printStackTrace();
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            File outputFile = new File("C:\\DiscordFiles\\"+fb.getFileMessage().getSourceInfo().get(0)+fb.getFileMessage().getDateTime().format(dateTimeFormatter)+fb.getFileName());
-            FileOutputStream outputStream = null;
-            try {
-                outputStream = new FileOutputStream(outputFile);
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
-            try {
-                outputStream.write(fb.getBytes());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
         }
 
         if (cmd.getKeyword().equals("download")){
