@@ -23,7 +23,7 @@ public class FileUploader extends Thread {
 
         String fileNameAndType = dialog.getFile();
         String path = dialog.getDirectory()+"//"+dialog.getFile();
-
+        System.out.println(dialog.getFile());
         byte[] bytes = new byte[0];
         try {
             bytes = readAllBytes(Paths.get(path));
