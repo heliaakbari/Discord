@@ -160,13 +160,13 @@ public class MessageWriter extends Thread{
     private void downloadFile(String text) {
 
         String[] splitted = text.split(" ",3);
-        String fileName = splitted[2];
+
         try{
             if (senderInfo.size() == 1){
-                cmd = Command.download(senderInfo.get(0),receiverInfo, fileName.toString(), false);
+                cmd = Command.download(senderInfo.get(0),receiverInfo, splitted[2], false);
             }
             else {
-                cmd = Command.download(senderInfo.get(2), senderInfo.get(1), fileName.toString(), true);
+                cmd = Command.download(senderInfo.get(2), senderInfo.get(1), splitted[2], true);
             }
             out.writeObject(cmd);
         } catch (IOException e){

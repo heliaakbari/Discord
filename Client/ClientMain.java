@@ -23,6 +23,7 @@ public class ClientMain {
 
     public static void main(String[] args) {
 
+
         int choice;
         inputHandler = new Console();
 
