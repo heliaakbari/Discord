@@ -1,4 +1,7 @@
-import oracle.jdbc.proxy.annotation.Pre;
+/**
+ *this class gets a command and implements changes in database
+ * and then sends the result back to client using Data object
+ */
 
 import java.io.File;
 import java.io.FileOutputStream;

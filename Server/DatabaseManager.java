@@ -1,4 +1,7 @@
-
+/**
+ * makes connection to database
+ * if wanted, will build a new database and truncate the previous one
+ */
 
 import java.io.File;
 import java.io.IOException;
