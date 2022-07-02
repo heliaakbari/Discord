@@ -17,6 +17,7 @@ public class FileBytes implements Serializable {
     public static FileBytes toServer(FileMessage fileMessage,byte[] bytes){
         FileBytes fb = new FileBytes();
         fb.fileMessage = fileMessage;
+        fb.bytes = bytes;
         return fb;
     }
 
