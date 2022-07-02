@@ -153,7 +153,8 @@ public class CmdManager {
                 dt = Data.exitChat(cmd.getUser());
                 break;
             case "download":
-
+              dt =  getFilePath(cmd);
+              break;
         }
 
         return dt;
@@ -168,10 +169,10 @@ public class CmdManager {
            PreparedStatement preparedStatement = con.prepareStatement(query);
             preparedStatement.setString(1,cmd.getServer());
             preparedStatement.setString(2,cmd.getChannel());
-            preparedStatement.setString(3,(String) cmd.getPrimary());
+            preparedStatement.setString(3,(String)cmd.getPrimary());
             ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()){
-                filePath = rs.getString("FILEPATH");
+                filePath = rs.getString("FILELINK");
             }
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -188,7 +189,7 @@ public class CmdManager {
             preparedStatement.setString(5,(String) cmd.getPrimary());
             ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()){
-                filePath = rs.getString("FILEPATH");
+                filePath = rs.getString("FILELINK");
             }
             } catch (SQLException e) {
                 e.printStackTrace();
