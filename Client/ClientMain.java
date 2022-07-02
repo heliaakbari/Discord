@@ -51,7 +51,7 @@ public class ClientMain {
                     press 0 to exit""", 2);
 
             if (choice == 1 && signup() == 1 || choice == 2 && login() == 1) {
-                Discord discord = new Discord(currentUsername, out,fout, in, fin);
+                Discord discord = new Discord(currentUsername, out, fout, in, fin);
                 discord.startDiscord();
             }
         } while (choice != 0);
@@ -61,6 +61,7 @@ public class ClientMain {
 
     /**
      * logs in the user
+     *
      * @return 1 if the login was successful and 0 if the user decides to quit
      */
     public static int login() {
@@ -73,11 +74,10 @@ public class ClientMain {
                 // if found the condition is true
                 cmd = Command.login(info.get(0), info.get(1));
                 transfer();
-                if (data.getKeyword().equals("checkLogin") && (boolean) data.getPrimary()){
+                if (data.getKeyword().equals("checkLogin") && (boolean) data.getPrimary()) {
                     currentUsername = data.getUser();
                     return 1;
-                }
-                else
+                } else
                     inputHandler.printMsg("incorrect username or password, try again!\npress 0 to exit");
             }
         }
@@ -85,6 +85,7 @@ public class ClientMain {
 
     /**
      * signs up a new user
+     *
      * @return 1 if the signup was successful and 0 if the user decides to quit
      */
     public static int signup() {

@@ -5,7 +5,7 @@ import java.io.Serializable;
 /**
  * holds the user's information including : username, phone number, password, email, status, profile photo - file and format-
  */
-public class User  implements Serializable {
+public class User implements Serializable {
     private static final long serialVersionUID = 944266325658983L;
     private String username;
     private String password;
@@ -16,18 +16,20 @@ public class User  implements Serializable {
     private String profilePhotoFormat;
 
 
-    public User (String username, String password, String email) {
+    public User(String username, String password, String email) {
         this.username = username;
         this.password = password;
         this.email = email;
     }
-    public User() {}
+
+    public User() {
+    }
 
     public String getUsername() {
         return username;
     }
 
-    public void setUsername(String username)   {
+    public void setUsername(String username) {
         this.username = username;
     }
 
@@ -35,7 +37,7 @@ public class User  implements Serializable {
         return password;
     }
 
-    public void setPassword(String password)  {
+    public void setPassword(String password) {
         this.password = password;
     }
 
@@ -60,10 +62,9 @@ public class User  implements Serializable {
     }
 
     public void setStatus(String status) {
-        if(status == null){
+        if (status == null) {
             this.status = null;
-        }
-        else {
+        } else {
             this.status = Status.valueOf(status);
         }
     }
@@ -82,19 +83,18 @@ public class User  implements Serializable {
     }
 
     /**
-     *
      * @return a string of user's info including username. phone number and status to be used in printing and ...
      */
     @Override
     public String toString() {
-       StringBuilder stringBuilder = new StringBuilder("======================================\n");
-       stringBuilder.append("username : ").append(username).append("\n");
-       if (phoneNum != null && !phoneNum.equalsIgnoreCase("NULL") )
-           stringBuilder.append("phone number : ").append(phoneNum).append("\n");
-       if (status != null)
-           stringBuilder.append("status : ").append(status).append("\n");
-       stringBuilder.append("======================================\n");
+        StringBuilder stringBuilder = new StringBuilder("======================================\n");
+        stringBuilder.append("username : ").append(username).append("\n");
+        if (phoneNum != null && !phoneNum.equalsIgnoreCase("NULL"))
+            stringBuilder.append("phone number : ").append(phoneNum).append("\n");
+        if (status != null)
+            stringBuilder.append("status : ").append(status).append("\n");
+        stringBuilder.append("======================================\n");
 
-       return stringBuilder.toString();
+        return stringBuilder.toString();
     }
 }

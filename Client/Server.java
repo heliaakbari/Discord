@@ -21,7 +21,7 @@ public class Server {
     private Command cmd;
     private Data data;
 
-    public Server(String name, ObjectOutputStream out,ObjectOutputStream fout, ObjectInputStream in, ObjectInputStream fin) {
+    public Server(String name, ObjectOutputStream out, ObjectOutputStream fout, ObjectInputStream in, ObjectInputStream fin) {
         currentServerName = name;
         inputHandler = new Console();
         this.out = out;
@@ -32,6 +32,7 @@ public class Server {
 
     /**
      * shows two options for seeing the list of  actions or channels once user enters the server
+     *
      * @param currentUsername username of the user who enters the server
      */
     public void enterServer(String currentUsername) {
@@ -41,9 +42,8 @@ public class Server {
             if (choice == 1) {
                 if (actionsList(currentUsername) == -1)
                     break;
-            }
-            else if (choice == 2)
-                    channelsList(currentUsername);
+            } else if (choice == 2)
+                channelsList(currentUsername);
 
         } while (choice != 0);
     }
@@ -51,6 +51,7 @@ public class Server {
     /**
      * shows the list of channels, once user enters a channel shows the list of available actions inside that channels
      * including chatting, seeing the member's list, seeing the pin bar and leaving the channel
+     *
      * @param currentUsername
      */
     public void channelsList(String currentUsername) {
@@ -60,7 +61,7 @@ public class Server {
             // create a command to get a list of channels in this server
             cmd = Command.userChannels(currentUsername, currentServerName);
             transfer();
-            if (!data.getKeyword().equals("userChannels")){
+            if (!data.getKeyword().equals("userChannels")) {
                 inputHandler.printMsg("unable to receive data from server");
                 return;
             }
@@ -91,7 +92,7 @@ public class Server {
 
                     cmd = Command.getChannelMsgs(currentUsername, currentServerName, channelName, 5);
                     transfer();
-                    if (!data.getKeyword().equals("channelMsgs")){
+                    if (!data.getKeyword().equals("channelMsgs")) {
                         inputHandler.printMsg("unable to receive data from server");
                         return;
                     }
@@ -99,7 +100,7 @@ public class Server {
                     inputHandler.showMessages(messageNumbering, true);
                     MessageReader messageReader = new MessageReader(in, inputHandler, messageNumbering, currentUsername);
 
-                    MessageWriter messageWriter = new MessageWriter(out,fout,fin, new ArrayList<>(Arrays.asList(currentUsername, channelName, currentServerName)), messageNumbering);
+                    MessageWriter messageWriter = new MessageWriter(out, fout, fin, new ArrayList<>(Arrays.asList(currentUsername, channelName, currentServerName)), messageNumbering);
                     messageReader.start();
                     messageWriter.start();
 
@@ -122,11 +123,10 @@ public class Server {
                     // creat a command to get the members
                     cmd = Command.getChannelMembers(currentUsername, currentServerName, channelName);
                     transfer();
-                    if (!data.getKeyword().equals("channelMembers")){
+                    if (!data.getKeyword().equals("channelMembers")) {
                         inputHandler.printMsg("unable to receive data from server");
                         action = 0;
-                    }
-                    else {
+                    } else {
                         ArrayList<String> members = (ArrayList<String>) data.getPrimary();
                         members.add("add new member to channel");
                         members.add("press 0 to exit");
@@ -142,10 +142,10 @@ public class Server {
                     }
                 }
                 // pin bar
-                else if (action == 3){
+                else if (action == 3) {
                     cmd = Command.getPinnedMsgs(currentUsername, currentServerName, channelName);
                     transfer();
-                    if (data.getKeyword().equals("pinnedMsgs")){
+                    if (data.getKeyword().equals("pinnedMsgs")) {
                         ArrayList<Message> pinnedMessages = (ArrayList<Message>) data.getPrimary();
                         inputHandler.printMsg("Pinned Messages :");
                         inputHandler.showMessages(pinnedMessages, true);
@@ -155,8 +155,8 @@ public class Server {
 
                 }
                 // leaving channel
-                else if (action == 4){
-                    cmd = Command.banFromChannel(currentUsername, currentServerName,channelName);
+                else if (action == 4) {
+                    cmd = Command.banFromChannel(currentUsername, currentServerName, channelName);
                     transfer();
                     action = 0;
                 }
@@ -168,6 +168,7 @@ public class Server {
 
     /**
      * shows the list of possible actions for the user based on their role in this channel
+     *
      * @param currentUsername
      * @return
      */
@@ -196,10 +197,10 @@ public class Server {
                     String newChannel = inputHandler.receiveData("enter channel name");
                     cmd = Command.newChannel(currentUsername, currentServerName, newChannel);
                     transfer();
-                    if (data.getKeyword().equals("checkNewChannel") && !(boolean)data.getPrimary())
+                    if (data.getKeyword().equals("checkNewChannel") && !(boolean) data.getPrimary())
                         inputHandler.printMsg("oops! couldn't create channel. try again later.");
                     String newMember;
-                    while (true){
+                    while (true) {
                         newMember = inputHandler.receiveData("enter the usernames you want to add to the channel. ad as always, press 0 when finished");
                         if (newMember.equals("0"))
                             break;
@@ -248,7 +249,7 @@ public class Server {
                     cmd = Command.deleteServer(currentUsername, currentServerName);
                     transfer();
                     return -1;
-                case "leave server" :
+                case "leave server":
                     cmd = Command.banFromServer(currentUsername, currentServerName);
                     transfer();
                     return -1;
@@ -261,6 +262,7 @@ public class Server {
 
     /**
      * shows the chat history of the channel that user chooses
+     *
      * @param currentUsername
      * @return te message that user chooses from the history
      */
@@ -269,7 +271,7 @@ public class Server {
 
         cmd = Command.getChannelMsgs(currentUsername, currentServerName, channel, 10);
         transfer();
-        if (!data.getKeyword().equals("channelMsgs")){
+        if (!data.getKeyword().equals("channelMsgs")) {
             inputHandler.printMsg("unable to receive data from server");
             return null;
         }

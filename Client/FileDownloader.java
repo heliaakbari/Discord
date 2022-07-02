@@ -4,11 +4,11 @@ import java.io.*;
 /**
  * a seperated thread to fetch file messages from server and saves it to local memory
  */
-public class FileDownloader extends Thread{
+public class FileDownloader extends Thread {
 
     private ObjectInputStream fin;
 
-    public FileDownloader( ObjectInputStream fin){
+    public FileDownloader(ObjectInputStream fin) {
         this.fin = fin;
     }
 
@@ -27,13 +27,13 @@ public class FileDownloader extends Thread{
 
         // choosing a path and saving the file in it
         String filePath = "C:\\discord";
-        filePath = filePath + "\\" +fileBytes.getFileName();
+        filePath = filePath + "\\" + fileBytes.getFileName();
         File file = new File(filePath);
         try {
             FileOutputStream fileOutputStream = new FileOutputStream(file);
             fileOutputStream.write(fileBytes.getBytes());
 
-        } catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
 

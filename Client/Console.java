@@ -6,13 +6,14 @@ import java.util.Scanner;
 /**
  * handles user's input and output on console
  */
-public class Console extends InputHandler{
+public class Console extends InputHandler {
 
     private String input;
     private final Scanner scanner = new Scanner(System.in);
 
     /**
      * checks the validation of user's input in case they are choosing from a menu
+     *
      * @param numberOfChoices number of options in the menu
      * @return user's choice if it's valid and 0 if user wants to exit the menu
      * @throws Exception if the input is invalid
@@ -29,7 +30,8 @@ public class Console extends InputHandler{
 
     /**
      * checks the validation of user's input in case they have to type a string as input
-     * @param regex the required input format
+     *
+     * @param regex     the required input format
      * @param minLength minimum length of the input
      * @param maxLength maximum length of the input
      * @return user's input if it's valid and 0 if user wants to exit
@@ -51,19 +53,21 @@ public class Console extends InputHandler{
 
     /**
      * prints a message on the console
+     *
      * @param msg the message to be printed
      */
-    public void printMsg(String msg){
+    public void printMsg(String msg) {
         System.out.println(msg);
     }
 
     /**
      * prints a menu on console and asks for user's option
-     * @param menu the menu to be printed
+     *
+     * @param menu    the menu to be printed
      * @param options number of menu's option
      * @return user's choice
      */
-    public int showMenu(String menu, int options){
+    public int showMenu(String menu, int options) {
 
         System.out.println("=======================================================================");
         System.out.println(menu);
@@ -74,32 +78,34 @@ public class Console extends InputHandler{
 
     /**
      * prints a menu on console and asks for user's option
+     *
      * @param menu an array list of options
      * @return user's choice
      */
-    public int showMenu(ArrayList<String> menu){
+    public int showMenu(ArrayList<String> menu) {
         System.out.println("=======================================================================");
         for (int i = 0; i < menu.size() - 1; i++) {
             System.out.println(i + 1 + ") " + menu.get(i));
         }
         System.out.println(menu.get(menu.size() - 1));
         System.out.println("=======================================================================");
-        return getUserOption( menu.size() - 1);
+        return getUserOption(menu.size() - 1);
     }
 
     /**
      * get's user's option and check if it's a valid number, process continues until user enters a valid number
+     *
      * @param options number of options in the menu
      * @return user's choice
      */
     private int getUserOption(int options) {
         boolean successful = false;
         int choice = 0;
-        while (!successful){
+        while (!successful) {
             try {
-               choice = checkInput(options);
-               successful = true;
-            } catch (Exception e){
+                choice = checkInput(options);
+                successful = true;
+            } catch (Exception e) {
                 System.err.println("you must choose one of the numbers in the menu");
             }
         }
@@ -108,9 +114,10 @@ public class Console extends InputHandler{
 
     /**
      * gets user's username and password
+     *
      * @return an array list of user's info
      */
-    public ArrayList<String> login(){
+    public ArrayList<String> login() {
 
         ArrayList<String> info = new ArrayList<>();
 
@@ -130,6 +137,7 @@ public class Console extends InputHandler{
 
     /**
      * gets user's necessary info for creating a new accont
+     *
      * @return an object of class User, holding new user's information
      */
     public User signup() {
@@ -141,14 +149,14 @@ public class Console extends InputHandler{
         System.out.print("password -> ");
         boolean successful = false;
 
-        while (!successful){
+        while (!successful) {
             try {
-                input = checkInput("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d]{8,}$",8, 20);
+                input = checkInput("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d]{8,}$", 8, 20);
                 if (input.equals("0"))
                     return null;
                 user.setPassword(input);
                 successful = true;
-            } catch (Exception e){
+            } catch (Exception e) {
                 System.err.println(e.getMessage());
             }
         }
@@ -157,14 +165,14 @@ public class Console extends InputHandler{
         System.out.println("press 0 to exit");
         System.out.print("email address -> ");
 
-        while (!successful){
+        while (!successful) {
             try {
-                input = checkInput("^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$",11, 50);
+                input = checkInput("^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$", 11, 50);
                 if (input.equals("0"))
                     return null;
                 user.setEmail(input);
                 successful = true;
-            } catch (Exception e){
+            } catch (Exception e) {
                 System.err.println(e.getMessage());
             }
         }
@@ -177,14 +185,14 @@ public class Console extends InputHandler{
             System.out.println("press 0 to exit");
             System.out.print(" phone number -> ");
 
-            while (!successful){
+            while (!successful) {
                 try {
-                    input = checkInput("^[0-9]+$",11, 15);
+                    input = checkInput("^[0-9]+$", 11, 15);
                     if (input.equals("0"))
                         return null;
                     user.setPhoneNum(input);
                     successful = true;
-                } catch (Exception e){
+                } catch (Exception e) {
                     System.err.println(e.getMessage());
                 }
             }
@@ -193,7 +201,7 @@ public class Console extends InputHandler{
         System.out.println("would you like to define a status?");
         System.out.println("1) yes    2) no");
         option = Integer.parseInt(scanner.nextLine());
-        if (option == 1){
+        if (option == 1) {
             ArrayList<String> status = new ArrayList<>(Arrays.asList("online", "idle", "do_not_disturb", "invisible", "press 0 to exit"));
             int choice = showMenu(status);
             if (choice != 0)
@@ -207,19 +215,20 @@ public class Console extends InputHandler{
 
     /**
      * gets user's username and checks if it's in the valid format. process continues until user finally types a valid username
+     *
      * @return username
      */
-    public String usernameValidation(){
+    public String usernameValidation() {
         System.out.println("username must be at least 6 characters and only containing english alphabet and numbers");
         System.out.println("press 0 to exit");
         System.out.print("username -> ");
 
         boolean successful = false;
-        while (!successful){
+        while (!successful) {
             try {
-                input = checkInput("^[0-9a-zA-Z]+$",6 , 20);
+                input = checkInput("^[0-9a-zA-Z]+$", 6, 20);
                 successful = true;
-            } catch (Exception e){
+            } catch (Exception e) {
                 System.err.println(e.getMessage());
             }
         }
@@ -229,30 +238,33 @@ public class Console extends InputHandler{
 
     /**
      * prints an exception on console in red color
+     *
      * @param e the exception to be printed
      */
-    public void printError(Exception e){
+    public void printError(Exception e) {
         e.printStackTrace();
     }
 
     /**
      * asks user a question and gets the answer
+     *
      * @param question the question to be printed on console
      * @return user's answer
      */
-    public String receiveData(String question){
+    public String receiveData(String question) {
         System.out.println(question);
         return scanner.nextLine();
     }
 
     /**
      * prints another user's information on console and shows a couple of possible actions and gets the answer
-     * @param user the user whose info must be printed
-     * @param optionsList the menu of actions to be done to the specified user
+     *
+     * @param user            the user whose info must be printed
+     * @param optionsList     the menu of actions to be done to the specified user
      * @param numberOfOptions number of options in the menu
      * @return user's choice of action
      */
-    public int receiveData(User user, String optionsList, int numberOfOptions){
+    public int receiveData(User user, String optionsList, int numberOfOptions) {
         System.out.println(user);
         return showMenu(optionsList, numberOfOptions);
 
@@ -260,9 +272,10 @@ public class Console extends InputHandler{
 
     /**
      * gets the necessary info to create a server including server name, list of channels and members
+     *
      * @return an array list of array list of strings holding the server info
      */
-    public ArrayList<ArrayList<String>> createServer(){
+    public ArrayList<ArrayList<String>> createServer() {
         ArrayList<ArrayList<String>> serverInfo = new ArrayList<>();
         ArrayList<String> eachInfo = new ArrayList<>();
         System.out.println("enter the name of the server");
@@ -272,7 +285,7 @@ public class Console extends InputHandler{
         eachInfo = new ArrayList<>();
         String input;
         System.out.println("ok now let's create channels, type the name of the channels, press 0 when finished");
-        while (true){
+        while (true) {
             input = scanner.nextLine();
             if (input.equals("0"))
                 break;
@@ -284,7 +297,7 @@ public class Console extends InputHandler{
 
         eachInfo = new ArrayList<>();
         System.out.println("now type the username of the people you want to add to server, press 0 when finished");
-        while (true){
+        while (true) {
             input = scanner.nextLine();
             if (input.equals("0"))
                 break;
@@ -299,6 +312,7 @@ public class Console extends InputHandler{
 
     /**
      * gets the necessary info to create a new role in the server
+     *
      * @return a hashmap containing the new role and username of the person with that role
      */
     public HashMap<String, Role> defineRoles() {
@@ -309,10 +323,10 @@ public class Console extends InputHandler{
         int choice;
         HashMap<String, Role> roles = new HashMap<>();
 
-        while (true){
+        while (true) {
             System.out.println("enter the role name");
             roleName = scanner.nextLine();
-            for (String ability : Role.abilities){
+            for (String ability : Role.abilities) {
                 System.out.println(ability + " ?");
                 System.out.println("1) yes    2) no");
                 choice = Integer.parseInt(scanner.nextLine());
@@ -334,11 +348,12 @@ public class Console extends InputHandler{
 
     /**
      * prints a list of messages on console with some information about their date and time, reactions and sender's info
-     * @param messages the array list of messages
+     *
+     * @param messages  the array list of messages
      * @param shortForm if this param is true messages must be printed in short form, meaning that the server and
      *                  channel name must not be shown, otherwise the whole sender info will be printed along with the message itself
      */
-    public void showMessages(ArrayList<Message> messages, boolean shortForm){
+    public void showMessages(ArrayList<Message> messages, boolean shortForm) {
 
         String text;
         System.out.println("=======================================================================");

@@ -3,7 +3,9 @@ import java.awt.*;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+
 import static java.nio.file.Files.readAllBytes;
+
 import java.nio.file.Paths;
 import java.util.*;
 
@@ -22,7 +24,7 @@ public class Discord {
     private Command cmd;
     private Data data;
 
-    public Discord(String username, ObjectOutputStream out,ObjectOutputStream fout, ObjectInputStream in, ObjectInputStream fin ) {
+    public Discord(String username, ObjectOutputStream out, ObjectOutputStream fout, ObjectInputStream in, ObjectInputStream fin) {
         currentUsername = username;
         inputHandler = new Console();
         this.out = out;
@@ -102,7 +104,7 @@ public class Discord {
                 createServer();
             }
             // or enter an existing server and do some actions there
-            else if (choice != 0){
+            else if (choice != 0) {
                 String currentServer = serversList.get(choice - 1);
                 Server server = new Server(currentServer, out, fout, in, fin);
                 server.enterServer(currentUsername);
@@ -123,7 +125,7 @@ public class Discord {
         // creating server
         cmd = Command.newServer(currentUsername, serverInfo.get(0).get(0));
         transfer();
-        if (data.getKeyword().equals("checkNewServer") && !(boolean)data.getPrimary()){
+        if (data.getKeyword().equals("checkNewServer") && !(boolean) data.getPrimary()) {
             inputHandler.printMsg("oops! couldn't create server. try again later");
             return;
         }
@@ -131,7 +133,7 @@ public class Discord {
         for (String channelName : serverInfo.get(1)) {
             cmd = Command.newChannel(currentUsername, serverInfo.get(0).get(0), channelName);
             transfer();
-            if (data.getKeyword().equals("checkNewChannel") && !(boolean)data.getPrimary())
+            if (data.getKeyword().equals("checkNewChannel") && !(boolean) data.getPrimary())
                 inputHandler.printMsg("couldn't create channel!");
         }
         // adding people
@@ -168,16 +170,16 @@ public class Discord {
         directChats.add("press 0 to exit");
 
         while (true) {
-            if (directChats.size() == 2){
+            if (directChats.size() == 2) {
                 inputHandler.printMsg("you're miserable and have no one to talk to. sorry :(");
             }
             int choice = inputHandler.showMenu(directChats);
             if (choice == 0)
                 break;
             // friends list is shown and user chooses a friend to start chat with
-            if (choice == directChats.size() - 1){
+            if (choice == directChats.size() - 1) {
 
-                cmd  = Command.getFriends(currentUsername);
+                cmd = Command.getFriends(currentUsername);
                 transfer();
                 ArrayList<String> friends = new ArrayList<>();
                 if (!data.getKeyword().equals("friends"))
@@ -186,7 +188,7 @@ public class Discord {
                     friends = (ArrayList<String>) data.getPrimary();
                 friends.add("press 0 to exit");
                 int chosenFriend;
-                while (true){
+                while (true) {
                     if (friends.size() == 1)
                         inputHandler.printMsg("friend list is empty, you can first send friend request to someone and then start chatting");
                     chosenFriend = inputHandler.showMenu(friends);
@@ -206,6 +208,7 @@ public class Discord {
 
     /**
      * creates a new thread for sending and receiving messages. also loads last 5 messages in the existing chats
+     *
      * @param otherPerson the other person which user wants to chat with
      */
     private void startPrivateChat(String otherPerson) {
@@ -225,7 +228,7 @@ public class Discord {
 
 
         MessageReader messageReader = new MessageReader(in, inputHandler);
-        MessageWriter messageWriter = new MessageWriter(out,fout,fin, currentUsername, otherPerson);
+        MessageWriter messageWriter = new MessageWriter(out, fout, fin, currentUsername, otherPerson);
 
 
         messageReader.start();
@@ -307,7 +310,7 @@ public class Discord {
                         inputHandler.printMsg("there is no such user with this username!");
                     } else {
                         Relationship friendRequest = Relationship.Friend_pending;
-                        cmd = Command.newRelation(friendRequest,currentUsername,friendUsername);
+                        cmd = Command.newRelation(friendRequest, currentUsername, friendUsername);
                         transfer();
                         break;
                     }
@@ -315,17 +318,16 @@ public class Discord {
             }
 
             // showing the chosen friend
-            else if (choice != 0){
+            else if (choice != 0) {
                 cmd = Command.getUser(friends.get(choice - 1));
                 transfer();
-                if (!data.getKeyword().equals("userInfo")){
+                if (!data.getKeyword().equals("userInfo")) {
                     inputHandler.printMsg("unable to receive data from server");
-                }
-                else {
+                } else {
                     User friend = (User) data.getPrimary();
                     if (inputHandler.receiveData(friend, "0) back\n1) block this person", 1) == 1) {
                         Relationship block = Relationship.Block;
-                        cmd = Command.newRelation(block,currentUsername,friend.getUsername());
+                        cmd = Command.newRelation(block, currentUsername, friend.getUsername());
                         transfer();
                     }
                 }
@@ -338,7 +340,7 @@ public class Discord {
      */
     private void blocklist() {
 
-        while (true){
+        while (true) {
             // getting the block list from server
             cmd = Command.getBlockList(currentUsername);
             transfer();
@@ -353,7 +355,7 @@ public class Discord {
 
             // printing the list
             inputHandler.printMsg("your block list :");
-            if (blocks.size() == 1){
+            if (blocks.size() == 1) {
                 inputHandler.printMsg("block list is empty");
                 return;
             }
@@ -366,8 +368,8 @@ public class Discord {
                 inputHandler.printMsg("something went worng");
             else {
                 inputHandler.printMsg(data.getPrimary().toString());
-                if (inputHandler.receiveData("1) unblock\npress 0 to exit").equals("1")){
-                    cmd = Command.newRelation(Relationship.Rejected, currentUsername,blocks.get(choice - 1));
+                if (inputHandler.receiveData("1) unblock\npress 0 to exit").equals("1")) {
+                    cmd = Command.newRelation(Relationship.Rejected, currentUsername, blocks.get(choice - 1));
                     transfer();
                 }
             }
@@ -382,7 +384,7 @@ public class Discord {
             inputHandler.printMsg("new requests :");
             cmd = Command.getRequests(currentUsername);
             transfer();
-            if (!data.getKeyword().equals("allFriendRequests")){
+            if (!data.getKeyword().equals("allFriendRequests")) {
                 inputHandler.printMsg("unable to receive data from server");
                 return;
             }
@@ -403,7 +405,7 @@ public class Discord {
                     } else if (decision == 2) {
                         result = Relationship.Rejected;
                     }
-                    cmd = Command.newRelation(result,currentUsername,user.getUsername());
+                    cmd = Command.newRelation(result, currentUsername, user.getUsername());
                     transfer();
                 }
             }
@@ -428,7 +430,7 @@ public class Discord {
                     dialog.setVisible(true);
 
                     String fileNameAndType = dialog.getFile();
-                    String path = dialog.getDirectory()+"//"+dialog.getFile();
+                    String path = dialog.getDirectory() + "//" + dialog.getFile();
 
                     byte[] photo = new byte[0];
                     try {
@@ -438,7 +440,7 @@ public class Discord {
                     }
                     String[] splitName = fileNameAndType.split("\\.");
 
-                    cmd = Command.changeProfilePhoto(currentUsername, photo, splitName[splitName.length - 1] );
+                    cmd = Command.changeProfilePhoto(currentUsername, photo, splitName[splitName.length - 1]);
                     try {
                         out.writeObject(cmd);
                     } catch (IOException e) {
@@ -454,12 +456,11 @@ public class Discord {
                         // create a command to check if it exists
                         cmd = Command.changeUsername(currentUsername, newUsername);
                         transfer();
-                        if (data.getKeyword().equals("checkChangeUsername") && (boolean)data.getPrimary()){
+                        if (data.getKeyword().equals("checkChangeUsername") && (boolean) data.getPrimary()) {
                             inputHandler.printMsg("username changed successfully");
                             currentUsername = newUsername;
                             break;
-                        }
-                        else
+                        } else
                             inputHandler.printMsg("this username already exists, please try another one");
                     }
                     break;

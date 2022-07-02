@@ -13,24 +13,24 @@ public class FileMessage extends Message implements Serializable {
     private static final long serialVersionUID = 535296473722284L;
     private String fileName;
 
-    public FileMessage(String sender,String fileName) throws IOException {
+    public FileMessage(String sender, String fileName) throws IOException {
         super(sender);
         this.fileName = fileName;
         System.out.println(fileName);
     }
 
-    public FileMessage(String sender,String server,String channel,String fileName) throws IOException {
-        super(sender,channel,server);
+    public FileMessage(String sender, String server, String channel, String fileName) throws IOException {
+        super(sender, channel, server);
         this.fileName = fileName;
     }
 
-    public FileMessage(String sender,String server,String channel,LocalDateTime date,String fileName) throws IOException {
-        super(sender,channel,server,date);
+    public FileMessage(String sender, String server, String channel, LocalDateTime date, String fileName) throws IOException {
+        super(sender, channel, server, date);
         this.fileName = fileName;
     }
 
-    public FileMessage(String sender,LocalDateTime date,String fileName) throws IOException {
-        super(sender,date);
+    public FileMessage(String sender, LocalDateTime date, String fileName) throws IOException {
+        super(sender, date);
         this.fileName = fileName;
     }
 
@@ -42,7 +42,7 @@ public class FileMessage extends Message implements Serializable {
     @Override
     public String toString() {
         if (super.getSourceInfo().size() > 1)
-            return super.getSourceInfoAsString() + fileName+"\n" + super.getReactions();
+            return super.getSourceInfoAsString() + fileName + "\n" + super.getReactions();
         else
             return super.getSourceInfoAsString() + fileName;
     }
