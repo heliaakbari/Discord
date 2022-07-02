@@ -155,12 +155,11 @@ public class MessageWriter extends Thread{
         try{
             FileMessage fileMessage;
             if (senderInfo.size() == 1){
-                fileMessage = new FileMessage(receiverInfo, splitted[1]);
+                cmd = Command.download(senderInfo.get(0),receiverInfo, splitted[1], false);
             }
             else {
-                fileMessage = new FileMessage(null, senderInfo.get(2), senderInfo.get(1), splitted[1]);
+                cmd = Command.download(senderInfo.get(2), senderInfo.get(1), splitted[1], true);
             }
-            cmd = Command.download(fileMessage);
             out.writeObject(cmd);
         } catch (IOException e){
             e.printStackTrace();
