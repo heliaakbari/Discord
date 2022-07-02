@@ -723,7 +723,6 @@ public class CmdManager {
            ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()){
                 if(rs.getBoolean("isfile")){
-                    byte[] bytes = fileToBytes(rs.getString("FILELINK"));
                     FileMessage m = new FileMessage(rs.getString("SENDER"),rs.getString("SERVER"),rs.getString("CHANNEL"),rs.getTimestamp("DATE").toLocalDateTime(),rs.getString("FILENAME"));
                     messages.add(m);
                 }

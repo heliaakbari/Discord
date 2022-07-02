@@ -70,6 +70,12 @@ public class ClientHandler extends Thread{
             } catch (IOException e) {
                     e.printStackTrace();
                 }
+            if((boolean) cmd.getPrimary()){
+                serverSide.moveCmd(Command.newChannelMsg(fb.getFileMessage().getSourceInfo().get(0),fb.getFileMessage().getSourceInfo().get(2),fb.getFileMessage().getSourceInfo().get(1),fb.getFileMessage()),this);
+            }
+           else{
+               serverSide.moveCmd(Command.newPvMsg(fb.getFileMessage().getSourceInfo().get(0),cmd.getUser(),fb.getFileMessage()),this);
+            }
         }
 
         if (cmd.getKeyword().equals("download")){

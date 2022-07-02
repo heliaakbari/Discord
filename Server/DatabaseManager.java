@@ -123,8 +123,8 @@ public class DatabaseManager {
                                              body varchar(1000),
                                              isPinned boolean not null,
                                              isFile boolean not null,
-                                             filename varchar(50),
-                                             filelink varchar(200));""");
+                                             filename varchar(200),
+                                             filelink varchar(1000));""");
 
         //pv messages
         stmt.executeUpdate("""
@@ -135,8 +135,8 @@ public class DatabaseManager {
                                              body varchar(1000),
                                              seen boolean not null,
                                              isFile boolean not null,
-                                             filename varchar(50),
-                                             filelink varchar(200));""");
+                                             filename varchar(200),
+                                             filelink varchar(1000));""");
         //roles
         stmt.executeUpdate("""
                                             CREATE TABLE IF NOT EXISTS server_members
