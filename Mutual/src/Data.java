@@ -121,6 +121,11 @@ public class Data  implements Serializable {
         return data;
     }
 
+    public static Data giveFilePath(String filepath){
+        Data data = new Data("giveFilePath");
+        data.primary = filepath;
+        return data;
+    }
     public static @NotNull Data allFriendRequests(String user, ArrayList<String> allRequests){
         Data data = new Data("allFriendRequests");
         data.user = user;

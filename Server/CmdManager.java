@@ -152,10 +152,51 @@ public class CmdManager {
                 lastseenChannel(cmd);
                 dt = Data.exitChat(cmd.getUser());
                 break;
+            case "download":
+
         }
 
         return dt;
     }
+
+    public Data getFilePath(Command cmd){
+        boolean isChannel = (boolean) cmd.getSecondary();
+        String filePath = null;
+        if(isChannel){
+            try {
+            String query = "select FILELINK from channel_messages where server=? and channel=? and filename=?";
+           PreparedStatement preparedStatement = con.prepareStatement(query);
+            preparedStatement.setString(1,cmd.getServer());
+            preparedStatement.setString(2,cmd.getChannel());
+            preparedStatement.setString(3,(String) cmd.getPrimary());
+            ResultSet rs = preparedStatement.executeQuery();
+            while (rs.next()){
+                filePath = rs.getString("FILEPATH");
+            }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        else{
+            try{
+            String query = "select FILELINK from pv_messages where ( (sender =? and receiver = ?) or (receiver=? and sender=?) ) and filename=?";
+            PreparedStatement preparedStatement = con.prepareStatement(query);
+            preparedStatement.setString(1,cmd.getServer());
+            preparedStatement.setString(2,cmd.getChannel());
+            preparedStatement.setString(3,cmd.getServer());
+            preparedStatement.setString(4,cmd.getChannel());
+            preparedStatement.setString(5,(String) cmd.getPrimary());
+            ResultSet rs = preparedStatement.executeQuery();
+            while (rs.next()){
+                filePath = rs.getString("FILEPATH");
+            }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return Data.giveFilePath(filePath);
+    }
+
     public ArrayList<Message> addReactionsToMessages(ArrayList<Message> messages){
         for(Message message : messages){
             if(message.getSourceInfo().size()==3) {

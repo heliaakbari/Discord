@@ -48,6 +48,7 @@ public class ClientHandler extends Thread{
                 e.printStackTrace();
             }
         }
+
         if (cmd.getKeyword().equals("upload")){
             FileBytes fb = null;
             try {
@@ -75,9 +76,9 @@ public class ClientHandler extends Thread{
 
         if (cmd.getKeyword().equals("download")){
             byte[] bytes = null;
-            FileMessage fileMessage =(FileMessage) cmd.getPrimary();
+            String address = (String) dt.getPrimary();
             try {
-                bytes = readAllBytes(Paths.get("C:\\DiscordFiles\\"+fileMessage.getSourceInfo().get(0)+fileMessage.getDateTime().format(dateTimeFormatter)+fileMessage.getFileName()));
+                bytes = readAllBytes(Paths.get(address));
             }
             catch (NoSuchFileException e){
                 System.out.println("the file with path doesnt exists");
@@ -86,7 +87,7 @@ public class ClientHandler extends Thread{
                 e.printStackTrace();
             }
             try {
-                fout.writeObject(FileBytes.toClient(fileMessage.getFileName(),bytes));
+                fout.writeObject(FileBytes.toClient((String) cmd.getPrimary(),bytes));
             } catch (IOException e) {
                 e.printStackTrace();
             }
