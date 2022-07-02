@@ -151,7 +151,7 @@ public class MessageWriter extends Thread{
      * @param text
      */
     private void downloadFile(String text) {
-        String[] splitted = text.split(" ");
+        String[] splitted = text.split(" ",3);
         try{
             if (senderInfo.size() == 1){
                 cmd = Command.download(senderInfo.get(0),receiverInfo, splitted[2], false);

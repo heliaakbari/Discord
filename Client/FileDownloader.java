@@ -43,7 +43,7 @@ public class FileDownloader extends Thread{
 //
 //        }
 
-        String filePath = "C:\\Users\\user\\Downloads\\discord";
+        String filePath = "C:\\discord";
         filePath = filePath + "\\" +fileBytes.getFileName();
         File file = new File(filePath);
         try {

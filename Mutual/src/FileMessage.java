@@ -54,6 +54,6 @@ public class FileMessage extends Message implements Serializable {
 
     @Override
     public String shortFormToString() {
-        return null;
+        return fileName;
     }
 }
