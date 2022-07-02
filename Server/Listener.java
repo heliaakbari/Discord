@@ -1,25 +1,28 @@
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
-public class Listener extends Thread{
+/**
+ * a seperated thread to wait for commands
+ */
+public class Listener extends Thread {
     private ClientHandler clientHandler;
     private ObjectInputStream in;
 
 
-    public Listener(ClientHandler clientHandler,ObjectInputStream in){
+    public Listener(ClientHandler clientHandler, ObjectInputStream in) {
         this.clientHandler = clientHandler;
         this.in = in;
     }
+
     @Override
     public void run() {
-        Command cmd = null;
-        while (true){
-            cmd = null;
+        Command cmd;
+        while (true) {
             try {
-                cmd =(Command) in.readObject();
-                System.out.println("got a command: "+cmd.getKeyword());
+                cmd = (Command) in.readObject();
+                System.out.println("got a command: " + cmd.getKeyword());
                 clientHandler.getCommandFromListener(cmd);
-                if(cmd.getKeyword().equals("exit")) {
+                if (cmd.getKeyword().equals("exit")) {
                     return;
                 }
 
