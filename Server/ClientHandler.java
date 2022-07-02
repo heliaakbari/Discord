@@ -81,6 +81,7 @@ public class ClientHandler extends Thread{
         if (cmd.getKeyword().equals("download")){
             byte[] bytes = null;
             String address = (String) dt.getPrimary();
+            System.out.println(address);
             try {
                 bytes = readAllBytes(Paths.get(address));
             }

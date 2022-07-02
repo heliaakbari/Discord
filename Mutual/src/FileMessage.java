@@ -42,9 +42,9 @@ public class FileMessage extends Message implements Serializable {
     @Override
     public String toString() {
         if (super.getSourceInfo().size() > 1)
-            return super.getSourceInfoAsString() + " a file\n" + super.getReactions();
+            return super.getSourceInfoAsString() + fileName+"\n" + super.getReactions();
         else
-            return super.getSourceInfoAsString() + " a file";
+            return super.getSourceInfoAsString() + fileName;
     }
 
     @Override
