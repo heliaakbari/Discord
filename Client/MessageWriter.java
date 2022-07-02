@@ -92,18 +92,25 @@ public class MessageWriter extends Thread{
                 String[] splitted = text.split(" ");
                 message = messageNumbering.get(Integer.parseInt(splitted[1]) - 1);
                 cmd = Command.newReaction(senderInfo.get(0), message, splitted[2]);
+
+                try {
+                    out.writeObject(cmd);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
             // for text messages
             else {
                 message = new TextMessage(senderInfo, text);
                 cmd = Command.newChannelMsg(senderInfo.get(0),senderInfo.get(2),senderInfo.get(1), message);
+
+                try {
+                    out.writeObject(cmd);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
-            // sending the reaction or message to server
-            try {
-                out.writeObject(cmd);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+
         }
     }
 
@@ -151,13 +158,15 @@ public class MessageWriter extends Thread{
      * @param text
      */
     private void downloadFile(String text) {
+
         String[] splitted = text.split(" ",3);
+        String fileName = splitted[2];
         try{
             if (senderInfo.size() == 1){
-                cmd = Command.download(senderInfo.get(0),receiverInfo, splitted[2], false);
+                cmd = Command.download(senderInfo.get(0),receiverInfo, fileName.toString(), false);
             }
             else {
-                cmd = Command.download(senderInfo.get(2), senderInfo.get(1), splitted[2], true);
+                cmd = Command.download(senderInfo.get(2), senderInfo.get(1), fileName.toString(), true);
             }
             out.writeObject(cmd);
         } catch (IOException e){
