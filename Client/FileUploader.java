@@ -22,7 +22,6 @@ public class FileUploader extends Thread {
         dialog.setVisible(true);
 
         String fileNameAndType = dialog.getFile();
-        System.out.println(fileNameAndType);
         String path = dialog.getDirectory()+"//"+dialog.getFile();
 
         byte[] bytes = new byte[0];
@@ -39,8 +38,7 @@ public class FileUploader extends Thread {
                 fileMessage = new FileMessage(senderInfo.get(0), senderInfo.get(2), senderInfo.get(1), fileNameAndType);
 
             FileBytes fileBytes = FileBytes.toServer(fileMessage, bytes);
-            fileBytes
-            System.out.println(fileBytes.getFileName());
+            System.out.println(bytes.length);
             fout.writeObject(fileBytes);
         } catch (IOException e){
             e.printStackTrace();

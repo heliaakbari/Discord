@@ -16,6 +16,7 @@ public class FileMessage extends Message implements Serializable {
     public FileMessage(String sender,String fileName) throws IOException {
         super(sender);
         this.fileName = fileName;
+        System.out.println(fileName);
     }
 
     public FileMessage(String sender,String server,String channel,String fileName) throws IOException {
