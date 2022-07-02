@@ -1,4 +1,6 @@
-
+/**
+ * an Enum class used to define each user's statu including online. idle, invisible, offline or do not disturb
+ */
 public enum Status {
     online,
     idle,

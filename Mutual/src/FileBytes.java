@@ -2,6 +2,7 @@ public class FileBytes {
     private byte[] bytes;
     private String fileName;
     private FileMessage fileMessage;
+
     public void setBytes(byte[] bytes,String filename) {
         this.bytes = bytes;
         this.fileName = filename;

@@ -72,6 +72,11 @@ public class Console extends InputHandler{
         return getUserOption(options);
     }
 
+    /**
+     * prints a menu on console and asks for user's option
+     * @param menu an array list of options
+     * @return user's choice
+     */
     public int showMenu(ArrayList<String> menu){
         System.out.println("=======================================================================");
         for (int i = 0; i < menu.size() - 1; i++) {
@@ -82,6 +87,11 @@ public class Console extends InputHandler{
         return getUserOption( menu.size() - 1);
     }
 
+    /**
+     * get's user's option and check if it's a valid number, process continues until user enters a valid number
+     * @param options number of options in the menu
+     * @return user's choice
+     */
     private int getUserOption(int options) {
         boolean successful = false;
         int choice = 0;
@@ -96,6 +106,10 @@ public class Console extends InputHandler{
         return choice;
     }
 
+    /**
+     * gets user's username and password
+     * @return an array list of user's info
+     */
     public ArrayList<String> login(){
 
         ArrayList<String> info = new ArrayList<>();
@@ -114,6 +128,10 @@ public class Console extends InputHandler{
         return info;
     }
 
+    /**
+     * gets user's necessary info for creating a new accont
+     * @return an object of class User, holding new user's information
+     */
     public User signup() {
 
         User user = new User();
@@ -187,6 +205,10 @@ public class Console extends InputHandler{
         return user;
     }
 
+    /**
+     * gets user's username and checks if it's in the valid format. process continues until user finally types a valid username
+     * @return username
+     */
     public String usernameValidation(){
         System.out.println("username must be at least 6 characters and only containing english alphabet and numbers");
         System.out.println("press 0 to exit");
@@ -205,21 +227,41 @@ public class Console extends InputHandler{
         return input;
     }
 
+    /**
+     * prints an exception on console in red color
+     * @param e the exception to be printed
+     */
     public void printError(Exception e){
         e.printStackTrace();
     }
 
+    /**
+     * asks user a question and gets the answer
+     * @param question the question to be printed on console
+     * @return user's answer
+     */
     public String receiveData(String question){
         System.out.println(question);
         return scanner.nextLine();
     }
 
+    /**
+     * prints another user's information on console and shows a couple of possible actions and gets the answer
+     * @param user the user whose info must be printed
+     * @param optionsList the menu of actions to be done to the specified user
+     * @param numberOfOptions number of options in the menu
+     * @return user's choice of action
+     */
     public int receiveData(User user, String optionsList, int numberOfOptions){
         System.out.println(user);
         return showMenu(optionsList, numberOfOptions);
 
     }
 
+    /**
+     * gets the necessary info to create a server including server name, list of channels and members
+     * @return an array list of array list of strings holding the server info
+     */
     public ArrayList<ArrayList<String>> createServer(){
         ArrayList<ArrayList<String>> serverInfo = new ArrayList<>();
         ArrayList<String> eachInfo = new ArrayList<>();
@@ -255,6 +297,10 @@ public class Console extends InputHandler{
 
     }
 
+    /**
+     * gets the necessary info to create a new role in the server
+     * @return a hashmap containing the new role and username of the person with that role
+     */
     public HashMap<String, Role> defineRoles() {
         System.out.println("you can define special roles in server. to do so, you must first define the role and then give the corresponding username");
         Role role;
@@ -286,6 +332,12 @@ public class Console extends InputHandler{
         return roles;
     }
 
+    /**
+     * prints a list of messages on console with some information about their date and time, reactions and sender's info
+     * @param messages the array list of messages
+     * @param shortForm if this param is true messages must be printed in short form, meaning that the server and
+     *                  channel name must not be shown, otherwise the whole sender info will be printed along with the message itself
+     */
     public void showMessages(ArrayList<Message> messages, boolean shortForm){
 
         String text;

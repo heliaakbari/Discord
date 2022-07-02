@@ -5,22 +5,35 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+/**
+ * holds the name of the server which the user is currently in.
+ * is responsible for : showing the list of channels and actions inside the server, showing the list of members
+ * and actions inside each channel, handling channel chats and ...
+ */
 public class Server {
 
     private String currentServerName;
     private InputHandler inputHandler;
     private ObjectOutputStream out;
+    private ObjectOutputStream fout;
     private ObjectInputStream in;
+    private ObjectInputStream fin;
     private Command cmd;
     private Data data;
 
-    public Server(String name, ObjectOutputStream out, ObjectInputStream in) {
+    public Server(String name, ObjectOutputStream out,ObjectOutputStream fout, ObjectInputStream in, ObjectInputStream fin) {
         currentServerName = name;
         inputHandler = new Console();
         this.out = out;
         this.in = in;
+        this.fout = fout;
+        this.fin = fin;
     }
 
+    /**
+     * shows two options for seeing the list of  actions or channels once user enters the server
+     * @param currentUsername username of the user who enters the server
+     */
     public void enterServer(String currentUsername) {
         int choice;
         do {
@@ -35,6 +48,11 @@ public class Server {
         } while (choice != 0);
     }
 
+    /**
+     * shows the list of channels, once user enters a channel shows the list of available actions inside that channels
+     * including chatting, seeing the member's list, seeing the pin bar and leaving the channel
+     * @param currentUsername
+     */
     public void channelsList(String currentUsername) {
 
         int choice;
@@ -54,12 +72,15 @@ public class Server {
             choice = inputHandler.showMenu(channelsList);
             if (choice == 0)
                 break;
+            // user chooses a channel to enter
             channelName = channelsList.get(choice - 1);
 
             int action;
             do {
+                // list of actions inside channel
                 action = inputHandler.showMenu("1) start chatting\n2) see the channel members\n3) see pin bar\n4) leave channel\npress 0 to exit", 4);
 
+                // chatting
                 if (action == 1) {
                     inputHandler.printMsg("you can type your messages now, to react to a message type 'react <message number> <reaction> '.\n" +
                             "to send a file type 'send file'. to download a file type 'open file <file name>'. press 0 to exit the chat");
@@ -78,7 +99,7 @@ public class Server {
                     inputHandler.showMessages(messageNumbering, true);
                     MessageReader messageReader = new MessageReader(in, inputHandler, messageNumbering, currentUsername);
 
-                    MessageWriter messageWriter = new MessageWriter(out, new ArrayList<>(Arrays.asList(currentUsername, channelName, currentServerName)), messageNumbering);
+                    MessageWriter messageWriter = new MessageWriter(out,fout,fin, new ArrayList<>(Arrays.asList(currentUsername, channelName, currentServerName)), messageNumbering);
                     messageReader.start();
                     messageWriter.start();
 
@@ -96,6 +117,7 @@ public class Server {
                     }
 
                 }
+                // member's list
                 else if (action == 2) {
                     // creat a command to get the members
                     cmd = Command.getChannelMembers(currentUsername, currentServerName, channelName);
@@ -119,6 +141,7 @@ public class Server {
                         }
                     }
                 }
+                // pin bar
                 else if (action == 3){
                     cmd = Command.getPinnedMsgs(currentUsername, currentServerName, channelName);
                     transfer();
@@ -131,6 +154,7 @@ public class Server {
                     }
 
                 }
+                // leaving channel
                 else if (action == 4){
                     cmd = Command.banFromChannel(currentUsername, currentServerName,channelName);
                     transfer();
@@ -142,6 +166,11 @@ public class Server {
         } while (choice != 0);
     }
 
+    /**
+     * shows the list of possible actions for the user based on their role in this channel
+     * @param currentUsername
+     * @return
+     */
     public int actionsList(String currentUsername) {
         int action;
         do {
@@ -161,7 +190,6 @@ public class Server {
             action = inputHandler.showMenu(actions);
             if (action == 0)
                 break;
-            // create the command, for the keyword use the value in the abilities arrayList, to get the value use action - 1 index
             String chosenAction = actions.get(action - 1);
             switch (chosenAction) {
                 case "create channel":
@@ -231,6 +259,11 @@ public class Server {
         return 0;
     }
 
+    /**
+     * shows the chat history of the channel that user chooses
+     * @param currentUsername
+     * @return te message that user chooses from the history
+     */
     private Message chatHistory(String currentUsername) {
         String channel = inputHandler.receiveData("type a channel name to see chat history");
 
@@ -253,6 +286,9 @@ public class Server {
             return recentMessages.get(messageNum - 1);
     }
 
+    /**
+     * transfers commands from client to server and datas from server to client
+     */
     private void transfer() {
         try {
             out.writeObject(cmd);

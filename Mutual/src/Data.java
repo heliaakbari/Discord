@@ -45,7 +45,7 @@ public class Data  implements Serializable {
     }
 
     /**
-     * returns if the sign up of a new member was successful or not
+     * returns if the signup of a new member was successful or not
      */
     public static @NotNull Data checkSignUp(String user, Boolean isSignedUp){
         Data data = new Data("checkSignUp");
