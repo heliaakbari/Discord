@@ -110,7 +110,7 @@ public class ClientHandler extends Thread {
         return;
     }
 
-    
+
     public void sendInstantMessage(Data dt) {
         try {
             out.writeObject(dt);

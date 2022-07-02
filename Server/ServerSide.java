@@ -8,11 +8,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
+/**
+ * handles every thing related to server including communicating with database and clients, delivering messages and command and data and ...
+ */
 public class ServerSide {
 
     private ServerSocket serverSocket;
     private ServerSocket fileSocket;
-    private HashMap<String,ClientHandler> clientHandlers;
+    private HashMap<String, ClientHandler> clientHandlers;
     private Socket client;
     private ObjectOutputStream out;
     private ObjectInputStream in;
@@ -20,9 +23,9 @@ public class ServerSide {
     private ObjectInputStream fin;
     private DatabaseManager dbm = new DatabaseManager();
     //first one is the person and the other is their friend
-    private HashMap<String,String> activePvs= new HashMap<>();
+    private HashMap<String, String> activePvs = new HashMap<>();
     //first one is the user and the other is array [server,channel] form
-    private HashMap<String,ArrayList<String>> activeChannels= new HashMap<>();
+    private HashMap<String, ArrayList<String>> activeChannels = new HashMap<>();
 
     public ServerSide() {
         try {
@@ -34,6 +37,10 @@ public class ServerSide {
         }
     }
 
+    /**
+     * starts the server nad database manager, sets the object input and output stream for the first and second port.
+     * accepts clients and opens a new thread for after accepting each
+     */
     public void startServer() {
         dbm.start();
 
@@ -57,7 +64,7 @@ public class ServerSide {
             // creating new thread for handling new connection
             ClientHandler clientHandler;
             try {
-                clientHandler = new ClientHandler(client, in, out,fin,fout, this);
+                clientHandler = new ClientHandler(client, in, out, fin, fout, this);
                 Thread thread = new Thread(clientHandler);
                 thread.start();
             } catch (SocketException e) {
@@ -66,155 +73,173 @@ public class ServerSide {
         }
     }
 
-    public void addClientHandler (String username,ClientHandler clientHandler ){
-        clientHandlers.put(username,clientHandler);
-        System.out.println(username+ " was added to handlers");
+    /**
+     * adds a new clientHandler to the list of threads
+     * @param username username of the client or the specific id which the clientHandler will be recognized with
+     * @param clientHandler new handler thread to be added to list
+     */
+    public void addClientHandler(String username, ClientHandler clientHandler) {
+        clientHandlers.put(username, clientHandler);
+        System.out.println(username + " was added to handlers");
         printClientHandlers();
     }
 
-    public Data moveCmd(Command cmd,ClientHandler clientHandler){
+    /**
+     * receives command from client handler and do operations based on its keyword.
+     * sends the command to cmdManager to be processed and receives data object in answer and transfers it back to client handler
+     * @param cmd
+     * @param clientHandler
+     * @return
+     */
+    public Data moveCmd(Command cmd, ClientHandler clientHandler) {
         Data dt = dbm.cmdManager.process(cmd);
-        switch (dt.getKeyword()){
-            case "checkSignUp" :
-            case "checkLogin" :
-                if (((boolean)dt.getPrimary())){
-                    addClientHandler(dt.getUser(),clientHandler);
+        switch (dt.getKeyword()) {
+            case "checkSignUp":
+            case "checkLogin":
+                if (((boolean) dt.getPrimary())) {
+                    addClientHandler(dt.getUser(), clientHandler);
                 }
-            break;
+                break;
             case "checkChangeUsername":
-                if (((boolean)dt.getPrimary())){
-                   if (clientHandlers.containsKey(dt.getUser())){
-                       ClientHandler ch = clientHandlers.get(dt.getUser());
-                       clientHandlers.remove(dt.getUser());
-                       clientHandlers.put((String) dt.getSecondary(),ch);
-                   }
+                if (((boolean) dt.getPrimary())) {
+                    if (clientHandlers.containsKey(dt.getUser())) {
+                        ClientHandler ch = clientHandlers.get(dt.getUser());
+                        clientHandlers.remove(dt.getUser());
+                        clientHandlers.put((String) dt.getSecondary(), ch);
+                    }
 
-                   if(activePvs.containsKey(dt.getUser())){
-                       String theOther = activePvs.get(dt.getUser());
-                       activePvs.remove(dt.getUser());
-                       activePvs.put((String) dt.getSecondary(),theOther);
-                   }
-
-                   else if(activeChannels.containsKey(dt.getUser())){
-                       ArrayList<String> place = activeChannels.get(dt.getUser());
-                       activeChannels.remove(dt.getUser());
-                       activeChannels.put((String)dt.getSecondary(),place);
-                   }
+                    if (activePvs.containsKey(dt.getUser())) {
+                        String theOther = activePvs.get(dt.getUser());
+                        activePvs.remove(dt.getUser());
+                        activePvs.put((String) dt.getSecondary(), theOther);
+                    } else if (activeChannels.containsKey(dt.getUser())) {
+                        ArrayList<String> place = activeChannels.get(dt.getUser());
+                        activeChannels.remove(dt.getUser());
+                        activeChannels.put((String) dt.getSecondary(), place);
+                    }
                 }
-            break;
+                break;
             case "checkChangeServerName":
                 for (HashMap.Entry<String, ArrayList<String>> set :
                         activeChannels.entrySet()) {
-                    if(set.getValue().get(0).equals(dt.getServer())){
+                    if (set.getValue().get(0).equals(dt.getServer())) {
                         ArrayList<String> newPlace = new ArrayList<>();
                         newPlace.add((String) dt.getSecondary());
                         newPlace.add(set.getValue().get(1));
-                        activeChannels.replace(set.getKey(),newPlace);
+                        activeChannels.replace(set.getKey(), newPlace);
                     }
                 }
-            break;
+                break;
 
             case "checkDeleteChannel":
-                if(((boolean) dt.getPrimary())==true){
+                if (((boolean) dt.getPrimary()) == true) {
                     for (HashMap.Entry<String, ArrayList<String>> set :
                             activeChannels.entrySet()) {
-                        if(set.getValue().get(0).equals(dt.getServer()) && set.getValue().get(1).equals(dt.getChannel())){
+                        if (set.getValue().get(0).equals(dt.getServer()) && set.getValue().get(1).equals(dt.getChannel())) {
                             activeChannels.remove(set);
                         }
                     }
                 }
-            break;
+                break;
 
             case "checkDeleteServer":
-                if(((boolean) dt.getPrimary())==true){
+                if (((boolean) dt.getPrimary()) == true) {
                     for (HashMap.Entry<String, ArrayList<String>> set :
                             activeChannels.entrySet()) {
-                        if(set.getValue().get(0).equals(dt.getServer()) ){
+                        if (set.getValue().get(0).equals(dt.getServer())) {
                             activeChannels.remove(set);
                         }
                     }
                 }
-            break;
+                break;
         }
 
-        switch (cmd.getKeyword()){
+        switch (cmd.getKeyword()) {
             case "exit":
                 System.out.println("got exit command");
                 String person = null;
-                for (HashMap.Entry<String, ClientHandler> pair: clientHandlers.entrySet()) {
-                    if(pair.getValue().equals(clientHandler)){
+                for (HashMap.Entry<String, ClientHandler> pair : clientHandlers.entrySet()) {
+                    if (pair.getValue().equals(clientHandler)) {
                         person = pair.getKey();
                         break;
                     }
                 }
-                if(activePvs.containsKey(person)){
-                    dbm.cmdManager.process(Command.lastseenPv(person,activePvs.get(person)));
+                if (activePvs.containsKey(person)) {
+                    dbm.cmdManager.process(Command.lastseenPv(person, activePvs.get(person)));
                 }
-                if(activeChannels.containsKey(person)){
-                    dbm.cmdManager.process(Command.lastseenChannel(person,activeChannels.get(person).get(0),activeChannels.get(person).get(1)));
+                if (activeChannels.containsKey(person)) {
+                    dbm.cmdManager.process(Command.lastseenChannel(person, activeChannels.get(person).get(0), activeChannels.get(person).get(1)));
                 }
                 clientHandlers.remove(person);
-            break;
+                break;
             case "lastseenPv":
                 activePvs.remove(cmd.getUser());
-            break;
+                break;
 
             case "lastseenChannel":
                 activeChannels.remove(cmd.getUser());
-            break;
+                break;
 
             case "tellPv":
-                activePvs.put(cmd.getUser(),(String)cmd.getPrimary());
-            break;
+                activePvs.put(cmd.getUser(), (String) cmd.getPrimary());
+                break;
 
             case "tellChannel":
-                ArrayList<String> place = new ArrayList<>(Arrays.asList(cmd.getServer(),cmd.getChannel()));
-                activeChannels.put(cmd.getUser(),place);
-            break;
+                ArrayList<String> place = new ArrayList<>(Arrays.asList(cmd.getServer(), cmd.getChannel()));
+                activeChannels.put(cmd.getUser(), place);
+                break;
 
-            case "newPvMsg" :
+            case "newPvMsg":
                 instantPvMsg(cmd);
-            break;
+                break;
 
-            case "newChannelMsg" :
+            case "newChannelMsg":
                 instantChannelMsg(cmd);
-            break;
+                break;
         }
         return dt;
     }
 
-    public void instantPvMsg(Command cmd){
-        if(cmd.getKeyword().equals("newPvMsg")){
+    /**
+     * if the command is newPvMsg, delivers it to the other client handler in private chat
+     * @param cmd
+     */
+    public void instantPvMsg(Command cmd) {
+        if (cmd.getKeyword().equals("newPvMsg")) {
             printClientHandlers();
             String receiver = (String) cmd.getSecondary();
-            if(activePvs.containsKey(receiver)){
-               String sender = activePvs.get(receiver);
-               if(sender.equals(cmd.getUser())){
-                   Data dt = Data.newPvMsg(receiver,(Message) cmd.getPrimary());
-                   clientHandlers.get(receiver).sendInstantMessage(dt);
-               }
+            if (activePvs.containsKey(receiver)) {
+                String sender = activePvs.get(receiver);
+                if (sender.equals(cmd.getUser())) {
+                    Data dt = Data.newPvMsg(receiver, (Message) cmd.getPrimary());
+                    clientHandlers.get(receiver).sendInstantMessage(dt);
+                }
             }
         }
     }
 
-    public void instantChannelMsg(Command cmd){
-        if(cmd.getKeyword().equals("newChannelMsg")) {
+    /**
+     * if the command is newChannelMsg, delivers it to all other client handlers who are currently is channel chat
+     * @param cmd
+     */
+    public void instantChannelMsg(Command cmd) {
+        if (cmd.getKeyword().equals("newChannelMsg")) {
             printClientHandlers();
-           ArrayList<String> onlinePeople = new ArrayList<>();
+            ArrayList<String> onlinePeople = new ArrayList<>();
             for (HashMap.Entry<String, ArrayList<String>> set :
                     activeChannels.entrySet()) {
-                if(set.getValue().get(0).equals(cmd.getServer()) && set.getValue().get(1).equals(cmd.getChannel() )){
+                if (set.getValue().get(0).equals(cmd.getServer()) && set.getValue().get(1).equals(cmd.getChannel())) {
                     onlinePeople.add(set.getKey());
                 }
             }
-            Data dt = Data.newChannelMsg(cmd.getUser(),cmd.getServer(),cmd.getChannel(),(Message)cmd.getPrimary());
-            for(String person : onlinePeople){
+            Data dt = Data.newChannelMsg(cmd.getUser(), cmd.getServer(), cmd.getChannel(), (Message) cmd.getPrimary());
+            for (String person : onlinePeople) {
                 clientHandlers.get(person).sendInstantMessage(dt);
             }
         }
     }
 
-    public void printClientHandlers(){
+    public void printClientHandlers() {
         System.out.println("!!!!!!!!!!!!!!!!!!!");
         for (HashMap.Entry<String, ClientHandler> set :
                 clientHandlers.entrySet()) {
@@ -224,8 +249,5 @@ public class ServerSide {
         }
         System.out.println("!!!!!!!!!!!!!!!!!!");
     }
-
-    public void offline(ClientHandler clientHandler){
-
-    }
+    
 }
