@@ -58,7 +58,7 @@ public class ClientHandler extends Thread{
                     fb = (FileBytes) fin.readObject();
                 } catch (ClassNotFoundException e) {
                     e.printStackTrace();
-
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
