@@ -1,4 +1,6 @@
-public class FileBytes {
+import java.io.Serializable;
+
+public class FileBytes implements Serializable {
     private byte[] bytes;
     private String fileName;
     private FileMessage fileMessage;
