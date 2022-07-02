@@ -173,12 +173,16 @@ public class MessageWriter extends Thread{
      * sends an upload command to server then starts a new thread for uploading it on another port
      */
     private void sendFile() {
-        cmd = Command.upload();
+        if (senderInfo.size() == 1)
+            cmd = Command.upload(receiverInfo, null ,null, false);
+        else
+            cmd = Command.upload(null, senderInfo.get(2), senderInfo.get(1), true);
         try {
             out.writeObject(cmd);
         } catch (IOException e) {
             e.printStackTrace();
         }
+
         FileUploader fileUploader = new FileUploader(fout, senderInfo);
         fileUploader.start();
     }

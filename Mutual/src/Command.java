@@ -120,8 +120,12 @@ public class Command implements Serializable {
         return cmd;
     }
 
-    public static Command upload(){
+    public static Command upload(String receiver, String server, String channel, boolean isChannel){
         Command cmd = new Command("upload");
+        cmd.user = receiver;
+        cmd.server = server;
+        cmd.channel = channel;
+        cmd.primary = isChannel;
         return cmd;
     }
     //for new reaction: newReaction, user=reaction sender, primary= message, secondary = type of reaction(enum)
