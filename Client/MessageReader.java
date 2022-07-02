@@ -14,7 +14,13 @@ public class MessageReader extends Thread{
     private ArrayList<Message> messageNumbering;
     private String currentUsername;
 
-    // for channels
+    /**
+     * used to instantiate for channel messages
+     * @param in object input stream of the socket
+     * @param inputHandler an object of InputHandler class
+     * @param messageNumbering an array list of messages already sent  in the channel
+     * @param currentUsername this user's username
+     */
     public MessageReader(ObjectInputStream in, InputHandler inputHandler, ArrayList<Message> messageNumbering, String currentUsername){
         this.in = in;
         this.inputHandler = inputHandler;
@@ -22,7 +28,11 @@ public class MessageReader extends Thread{
         this.currentUsername = currentUsername;
     }
 
-    // for private messages
+    /**
+     * used to instantiate for pv messages
+     * @param in object input stream of the socket
+     * @param inputHandler an object of InputHandler class
+     */
     public MessageReader(ObjectInputStream in, InputHandler inputHandler){
         this.in = in;
         this.inputHandler = inputHandler;
@@ -49,9 +59,12 @@ public class MessageReader extends Thread{
             message = (Message) data.getPrimary();
             messageNumbering.add(message);
 
+            // pv messages are only shown with the sender's username
             if (data.getKeyword().equals("newPvMsg")){
                 stringBuilder.append(message.getSourceInfo().get(0)).append(" : ").append(message.getText());
             }
+            // channel messages are shown with sender's username, channel and server
+            // sender and receu=iver's username are checked not tobe the same so that messages aren't duplicated
             else if (data.getKeyword().equals("newChannelMsg") && !data.getUser().equals(currentUsername)){
                 stringBuilder.append(messageNumbering.size()).append(") ").append(message.getSourceInfo().get(0)).append(" : ").append(message.getText());
             }

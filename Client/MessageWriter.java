@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-
+/**
+ * this class is a seperated thread for sending messages in private chats or channels
+ * it will transfer messages to server side
+ */
 public class MessageWriter extends Thread{
 
     private ObjectOutputStream out;
@@ -13,14 +16,24 @@ public class MessageWriter extends Thread{
     private String receiverInfo;
     private ArrayList<Message> messageNumbering;
 
-    // for channels
+    /**
+     * used to instantiate for channels messages
+     * @param out object output stream of the socket
+     * @param senderInfo an array list of sender's info including their username and name of the channel and server where they're sending the message
+     * @param messageNumbering an arraylist of already existing messages in the chat
+     */
     public MessageWriter(ObjectOutputStream out, ArrayList<String > senderInfo, ArrayList<Message> messageNumbering){
         this.out = out;
         this.senderInfo = senderInfo;
         this.messageNumbering = messageNumbering;
     }
 
-    // for private messages
+    /**
+     * used to instantiate for pv messages
+     * @param out object output stream of the socket
+     * @param senderInfo an array list of sender info with only one element : sender's username
+     * @param receiverInfo receiver's username
+     */
     public MessageWriter(ObjectOutputStream out, String senderInfo, String receiverInfo){
         this.out = out;
         this.senderInfo = new ArrayList<>(List.of(senderInfo));
@@ -37,6 +50,9 @@ public class MessageWriter extends Thread{
         Thread.currentThread().interrupt();
     }
 
+    /**
+     * used to receive messages on channels
+     */
     private void channelChat(){
         Message message;
         Scanner scanner = new Scanner(System.in);
@@ -44,6 +60,7 @@ public class MessageWriter extends Thread{
 
         while (true){
             text = scanner.nextLine();
+            // if user decides to quit the chat
             if (text.equals("0")) {
                 Command cmd = Command.lastseenChannel(senderInfo.get(0),senderInfo.get(2),senderInfo.get(1));
                 try {
@@ -53,15 +70,18 @@ public class MessageWriter extends Thread{
                 }
                 break;
             }
+            // for reaction
             else if (text.contains("react ")){
                 String[] splitted = text.split(" ");
                 message = messageNumbering.get(Integer.parseInt(splitted[1]) - 1);
                 cmd = Command.newReaction(senderInfo.get(0), message, splitted[2]);
             }
+            // for text messages
             else {
                 message = new TextMessage(senderInfo, text);
                 cmd = Command.newChannelMsg(senderInfo.get(0),senderInfo.get(2),senderInfo.get(1), message);
             }
+            // sending the reaction or message to server
             try {
                 out.writeObject(cmd);
             } catch (IOException e) {
@@ -70,6 +90,9 @@ public class MessageWriter extends Thread{
         }
     }
 
+    /**
+     * used to receive messages in private chats
+     */
     private void pvChat(){
         Message message;
         Scanner scanner = new Scanner(System.in);

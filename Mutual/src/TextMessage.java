@@ -3,6 +3,10 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
+/**
+ * holds the information of a text message
+ * inherits Message class
+ */
 public class TextMessage extends Message  implements Serializable {
     private String text;
     private static final long serialVersionUID = 738549465835985L;
@@ -32,6 +36,10 @@ public class TextMessage extends Message  implements Serializable {
         return text;
     }
 
+    /**
+     *
+     * @return a string including sender's username, channel and server, date and time and reactions
+     */
     @Override
     public String toString() {
         if (super.getSourceInfo().size() > 1)
@@ -40,6 +48,10 @@ public class TextMessage extends Message  implements Serializable {
             return super.getSourceInfoAsString() + text;
     }
 
+    /**
+     *
+     * @return a string only containing sender's username, date and time and reactions
+     */
     public String shortFormToString(){
         if (super.getSourceInfo().size() > 1)
             return super.getWriterOnly() + text + "\n" + super.getReactions();

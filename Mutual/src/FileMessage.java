@@ -5,6 +5,10 @@ import java.io.Serializable;
 import java.nio.file.Files;
 import java.time.LocalDateTime;
 
+/**
+ * holds the information of a file message which is their name + format
+ * inherits Message class
+ */
 public class FileMessage extends Message implements Serializable {
     private static final long serialVersionUID = 535296473722284L;
     private String fileName;

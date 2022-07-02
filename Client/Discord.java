@@ -303,8 +303,6 @@ public class Discord {
                         inputHandler.printMsg("there is no such user with this username!");
                     } else {
                         Relationship friendRequest = Relationship.Friend_pending;
-                        friendRequest.setSender(currentUsername);
-                        friendRequest.setReceiver(friendUsername);
                         cmd = Command.newRelation(friendRequest,currentUsername,friendUsername);
                         transfer();
                         break;
@@ -323,8 +321,6 @@ public class Discord {
                     User friend = (User) data.getPrimary();
                     if (inputHandler.receiveData(friend, "0) back\n1) block this person", 1) == 1) {
                         Relationship block = Relationship.Block;
-                        block.setSender(currentUsername);
-                        block.setReceiver(friend.getUsername());
                         cmd = Command.newRelation(block,currentUsername,friend.getUsername());
                         transfer();
                     }

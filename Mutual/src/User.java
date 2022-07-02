@@ -2,15 +2,18 @@
 
 import java.io.Serializable;
 
+/**
+ * holds the user's information including : username, phone number, password, email, status, profile photo - file and format-
+ */
 public class User  implements Serializable {
     private static final long serialVersionUID = 944266325658983L;
     private String username;
     private String password;
     private String phoneNum;
     private String email;
-    private Enum<Status> status=null;
-    private byte[] profilePhoto=null;
-    private String profilePhotoFormat=null;
+    private Enum<Status> status;
+    private byte[] profilePhoto;
+    private String profilePhotoFormat;
 
 
     public User (String username, String password, String email) {
@@ -78,6 +81,10 @@ public class User  implements Serializable {
         this.profilePhotoFormat = format;
     }
 
+    /**
+     *
+     * @return a string of user's info including username. phone number and status to be used in printing and ...
+     */
     @Override
     public String toString() {
        StringBuilder stringBuilder = new StringBuilder("======================================\n");

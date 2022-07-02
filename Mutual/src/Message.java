@@ -2,6 +2,10 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.*;
 
+/**
+ * holds the general information - including sender's info and date&time and reactions - of a message the user sends.
+ * a message can be a file or a text message which are the children of this class
+ */
 public abstract class Message implements Serializable {
     private static final long serialVersionUID = 232222247967289L;
     private LocalDateTime dateTime;
@@ -58,6 +62,10 @@ public abstract class Message implements Serializable {
     }
 
 
+    /**
+     *
+     * @return a string containing sender's username, channel and server
+     */
     public String getSourceInfoAsString(){
         StringBuilder stringBuilder = new StringBuilder();
         for (int i = sourceInfo.size() - 1; i >= 0; i--){
@@ -67,10 +75,18 @@ public abstract class Message implements Serializable {
         return stringBuilder.toString();
     }
 
+    /**
+     *
+     * @return a string only containing sender's username
+     */
     public String getWriterOnly(){
         return sourceInfo.get(0) + "-> ";
     }
 
+    /**
+     *
+     * @return an array list of sender info containing usernaem, channel and server name
+     */
     public ArrayList<String> getSourceInfo() {
         return sourceInfo;
     }
