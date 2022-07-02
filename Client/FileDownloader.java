@@ -13,6 +13,7 @@ public class FileDownloader extends Thread{
 
     @Override
     public void run() {
+        System.out.println("thread started");
         FileBytes fileBytes = null;
         try {
             fileBytes = (FileBytes) fin.readObject();
