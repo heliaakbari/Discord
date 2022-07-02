@@ -1,3 +1,4 @@
+import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -23,7 +24,8 @@ public class ClientMain {
 
     public static void main(String[] args) {
 
-
+        File f1 = new File("C:\\discord");
+        boolean bool = f1.mkdir();
         int choice;
         inputHandler = new Console();
 
