@@ -15,12 +15,12 @@ public class FileMessage extends Message implements Serializable {
     }
 
     public FileMessage(String sender,String server,String channel,String fileName) throws IOException {
-        super(sender,server,channel);
+        super(sender,channel,server);
         this.fileName = fileName;
     }
 
     public FileMessage(String sender,String server,String channel,LocalDateTime date,String fileName) throws IOException {
-        super(sender,server,channel,date);
+        super(sender,channel,server,date);
         this.fileName = fileName;
     }
 

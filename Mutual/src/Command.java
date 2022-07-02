@@ -111,9 +111,12 @@ public class Command implements Serializable {
         return cmd;
     }
 
-    public static Command download(FileMessage fileMessage ){
+    public static Command download(String p1OrServer,String p2OrChannel, String filename,Boolean isChannel){
         Command cmd = new Command("download");
-        cmd.primary = fileMessage;
+        cmd.server = p1OrServer;
+        cmd.channel = p2OrChannel;
+        cmd.primary = filename;
+        cmd.secondary = isChannel;
         return cmd;
     }
 
