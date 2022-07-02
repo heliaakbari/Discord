@@ -1,8 +1,9 @@
 
-import javax.swing.*;
-import java.awt.*;
 import java.io.*;
 
+/**
+ * a seperated thread to fetch file messages from server and saves it to local memory
+ */
 public class FileDownloader extends Thread{
 
     private ObjectInputStream fin;
@@ -13,43 +14,25 @@ public class FileDownloader extends Thread{
 
     @Override
     public void run() {
-        System.out.println("thread started");
+
+        // getting fileBytes object from server
         FileBytes fileBytes = null;
         try {
             fileBytes = (FileBytes) fin.readObject();
-            System.out.println("got the file fro server");
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
 
-//        StringBuilder path = new StringBuilder();
-//        JFileChooser jFileChooser = new JFileChooser();
-//        jFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-//        if (jFileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION){
-//
-//            File file = jFileChooser.getSelectedFile();
-//            path.append(file.getAbsolutePath()).append(fileBytes.getFileName());
-//
-//            file = new File(path.toString());
-//
-//            try {
-//                FileOutputStream fileOutputStream = new FileOutputStream(file);
-//                fileOutputStream.write(fileBytes.getBytes());
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//
-//        }
-
+        // choosing a path and saving the file in it
         String filePath = "C:\\discord";
         filePath = filePath + "\\" +fileBytes.getFileName();
         File file = new File(filePath);
         try {
             FileOutputStream fileOutputStream = new FileOutputStream(file);
             fileOutputStream.write(fileBytes.getBytes());
-            System.out.println("file saved!");
+
         } catch (IOException e){
             e.printStackTrace();
         }
